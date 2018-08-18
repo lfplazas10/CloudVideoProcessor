@@ -1,6 +1,8 @@
 logs
 target
 build
+*.ipr
+*.iws
 /.idea
 /.idea_modules
 /.classpath
