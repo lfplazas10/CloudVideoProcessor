@@ -11,6 +11,9 @@ POST    /api/signup                     controllers.AuthController.createManager
 POST    /api/login                      controllers.AuthController.login()
 POST    /api/logout                     controllers.AuthController.logout()
 
+# Contest endpoints
+POST    /api/contest                    controllers.ContestController.create()
+
 # An example controller showing how to write asynchronous code
 #GET     /message                    controllers.AsyncController.message
 

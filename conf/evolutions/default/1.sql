@@ -3,6 +3,17 @@
 
 # --- !Ups
 
+create table contests (
+  id                            bigserial not null,
+  name                          varchar(255),
+  url                           varchar(255),
+  description                   varchar(255),
+  owner_email                   varchar(255),
+  start_date                    timestamptz,
+  end_date                      timestamptz,
+  constraint pk_contests primary key (id)
+);
+
 create table managers (
   email                         varchar(255) not null,
   salt                          varchar(255),
@@ -14,6 +25,8 @@ create table managers (
 
 
 # --- !Downs
+
+drop table if exists contests cascade;
 
 drop table if exists managers cascade;
 
