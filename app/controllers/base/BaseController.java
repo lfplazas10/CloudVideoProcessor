@@ -4,6 +4,7 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Results;
 
 public class BaseController extends Controller {
 
@@ -17,11 +18,19 @@ public class BaseController extends Controller {
         return Json.fromJson(body.asJson(), clazz);
     }
 
-    protected static Result ok(Object object) {
-        return object == null ? ok() : ok(Json.prettyPrint(Json.toJson(object))).as(CONTENT_TYPE);
+    protected Result ok(Object object) {
+        return object == null ? ok() : Results.ok(Json.prettyPrint(Json.toJson(object))).as(CONTENT_TYPE);
     }
 
-    protected static Result error(String message) {
+    public static Result ok(String message) {
+        return ok( Json.parse("{\"status\":\""+message+"\"}") ).as(CONTENT_TYPE);
+    }
+
+    public static Result ok(String property, String text) {
+        return ok( Json.parse("{\""+property+"\":\""+text+"\"}") ).as(CONTENT_TYPE);
+    }
+
+    protected Result error(String message) {
         return internalServerError(Json.parse("{\"error\":\""+message+"\"}"));
     }
 

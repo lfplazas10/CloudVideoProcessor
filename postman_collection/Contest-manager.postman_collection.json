@@ -7,177 +7,255 @@
 	},
 	"item": [
 		{
-			"name": "GET CSRF Token",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "localhost:9000/api/token",
-					"host": [
-						"localhost"
-					],
-					"port": "9000",
-					"path": [
-						"api",
-						"token"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Signup",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
+			"name": "Authentication",
+			"description": "",
+			"item": [
+				{
+					"name": "GET CSRF Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "localhost:9000/api/token",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"token"
+							]
+						},
+						"description": ""
 					},
-					{
-						"key": "Csrf-Token",
-						"value": "{{CRSF}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"firstName\":\"Carl\",\n\t\"lastName\":\"Smith\",\n\t\"email\" :\"c@u.com\",\n\t\"password\" : \"Pass\"\n}"
+					"response": []
 				},
-				"url": {
-					"raw": "localhost:9000/api/signup",
-					"host": [
-						"localhost"
-					],
-					"port": "9000",
-					"path": [
-						"api",
-						"signup"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Login",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\":\"Carl\",\n\t\"lastName\":\"Smith\",\n\t\"email\" :\"c@u.com\",\n\t\"password\" : \"Pass\"\n}"
+						},
+						"url": {
+							"raw": "localhost:9000/api/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"signup"
+							]
+						},
+						"description": ""
 					},
-					{
-						"key": "Csrf-Token",
-						"value": "{{CRSF}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\":\"c@u.com\",\n\t\"password\": \"Pass\"\n}"
+					"response": []
 				},
-				"url": {
-					"raw": "localhost:9000/api/login",
-					"host": [
-						"localhost"
-					],
-					"port": "9000",
-					"path": [
-						"api",
-						"login"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Logout",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Csrf-Token",
-						"value": "{{CRSF}}"
-					}
-				],
-				"body": {},
-				"url": {
-					"raw": "localhost:9000/api/logout",
-					"host": [
-						"localhost"
-					],
-					"port": "9000",
-					"path": [
-						"api",
-						"logout"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Create event",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\":\"c@u.com\",\n\t\"password\": \"Pass\"\n}"
+						},
+						"url": {
+							"raw": "localhost:9000/api/login",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": ""
 					},
-					{
-						"key": "Csrf-Token",
-						"value": "{{CRSF}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\":\"Test event\",\n\t\"category\":\"Conference\",\n\t\"ownerEmail\":\"das@e.com\",\n\t\"place\":\"das\",\n\t\"address\":\"dsa\"\n}"
+					"response": []
 				},
-				"url": {
-					"raw": "localhost:9000/api/event",
-					"host": [
-						"localhost"
-					],
-					"port": "9000",
-					"path": [
-						"api",
-						"event"
-					]
-				},
-				"description": ""
-			},
-			"response": []
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:9000/api/logout",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"logout"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Delete event",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Csrf-Token",
-						"value": "{{CRSF}}"
-					}
-				],
-				"body": {},
-				"url": {
-					"raw": "localhost:9000/api/event/2",
-					"host": [
-						"localhost"
-					],
-					"port": "9000",
-					"path": [
-						"api",
-						"event",
-						"2"
-					]
+			"name": "Contest",
+			"description": "",
+			"item": [
+				{
+					"name": "Get all user contests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"c3\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
+						},
+						"url": {
+							"raw": "localhost:9000/api/contest",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"contest"
+							]
+						},
+						"description": ""
+					},
+					"response": []
 				},
-				"description": ""
-			},
-			"response": []
+				{
+					"name": "Create contest",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"c3\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
+						},
+						"url": {
+							"raw": "localhost:9000/api/contest",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"contest"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Update contest",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 1,\n\t\"name\":\"Contest number LA\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"c3\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
+						},
+						"url": {
+							"raw": "localhost:9000/api/contest",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"contest"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete event",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:9000/api/contest/2",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"contest",
+								"2"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -204,7 +282,7 @@
 	],
 	"variable": [
 		{
-			"id": "0413a483-c002-44ba-88c4-2d6c2723a5bb",
+			"id": "259f8f4e-a555-4293-a028-637212be4dfb",
 			"key": "CRSF",
 			"value": "b821dd6ab9081f8f600d500841983309388d48ef-1534609506404-08f49c2809c864410c01d07f",
 			"type": "text"

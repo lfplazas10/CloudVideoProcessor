@@ -11,6 +11,7 @@ create table contests (
   owner_email                   varchar(255),
   start_date                    timestamptz,
   end_date                      timestamptz,
+  creation_date                 timestamptz,
   constraint pk_contests primary key (id)
 );
 

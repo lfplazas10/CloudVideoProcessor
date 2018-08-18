@@ -3,16 +3,19 @@
 # ~~~~
 
 # Endpoint serving the main html file
-GET     /                               controllers.FrontendController.index()
+GET         /                               controllers.FrontendController.index()
 
 # Authorization endpoints
-GET     /api/token                      controllers.AuthController.getToken()
-POST    /api/signup                     controllers.AuthController.createManager()
-POST    /api/login                      controllers.AuthController.login()
-POST    /api/logout                     controllers.AuthController.logout()
+GET         /api/token                      controllers.AuthController.getToken()
+POST        /api/signup                     controllers.AuthController.createManager()
+POST        /api/login                      controllers.AuthController.login()
+POST        /api/logout                     controllers.AuthController.logout()
 
 # Contest endpoints
-POST    /api/contest                    controllers.ContestController.create()
+GET         /api/contest                    controllers.ContestController.getAll()
+POST        /api/contest                    controllers.ContestController.create()
+PUT         /api/contest                    controllers.ContestController.update()
+DELETE      /api/contest/:id                controllers.ContestController.delete(id:Long)
 
 # An example controller showing how to write asynchronous code
 #GET     /message                    controllers.AsyncController.message

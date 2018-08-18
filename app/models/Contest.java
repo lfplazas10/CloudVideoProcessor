@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 public class Contest extends BaseModel {
 
     private String url, description, ownerEmail;
-    private OffsetDateTime startDate, endDate;
+    private OffsetDateTime startDate, endDate, creationDate;
 
     public String getUrl() {
         return url;
@@ -51,6 +51,14 @@ public class Contest extends BaseModel {
 
     public void setEndDate(OffsetDateTime endDate) {
         this.endDate = endDate;
+    }
+
+    public OffsetDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(OffsetDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
     public static Finder<Long, Contest> find() {
