@@ -2,12 +2,11 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.base.BaseController;
-import models.User;
+import models.Manager;
+import models.base.User;
 import play.filters.csrf.AddCSRFToken;
 import play.filters.csrf.CSRF;
 import play.mvc.Result;
-
-import java.util.Optional;
 
 public class AuthController extends BaseController {
 
@@ -16,27 +15,19 @@ public class AuthController extends BaseController {
         return ok(CSRF.getToken(request()).map(CSRF.Token::value).orElse("no token"));
     }
 
-    public Result createUser() {
+    public Result createManager() {
         try {
-            User user = bodyAs(User.class);
-            boolean exists = User.find().query().where()
+            Manager user = bodyAs(Manager.class);
+            boolean exists = Manager.find().query().where()
                     .eq("email", user.getEmail()).findOne() != null;
-            if (exists){
+
+            if (exists)
                 throw new Exception("There is already an user with that email");
-            }
+
             user.hashAndSavePassword();
             user.save();
             return ok(user);
         } catch (Exception e){
-            return error(e.getMessage());
-        }
-    }
-
-    public Result getUser() {
-        try {
-            return ok(User.find().all());
-        } catch (Exception e){
-            e.printStackTrace();
             return error(e.getMessage());
         }
     }
@@ -56,11 +47,13 @@ public class AuthController extends BaseController {
             JsonNode request = request().body().asJson();
             String email = request.get("email").asText();
             String password = request.get("password").asText();
-            User user = User.find().query().where().eq("email", email).findOne();
+            User user = Manager.find().query().where().eq("email", email).findOne();
+
             if (user == null)
                 throw new Exception("The user does not exist");
             if (!user.isPasswordCorrect(user, password))
                 throw new Exception("The password is incorrect");
+
             session("connected", email);
             return ok(user);
         } catch (Exception e){
@@ -71,7 +64,7 @@ public class AuthController extends BaseController {
     public Result logout() {
         try {
             response().discardCookie("session");
-            return ok();
+            return ok("logged out");
         } catch (Exception e){
             return error(e.getMessage());
         }

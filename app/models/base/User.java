@@ -1,20 +1,17 @@
-package models;
+package models.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.hash.Hashing;
 import io.ebean.Finder;
 import io.ebean.Model;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import javax.persistence.*;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
-@Entity
-@Table(name = "USERS")
-public class User extends Model {
+@MappedSuperclass
+public abstract class User extends Model {
 
     @JsonInclude()
     @Transient
@@ -25,10 +22,6 @@ public class User extends Model {
 
     @Id
     private String email;
-
-    public static Finder<Long, User> find() {
-        return new Finder<Long, User>(User.class);
-    }
 
     public String getEmail() {
         return email;
@@ -78,6 +71,5 @@ public class User extends Model {
                 .toString();
         return sha512hex.equals(user.hash);
     }
-
 
 }
