@@ -62,7 +62,7 @@ public class ContestController extends BaseController {
         try {
             String user = session("connected");
             if (!Contest.find().byId(contestId).getOwnerEmail().equals(user))
-                throw new Exception("The user does not own the event");
+                throw new Exception("The user does not own the contest");
 
             Contest.find().deleteById(contestId);
             return ok("deleted");
