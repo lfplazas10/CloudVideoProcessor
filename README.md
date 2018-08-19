@@ -2,6 +2,8 @@
 
 # Contest manager app
 
+## The react project is found under the /web directory
+
 ## How to run
 
 ### First run the database:
