@@ -15,6 +15,17 @@ create table contests (
   constraint pk_contests primary key (id)
 );
 
+create table contestsubmissions (
+  id                            bigserial not null,
+  name                          varchar(255),
+  first_name                    varchar(255),
+  last_name                     varchar(255),
+  email                         varchar(255),
+  state                         integer,
+  constraint ck_contestsubmissions_state check ( state in (0,1,2)),
+  constraint pk_contestsubmissions primary key (id)
+);
+
 create table managers (
   email                         varchar(255) not null,
   salt                          varchar(255),
@@ -28,6 +39,8 @@ create table managers (
 # --- !Downs
 
 drop table if exists contests cascade;
+
+drop table if exists contestsubmissions cascade;
 
 drop table if exists managers cascade;
 
