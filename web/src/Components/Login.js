@@ -17,13 +17,7 @@ class Login extends React.Component {
   
   handleSubmit(e){
    e.preventDefault();
-  axios.get('call/some/endpoint')
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  //Check Signup.js
   }
   
   render(){

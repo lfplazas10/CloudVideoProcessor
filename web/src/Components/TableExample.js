@@ -32,7 +32,7 @@ class TableExample extends React.Component{
       classes
     } = this.props;
     return (
-      <Paper className={classes.root}>
+      <Paper className={classes.root} style={{marginTop: '15px'}}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
