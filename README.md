@@ -47,5 +47,7 @@ Go into the /web directory inside the project and run:
 npm install && npm start
 ```
 
+The web project makes use of Material-UI, for reference check: https://material-ui.com/api/app-bar/
+
 Future reference:
 https://www.sample-videos.com/
