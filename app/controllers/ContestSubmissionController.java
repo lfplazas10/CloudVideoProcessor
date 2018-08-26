@@ -66,6 +66,9 @@ public class ContestSubmissionController extends BaseController {
     public Result create() {
         try {
             ContestSubmission cs = bodyAs(ContestSubmission.class);
+            if (Contest.find.byId(cs.getContestId()) == null)
+                throw new Exception("The contest doesn't exist, it's kinda hard to create a submission on a non existing contest");
+
             cs.setCreationDate(OffsetDateTime.now());
             cs.setState(ContestSubmission.State.Waiting);
             cs.save();
