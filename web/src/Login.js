@@ -6,12 +6,24 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button/Button";
-
+import axios from 'axios';
 
 class Login extends React.Component {
   
   constructor(){
     super();
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  handleSubmit(e){
+   e.preventDefault();
+  axios.get('call/some/endpoint')
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
   
   render(){
@@ -19,6 +31,7 @@ class Login extends React.Component {
       <Dialog
         open
         fullScreen={this.props.fullScreen}>
+        <form onSubmit={this.handleSubmit}>
         <DialogTitle>Login</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -30,14 +43,15 @@ class Login extends React.Component {
             id="email"
             label="Email Address"
             type="email"
+            required
             fullWidth
           />
           <TextField
-            autoFocus
             margin="dense"
             id="pass"
             label="password"
             type="password"
+            required
             fullWidth
           />
         </DialogContent>
@@ -45,10 +59,11 @@ class Login extends React.Component {
           <Button onClick={this.props.toggleLogin} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.props.toggleLogin} color="primary">
+          <Button color="primary" type="submit">
             Login
           </Button>
         </DialogActions>
+        </form>
       </Dialog>
     )
   }
