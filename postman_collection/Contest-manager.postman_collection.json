@@ -1,14 +1,12 @@
 {
 	"info": {
-		"name": "Contest-manager",
 		"_postman_id": "c09aafc4-7d7e-1c3c-dba3-eb0f75a1640b",
-		"description": "",
+		"name": "Contest-manager",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Authentication",
-			"description": "",
 			"item": [
 				{
 					"name": "GET CSRF Token",
@@ -26,8 +24,7 @@
 								"api",
 								"token"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -59,8 +56,7 @@
 								"api",
 								"signup"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -92,8 +88,7 @@
 								"api",
 								"login"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -118,8 +113,7 @@
 								"api",
 								"logout"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -127,7 +121,6 @@
 		},
 		{
 			"name": "Contest",
-			"description": "",
 			"item": [
 				{
 					"name": "Get all user contests",
@@ -157,8 +150,7 @@
 								"api",
 								"contest"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -178,7 +170,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"c3\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
+							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"contestUrl\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
 						},
 						"url": {
 							"raw": "localhost:9000/api/contest",
@@ -190,8 +182,7 @@
 								"api",
 								"contest"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -223,8 +214,7 @@
 								"api",
 								"contest"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -240,7 +230,7 @@
 						],
 						"body": {},
 						"url": {
-							"raw": "localhost:9000/api/contest/2",
+							"raw": "localhost:9000/api/contest/1",
 							"host": [
 								"localhost"
 							],
@@ -248,10 +238,82 @@
 							"path": [
 								"api",
 								"contest",
-								"2"
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ContestSubmission",
+			"item": [
+				{
+					"name": "Create video",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "video",
+									"type": "file"
+								}
 							]
 						},
-						"description": ""
+						"url": {
+							"raw": "http://localhost:9000/api/contestSubmission/video/13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"contestSubmission",
+								"video",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create ContestSubmission",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"Lalo\",\n\t\"lastName\": \"Landa\",\n\t\"email\": \"ll@u.com\",\n\t\"description\": \"This is  a fun video\",\n\t\"contestId\": 3\n}"
+						},
+						"url": {
+							"raw": "localhost:9000/api/contestSubmission",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"contestSubmission"
+							]
+						}
 					},
 					"response": []
 				}
@@ -282,10 +344,10 @@
 	],
 	"variable": [
 		{
-			"id": "259f8f4e-a555-4293-a028-637212be4dfb",
+			"id": "0cb132af-ad97-417f-b8be-a50b83fc4b1c",
 			"key": "CRSF",
-			"value": "b821dd6ab9081f8f600d500841983309388d48ef-1534609506404-08f49c2809c864410c01d07f",
-			"type": "text"
+			"value": "d25eab667c32b0f6b30e114f0eea31101f238465-1535253644100-08f49c2809c864410c01d07f",
+			"type": "string"
 		}
 	]
 }

@@ -18,7 +18,9 @@ PUT         /api/contest                    controllers.ContestController.update
 DELETE      /api/contest/:id                controllers.ContestController.delete(id:Long)
 
 # ContestSubmission endpoints
-GET         /api/contestSubmission          controllers.ContestSubmissionController.getAll()
+
+POST        /api/contestSubmission                    controllers.ContestSubmissionController.create()
+POST        /api/contestSubmission/video/:id          controllers.ContestSubmissionController.receiveVideo(id:Long)
 
 # An example controller showing how to write asynchronous code
 #GET     /message                    controllers.AsyncController.message

@@ -13,18 +13,35 @@ public class ContestSubmission extends BaseModel {
     public static final Finder<Long, ContestSubmission> find = new Finder<>(ContestSubmission.class);
 
     public enum State {
+        Waiting,
         Submitted,
         Processing,
         Processed
     }
 
-    private String firstName, lastName, email, description;
+    private String firstName, lastName, email, description, videoId, videoType;
 
     private State state;
 
     private long contestId;
 
     private OffsetDateTime creationDate;
+
+    public String getVideoType() {
+        return videoType;
+    }
+
+    public void setVideoType(String videoType) {
+        this.videoType = videoType;
+    }
+
+    public String getVideoId() {
+        return videoId;
+    }
+
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
+    }
 
     public long getContestId() {
         return contestId;

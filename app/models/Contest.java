@@ -1,11 +1,7 @@
 package models;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import io.ebean.Finder;
-import models.base.BModel;
 import models.base.BaseModel;
-import models.base.FinderModel;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.OffsetDateTime;
