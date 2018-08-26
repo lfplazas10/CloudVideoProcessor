@@ -27,8 +27,12 @@ class Header extends React.Component {
     this.setState({mobileOpen: !this.state.mobileOpen});
   }
   
-  toggleSignup(){
-    this.setState({signup : !this.state.signup})
+  toggleSignup(login){
+    console.log(login)
+    this.setState({
+      signup  : !this.state.signup,
+      login   : login == true ? true : this.state.login
+    });
   }
   
   toggleLogin(){
@@ -49,7 +53,7 @@ class Header extends React.Component {
             </Typography>
           </div>
           <Hidden smDown implementation="css">
-            <Button color="inherit" onClick={this.toggleSignup}>
+            <Button color="inherit" onClick={() => this.toggleSignup(false)}>
               Signup
             </Button>
             <Button color="inherit" onClick={this.toggleLogin}>
@@ -78,7 +82,7 @@ class Header extends React.Component {
           >
             <div className={classes.appResponsive}>
               {/*toggled*/}
-              <Button color="inherit" onClick={this.toggleSignup}>
+              <Button color="inherit" onClick={() => this.toggleSignup(false)}>
                 Signup
               </Button>
               <Button color="inherit" onClick={this.toggleLogin}>
