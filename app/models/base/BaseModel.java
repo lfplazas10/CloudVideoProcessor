@@ -28,4 +28,12 @@ public abstract class BaseModel extends Model {
         this.id = id;
     }
 
+//    @Override
+//    public static<T extends BaseModel> Finder<Long, T> find(Class<T> type){
+//        return new Finder<>(type);
+//    };
+
+//    public static Finder<Long, ?> find(){
+//        return null;
+//    };
 }

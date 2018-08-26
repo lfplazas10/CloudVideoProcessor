@@ -1,10 +1,10 @@
 package controllers.base;
 
 import play.libs.Json;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Result;
-import play.mvc.Results;
+import play.mvc.*;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 public class BaseController extends Controller {
 
@@ -32,6 +32,18 @@ public class BaseController extends Controller {
 
     protected Result error(String message) {
         return internalServerError(Json.parse("{\"error\":\""+message+"\"}"));
+    }
+
+    public static class Session extends Action.Simple {
+        @Override
+        public CompletionStage<Result> call(Http.Context ctx) {
+            String user = ctx.current().session().get("connected");
+            if (user == null)
+                return CompletableFuture.completedFuture(
+                        unauthorized()
+                );
+            return delegate.call(ctx);
+        }
     }
 
 }

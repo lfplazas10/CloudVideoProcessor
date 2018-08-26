@@ -1,7 +1,11 @@
 package models;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import io.ebean.Finder;
+import models.base.BModel;
 import models.base.BaseModel;
+import models.base.FinderModel;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.OffsetDateTime;
@@ -10,6 +14,7 @@ import java.time.OffsetDateTime;
 @Table(name = "CONTESTS")
 public class Contest extends BaseModel {
 
+    public static final Finder<Long, Contest> find = new Finder<>(Contest.class);
     private String url, description, ownerEmail;
     private OffsetDateTime startDate, endDate, creationDate;
 
@@ -61,7 +66,4 @@ public class Contest extends BaseModel {
         this.creationDate = creationDate;
     }
 
-    public static Finder<Long, Contest> find() {
-        return new Finder<Long, Contest>(Contest.class);
-    }
 }
