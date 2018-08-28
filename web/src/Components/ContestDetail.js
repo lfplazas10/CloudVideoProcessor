@@ -119,9 +119,9 @@ class ContestDetail extends Component {
             </CardActions>
         </Card>);
         return (
-            <div className={classes.root}>
+            <div >
                 {(this.state.submissions !== undefined && this.state.submissions !== {}) &&
-                <GridList cellHeight={'auto'} cellWidth={'auto'} cols={5} className={classes.gridList}>
+                <GridList className={classes.root} cellHeight={'auto'} cols={5} >
                     {React.Children.toArray(cards)}
                 </GridList>}
             </div>
@@ -144,8 +144,8 @@ const styles = {
         overflow: 'hidden'
     },
     gridList: {
-        //width: 1000,
-        //height: 450,
+        width: 100,
+        height: 450,
     },
 
 };
