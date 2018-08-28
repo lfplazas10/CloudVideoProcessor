@@ -16,8 +16,9 @@ GET         /api/contest                    controllers.ContestController.getAll
 POST        /api/contest                    controllers.ContestController.create()
 PUT         /api/contest                    controllers.ContestController.update()
 DELETE      /api/contest/:id                controllers.ContestController.delete(id:Long)
-
+GET         /api/contest/:id/submissions    controllers.ContestSubmissionController.get(id:Long)
 # ContestSubmission endpoints
+
 
 POST        /api/contestSubmission                    controllers.ContestSubmissionController.create()
 POST        /api/contestSubmission/video/:id          controllers.ContestSubmissionController.receiveVideo(id:Long)
