@@ -9,4 +9,4 @@ services:
       POSTGRES_PASSWORD: SecurePassword123
       POSTGRES_USER: manager
     ports:
-      - 5432:5432
+      - 5434:5432
