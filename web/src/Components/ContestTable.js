@@ -15,7 +15,6 @@ import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import Paper from "@material-ui/core/Paper/Paper";
-import axios from 'axios';
 
 class ContestTable extends React.Component {
   constructor(props) {
@@ -49,7 +48,18 @@ class ContestTable extends React.Component {
     this.deleteContest = this.deleteContest.bind(this);
     this.formatDate = this.formatDate.bind(this);
   }
-
+  
+  componentDidMount(){
+    instance().get('user')
+      .then((response) => {
+        this.getAll();
+        this.setState({ user: response.data });
+      })
+      .catch((error) => {
+        console.log(error.response)
+      });
+  }
+  
   hideCreate(e) {
     e.preventDefault();
     this.setState({ create: false });
@@ -111,7 +121,7 @@ class ContestTable extends React.Component {
       name: this.state.name,
       url: this.state.url,
       description: this.state.winnerPrize,
-      ownerEmail: "j@j.com",
+      ownerEmail: this.state.user.email,
       creationDate: new Date(),
       startDate: sDate,
       endDate: eDate
@@ -154,7 +164,7 @@ class ContestTable extends React.Component {
       name: this.state.name,
       url: this.state.url,
       description: this.state.winnerPrize,
-      ownerEmail: "j@j.com",
+      ownerEmail: this.state.user.email,
       creationDate: new Date(),
       startDate: new Date(this.state.startDate),
       endDate: new Date(this.state.endDate)
@@ -364,10 +374,6 @@ class ContestTable extends React.Component {
         </DialogActions>
       </Dialog>
     )
-  }
-
-  componentDidMount() {
-    this.getAll();
   }
 
   render() {

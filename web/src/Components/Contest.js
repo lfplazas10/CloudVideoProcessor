@@ -37,6 +37,7 @@ class Contest extends Component {
           <ContestTable
             {...props}
             brand={'Content manager'}
+            fullScreen={false}
           />
         </MuiThemeProvider>
       </div>
