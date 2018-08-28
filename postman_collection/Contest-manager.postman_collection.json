@@ -250,6 +250,40 @@
 			"name": "ContestSubmission",
 			"item": [
 				{
+					"name": "Get contest submissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"c3\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
+						},
+						"url": {
+							"raw": "localhost:9000/api/contest/1/submissions",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create video",
 					"request": {
 						"method": "POST",
@@ -269,7 +303,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:9000/api/contestSubmission/video/13",
+							"raw": "http://localhost:9000/api/contestSubmission/video/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -279,7 +313,7 @@
 								"api",
 								"contestSubmission",
 								"video",
-								"13"
+								"1"
 							]
 						}
 					},
@@ -344,7 +378,7 @@
 	],
 	"variable": [
 		{
-			"id": "0cb132af-ad97-417f-b8be-a50b83fc4b1c",
+			"id": "781554a3-efec-403f-aa37-09b0c1e62a86",
 			"key": "CRSF",
 			"value": "d25eab667c32b0f6b30e114f0eea31101f238465-1535253644100-08f49c2809c864410c01d07f",
 			"type": "string"

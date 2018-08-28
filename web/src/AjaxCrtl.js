@@ -9,7 +9,7 @@ const inst = axios.create({
 });
 
 inst.get("token")
-  .then((r) => inst.defaults.headers.post['Csrf-Token'] = r.data.status)
+  .then((r) => inst.defaults.headers['Csrf-Token'] = r.data.status)
   .catch((e)=> console.log(e) );
 
 export default function instance () {

@@ -15,10 +15,18 @@ public class AuthController extends BaseController {
         return ok(CSRF.getToken(request()).map(CSRF.Token::value).orElse("no token"));
     }
 
+    public Result getManager(){
+        try{
+            return ok( Manager.find.byId( session("connected") ) );
+        } catch (Exception e){
+            return error(e.getMessage());
+        }
+    }
+
     public Result createManager() {
         try {
             Manager user = bodyAs(Manager.class);
-            boolean exists = Manager.find().query().where()
+            boolean exists = Manager.find.query().where()
                     .eq("email", user.getEmail()).findOne() != null;
 
             if (exists)
@@ -47,7 +55,7 @@ public class AuthController extends BaseController {
             JsonNode request = request().body().asJson();
             String email = request.get("email").asText();
             String password = request.get("password").asText();
-            User user = Manager.find().query().where().eq("email", email).findOne();
+            User user = Manager.find.query().where().eq("email", email).findOne();
 
             if (user == null)
                 throw new Exception("The user does not exist");

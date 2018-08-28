@@ -9,6 +9,8 @@ import javax.persistence.Table;
 @Table(name = "MANAGERS")
 public class Manager extends User {
 
+    public static final Finder<String, Manager> find = new Finder<>(Manager.class);
+
     private String firstName, lastName;
 
     public String getFirstName() {
@@ -27,7 +29,4 @@ public class Manager extends User {
         this.lastName = lastName;
     }
 
-    public static Finder<Long, Manager> find() {
-        return new Finder<Long, Manager>(Manager.class);
-    }
 }

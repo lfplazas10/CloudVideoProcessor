@@ -25,23 +25,24 @@ class Contest extends Component {
         this.setState({login : !this.state.login})
     }
 
-    render() {
-        const props = this.props;
-        return (
-            <div className="main">
-                <MuiThemeProvider theme={THEME}>
-                    <Header
-                        {...props}
-                        brand={'Content manager'}
-                        color={'info'}/>
-                    <ContestTable
-                        {...props}
-                        brand={'Content manager'}
-                    />
-                </MuiThemeProvider>
-            </div>
-        );
-    }
+  render() {
+    const props = this.props;
+    return (
+      <div className="main">
+        <MuiThemeProvider theme={THEME}>
+          <Header
+            {...props}
+            brand={'Content manager'}
+            color={'info'}/>
+          <ContestTable
+            {...props}
+            brand={'Content manager'}
+            fullScreen={false}
+          />
+        </MuiThemeProvider>
+      </div>
+    );
+  }
 }
 
 const THEME = createMuiTheme({

@@ -79,7 +79,7 @@ public class ContestSubmissionController extends BaseController {
     }
 
     @With(Session.class)
-    public Result getAll(Long id) {
+    public Result get(Long id) {
         try {
             return ok (ContestSubmission.find.query().where().eq("contest_id", id).findList());
         } catch (Exception e){
