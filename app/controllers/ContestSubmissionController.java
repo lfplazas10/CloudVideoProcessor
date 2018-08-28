@@ -79,10 +79,9 @@ public class ContestSubmissionController extends BaseController {
     }
 
     @With(Session.class)
-    public Result getAll() {
+    public Result getAll(Long id) {
         try {
-            Contest contest = bodyAs(Contest.class);
-            return ok (ContestSubmission.find.query().where().eq("contest_id", contest.getId()).findList());
+            return ok (ContestSubmission.find.query().where().eq("contest_id", id).findList());
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());
