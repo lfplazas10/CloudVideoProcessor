@@ -31,11 +31,11 @@ class ContestTable extends React.Component {
       create: false,
       update: false,
       delete: false,
-      id:0
+      id: 0,
+      contests: [],
     };
 
     this.getAll = this.getAll.bind(this);
-    this.getOne = this.getOne.bind(this);
     this.createContest = this.createContest.bind(this);
     this.updateContest = this.updateContest.bind(this);
     this.hideCreate = this.hideCreate.bind(this);
@@ -47,6 +47,7 @@ class ContestTable extends React.Component {
     this.showCreate = this.showCreate.bind(this);
     this.showUpdate = this.showUpdate.bind(this);
     this.deleteContest = this.deleteContest.bind(this);
+    this.formatDate = this.formatDate.bind(this);
   }
 
   hideCreate(e) {
@@ -65,6 +66,7 @@ class ContestTable extends React.Component {
   }
 
   viewDelete(e) {
+    if (e && e.preventDefault) e.preventDefault();
     this.setState({ delete: true });
   }
 
@@ -74,82 +76,99 @@ class ContestTable extends React.Component {
   }
 
   viewUpdate(e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     this.setState({ update: true });
   }
 
-  getOne(e) {
-    e.preventDefault();
-    instance().get('contest', {
-      params: {
-        foo: 'bar'
-      }
-    }).then((response) => {
-      console.log(response);
-    })
-      .catch((error) => {
-        console.log(error.response)
-      });
-  }
-
   getAll(e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     instance().get('contest')
       .then((response) => {
-        console.log(response);
+        this.setState({ contests: response.data });
       })
       .catch((error) => {
         console.log(error.response)
       });
   }
 
-  deleteContest(id) {
-    console.log("D",this.state);
-    // instance().delete('contest/'+id)
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error.response)
-    //   });
+  deleteContest(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const url = 'contest/' + this.state.id;
+    instance().delete(url)
+      .then((response) => {
+        this.setState({ delete: false }, this.getAll);
+      })
+      .catch((error) => {
+        console.log(error.response)
+      });
   }
-  
+
   createContest(e) {
     e.preventDefault();
-    console.log("C");
-
+    let sDate = new Date(this.state.startDate);
+    let eDate = new Date(this.state.endDate);
     instance().post('contest', {
       name: this.state.name,
       url: this.state.url,
       description: this.state.winnerPrize,
-      ownerEmail: ".",
+      ownerEmail: "j@j.com",
       creationDate: new Date(),
-      startDate: new Date(this.state.startDate),
-      endDate: new Date(this.state.endDate)
+      startDate: sDate,
+      endDate: eDate
     })
       .then((response) => {
-        console.log(response);
+        this.setState({
+          create: false,
+          name: "",
+          url: "",
+          banner: "",
+          startDate: "2018-08-28",
+          endDate: "2018-08-28",
+          winnerPrize: ""
+        }, this.getAll);
       })
       .catch((error) => {
         console.log(error.response)
       });
   }
 
+  formatDate(date) {
+		var monthNames = [
+		  "Enero", "Febrero", "Marzo",
+		  "Abril", "Mayo", "Junio", "Julio",
+		  "Agosto", "Septiembre", "Octubre",
+		  "Noviembre", "Diciembre"
+		];
+    var d = new Date(date);
+	  var day = d.getDate();
+		var monthIndex = d.getMonth();
+		var year = d.getFullYear();
+	  
+		return day + " " + monthNames[monthIndex] + " " + year;
+	  }
+
   updateContest(e) {
     e.preventDefault();
-    console.log("U");
-
     instance().put('contest', {
+      id: this.state.id,
       name: this.state.name,
       url: this.state.url,
       description: this.state.winnerPrize,
-      ownerEmail: ".",
+      ownerEmail: "j@j.com",
       creationDate: new Date(),
       startDate: new Date(this.state.startDate),
       endDate: new Date(this.state.endDate)
     })
       .then((response) => {
-        console.log(response);
+        this.setState({
+          update: false,
+          name: "",
+          url: "",
+          banner: "",
+          startDate: "2018-08-28",
+          endDate: "2018-08-28",
+          winnerPrize: ""
+        }, this.getAll);
       })
       .catch((error) => {
         console.log(error.response)
@@ -329,31 +348,33 @@ class ContestTable extends React.Component {
   showDelete() {
     return (
       <Dialog
-          open={this.state.delete}
-          onClose={this.hideDelete}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Are you sure you want to delete this contest? "}</DialogTitle>
-          <DialogActions>
+        open={this.state.delete}
+        onClose={this.hideDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Are you sure you want to delete this contest? "}</DialogTitle>
+        <DialogActions>
           <Button onClick={this.hideDelete} color="primary" autoFocus>
-              Cancel
+            Cancel
             </Button>
-            <Button onClick={this.deleteContest} color="primary" autoFocus>
-              Continue
+          <Button onClick={this.deleteContest} color="primary" autoFocus>
+            Continue
             </Button>
-          </DialogActions>
-        </Dialog>
+        </DialogActions>
+      </Dialog>
     )
   }
 
-  
+  componentDidMount() {
+    this.getAll();
+  }
 
   render() {
     const {
       classes
     } = this.props;
-    const rows = ["f"];
+    const rows = this.state.contests;
     return (
       <div>
         <Paper className={classes.root} style={{ marginTop: '75px' }}>
@@ -366,19 +387,27 @@ class ContestTable extends React.Component {
                 <TableCell >Start Date</TableCell>
                 <TableCell >End Date</TableCell>
                 <TableCell >Actions</TableCell>
-                </TableRow>
+              </TableRow>
             </TableHead>
             <TableBody>
               {rows.map(row => {
                 return (
-                  <TableRow key={"row.id"}>
+                  <TableRow key={row.id}>
                     <TableCell component="th" scope="row">
-                      {"row.name"}
+                      {row.name}
                     </TableCell>
-                    <TableCell >{"row.url"}</TableCell>
-                    <TableCell >{"row.startDate"}</TableCell>
-                    <TableCell >{"row.endDate"}</TableCell>
-                    <TableCell ><Button onClick={this.viewUpdate}>Edit Contest</Button><Button onClick={()=> this.setState({id:1},this.viewDelete)}>Delete Contest</Button></TableCell>
+                    <TableCell >{row.url}</TableCell>
+                    <TableCell >{this.formatDate(row.startDate)}</TableCell>
+                    <TableCell >{this.formatDate(row.endDate)}</TableCell>
+                    <TableCell ><Button onClick={() => this.setState({
+                      id: row.id,
+                      name: row.name,
+                      url: row.url,
+                      banner: "",
+                      startDate: row.startDate,
+                      endDate: row.endDate,
+                      winnerPrize: row.description
+                    }, this.viewUpdate)}>Edit Contest</Button><Button onClick={() => this.setState({ id: row.id }, this.viewDelete)}>Delete Contest</Button></TableCell>
                   </TableRow>
                 );
               })}
