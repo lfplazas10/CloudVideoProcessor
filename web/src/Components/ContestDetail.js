@@ -8,16 +8,31 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import GridList from '@material-ui/core/GridList';
+import instance from "../AjaxCrtl";
 
 
 class ContestDetail extends Component {
 
     constructor(props){
         super(props);
-
+        this.state={
+            id:1,
+            submissions:[]
+        }
+        this.componentDidMount = this.componentDidMount.bind(this)
     }
 
-
+    componentDidMount(){
+        console.log("holi");
+        instance().get('contest/'+this.state.id+'/submissions')
+            .then((response) => {
+                this.setState({submissions:response.data})
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log(error.response)
+            });
+    }
 
     render() {
         const { classes } = this.props;
@@ -74,15 +89,15 @@ class ContestDetail extends Component {
                 state:''
             }
         ];
-        const cards = tileData.map((tile) => <Card key={tile.id} >
+        const cards = this.state.submissions.map((tile) => <Card key={tile.id} >
             <CardMedia
                 className={classes.media}
-                image={tile.img}
+                image="/images.jpeg"
                 title="Contemplative Reptile"
             />
             <CardContent>
                 <Typography gutterBottom variant="headline" component="h2">
-                    {tile.author}
+                    {tile.firstName} {tile.lastName}
                 </Typography>
                 <Typography component="p">
                     <strong>Email: </strong>{tile.email}
@@ -105,9 +120,10 @@ class ContestDetail extends Component {
         </Card>);
         return (
             <div className={classes.root}>
-                <GridList cellHeight={'auto'} cols={5} className={classes.gridList}>
+                {(this.state.submissions !== undefined && this.state.submissions !== {}) &&
+                <GridList cellHeight={'auto'} cellWidth={'auto'} cols={5} className={classes.gridList}>
                     {React.Children.toArray(cards)}
-                </GridList>
+                </GridList>}
             </div>
         );
     }
