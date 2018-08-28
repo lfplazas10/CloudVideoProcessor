@@ -3,7 +3,7 @@ import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/
 import PropTypes from 'prop-types';
 import './App.css';
 import Header from "./Components/Header";
-import TableExample from "./Components/TableExample";
+import Home from "./Components/Home";
 
 class App extends Component {
   
@@ -33,11 +33,11 @@ class App extends Component {
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
-            brand={'Content manager'}
+            brand={'Smart tools'}
             color={'info'}/>
-          <TableExample
+          <Home
             {...props}
-            brand={'Content manager'}
+            brand={'Smart tools'}
           />
         </MuiThemeProvider>
       </div>
@@ -59,7 +59,7 @@ const styles = {
   root: {
     flexGrow: 1,
   },
-  table: {
+  paper: {
     flexGrow: 1,
   },
   flex: {

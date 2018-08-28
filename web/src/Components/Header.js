@@ -45,11 +45,11 @@ class Header extends React.Component {
     } = this.props;
     
     return (
-      <AppBar>
+      <AppBar style={{opacity: 0.8} }>
         <Toolbar className={classes.container}>
           <div className={classes.flex}>
             <Typography variant="display1" color="inherit" className={this.props.classes.flex}>
-              Content Manager
+              Smart Tools
             </Typography>
           </div>
           <Hidden smDown implementation="css">
