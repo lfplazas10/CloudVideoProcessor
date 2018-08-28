@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import './App.css';
 import Header from "./Components/Header";
 import Home from "./Components/Home";
+//import Contest from "./Components/Contest";
+
+
 
 class App extends Component {
   
