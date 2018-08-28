@@ -47,9 +47,15 @@ class ContestTable extends React.Component {
     this.showUpdate = this.showUpdate.bind(this);
     this.deleteContest = this.deleteContest.bind(this);
     this.formatDate = this.formatDate.bind(this);
+    //this.handleClick = this.handleClick.bind(this);
   }
-  
-  componentDidMount(){
+
+    static contextTypes = {
+        router: PropTypes.object
+    }
+
+
+    componentDidMount(){
     instance().get('user')
       .then((response) => {
         this.getAll();
@@ -376,6 +382,12 @@ class ContestTable extends React.Component {
     )
   }
 
+/*    handleClick(event,id) {
+        console.log(event, id)
+        return (
+
+        )
+    }*/
   render() {
     const {
       classes
@@ -385,9 +397,9 @@ class ContestTable extends React.Component {
       <div>
         <Paper className={classes.root} style={{ marginTop: '75px' }}>
           <h3 className="centerAlign">Contest List <Button onClick={this.viewCreate}>Add Contest</Button></h3>
-          <Table className={classes.table}>
+          <Table className={classes.table} >
             <TableHead>
-              <TableRow>
+              <TableRow >
                 <TableCell>Contest</TableCell>
                 <TableCell >URL</TableCell>
                 <TableCell >Start Date</TableCell>
@@ -398,8 +410,8 @@ class ContestTable extends React.Component {
             <TableBody>
               {rows.map(row => {
                 return (
-                  <TableRow key={row.id}>
-                    <TableCell component="th" scope="row">
+                  <TableRow key={row.id} onClick={() => this.context.router.history.push("/contest/"+row.id)}>
+                    <TableCell  component="th" scope="row">
                       {row.name}
                     </TableCell>
                     <TableCell >{row.url}</TableCell>

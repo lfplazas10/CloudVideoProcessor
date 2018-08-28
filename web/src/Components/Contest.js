@@ -30,10 +30,10 @@ class Contest extends Component {
     return (
       <div className="main">
         <MuiThemeProvider theme={THEME}>
-          <Header
-            {...props}
-            brand={'Content manager'}
-            color={'info'}/>
+                  <Header
+                    {...props}
+                    brand={'Content manager'}
+                    color={'info'}/>
           <ContestTable
             {...props}
             brand={'Content manager'}

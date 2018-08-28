@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import GridList from '@material-ui/core/GridList';
 import instance from "../AjaxCrtl";
+import Header from "./Header";
 
 
 class ContestDetail extends Component {
@@ -23,72 +24,20 @@ class ContestDetail extends Component {
     }
 
     componentDidMount(){
-        console.log("holi");
+        console.log("cualquier cosa")
         instance().get('contest/'+this.state.id+'/submissions')
             .then((response) => {
                 this.setState({submissions:response.data})
                 console.log(response);
             })
             .catch((error) => {
-                console.log(error.response)
+                console.log('entra',error);
             });
     }
 
     render() {
         const { classes } = this.props;
-        const tileData = [
-            {
-                key:'1',
-                img: "/images.jpeg",
-                author: 'author',
-                email:'email',
-                date:'',
-                state:''
-            },
-            {
-                key:'2',
 
-                img: "/images.jpeg",
-                author: 'author',
-                email:'email',
-                date:'',
-                state:''
-            },
-            {
-                key:'3',
-                img: "/images.jpeg",
-                author: 'author',
-                email:'email',
-                date:'',
-                state:''
-            },
-            {
-                key:'4',
-                img: "/images.jpeg",
-                author: 'author',
-                email:'email',
-                date:'',
-                state:''
-            },
-            {
-                key:'5',
-
-                img: "/images.jpeg",
-                author: 'author',
-                email:'email',
-                date:'',
-                state:''
-            },
-            {
-                key:'6',
-
-                img: "/images.jpeg",
-                author: 'author',
-                email:'email',
-                date:'',
-                state:''
-            }
-        ];
         const cards = this.state.submissions.map((tile) => <Card key={tile.id} >
             <CardMedia
                 className={classes.media}
@@ -118,12 +67,23 @@ class ContestDetail extends Component {
                 </Button>
             </CardActions>
         </Card>);
+
+        const props = this.props;
+
+
         return (
-            <div >
-                {(this.state.submissions !== undefined && this.state.submissions !== {}) &&
-                <GridList className={classes.root} cellHeight={'auto'} cols={5} >
-                    {React.Children.toArray(cards)}
-                </GridList>}
+            <div className="main" style={{ marginTop: '75px' }}>
+                <MuiThemeProvider theme={THEME}>
+                    <Header
+                        {...props}
+                        brand={'Content manager'}
+                        color={'info'}/>
+                    {(this.state.submissions !== undefined && this.state.submissions !== {}) &&
+                    <GridList className={classes.root} cellHeight={'auto'} cols={5} >
+                        {React.Children.toArray(cards)}
+                    </GridList>}
+                </MuiThemeProvider>
+
             </div>
         );
     }
@@ -131,9 +91,7 @@ class ContestDetail extends Component {
 
 
 const styles = {
-    card: {
-        margin:10
-    },
+
     media: {
         height: 140,
     },
@@ -149,6 +107,16 @@ const styles = {
     },
 
 };
+
+const THEME = createMuiTheme({
+    typography: {
+        "fontFamily": "\"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
+        "fontSize": 18,
+        "fontWeightLight": 300,
+        "fontWeightRegular": 400,
+        "fontWeightMedium": 500
+    }
+});
 
 
 ContestDetail.propTypes = {
