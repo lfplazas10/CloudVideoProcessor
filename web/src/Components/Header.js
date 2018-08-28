@@ -31,7 +31,7 @@ class Header extends React.Component {
     console.log(login)
     this.setState({
       signup  : !this.state.signup,
-      login   : login == true ? true : this.state.login
+      login   : login === true ? true : this.state.login
     });
   }
   

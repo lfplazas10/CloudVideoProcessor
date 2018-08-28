@@ -6,6 +6,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button/Button";
+import PropTypes from "prop-types";
 import instance from "../AjaxCrtl.js"
 import axios from 'axios';
 
@@ -24,6 +25,10 @@ class Login extends React.Component {
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.showMessage = this.showMessage.bind(this);
+  }
+
+  static contextTypes = {
+    router: PropTypes.object
   }
 
   handleSubmit(e) {
@@ -59,9 +64,9 @@ class Login extends React.Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Login successful! "}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">{"Login successful."}</DialogTitle>
           <DialogActions>
-            <Button onClick={() => { }} color="primary" autoFocus>
+            <Button onClick={() => this.context.router.history.push("/contests")} color="primary" autoFocus>
               Continue
             </Button>
           </DialogActions>

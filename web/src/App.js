@@ -21,7 +21,7 @@ class App extends Component {
   toggleSignup(){
     this.setState({signup : !this.state.signup})
   }
-  
+
   toggleLogin(){
     this.setState({login : !this.state.login})
   }
@@ -34,6 +34,7 @@ class App extends Component {
           <Header
             {...props}
             brand={'Smart tools'}
+
             color={'info'}/>
           <Home
             {...props}
