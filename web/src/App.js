@@ -21,7 +21,7 @@ class App extends Component {
   toggleSignup(){
     this.setState({signup : !this.state.signup})
   }
-  
+
   toggleLogin(){
     this.setState({login : !this.state.login})
   }
@@ -33,7 +33,7 @@ class App extends Component {
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
-            brand={'Content manager'}
+            brand={'Smart Tools'}
             color={'info'}/>
           <TableExample
             {...props}
