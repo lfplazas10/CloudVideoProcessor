@@ -7,6 +7,8 @@ import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import Paper from "@material-ui/core/Paper/Paper";
+import Button from "@material-ui/core/Button";
+
 
 const rows = [
   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
@@ -32,7 +34,7 @@ class TableExample extends React.Component{
       classes
     } = this.props;
     return (
-      <Paper className={classes.root} style={{marginTop: '15px'}}>
+      <Paper className={classes.root} style={{marginTop: '75px'}}>				
         <Table className={classes.table}>
           <TableHead>
             <TableRow>

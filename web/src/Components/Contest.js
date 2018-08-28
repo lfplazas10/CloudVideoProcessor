@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import './App.css';
-import Header from "./Components/Header";
-import TableExample from "./Components/TableExample";
+import Header from "./Header";
+import ContestTable from "./ContestTable";
 
-class App extends Component {
+class Contest extends Component {
   
   constructor(props){
     super(props);
@@ -33,9 +32,9 @@ class App extends Component {
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
-            brand={'Smart Tools'}
+            brand={'Content manager'}
             color={'info'}/>
-          <TableExample
+          <ContestTable
             {...props}
             brand={'Content manager'}
           />
@@ -71,8 +70,8 @@ const styles = {
   },
 };
 
-App.propTypes = {
+Contest.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(Contest);
