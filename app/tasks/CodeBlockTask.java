@@ -45,7 +45,7 @@ public class CodeBlockTask {
                 p.waitFor();
                 v.setState(ContestSubmission.State.Processed);
                 v.save();
-                System.out.println("Processed");
+                System.out.println("Processed "+v.getVideoId());
             } catch (IOException | InterruptedException e){
                 e.printStackTrace();
             }
