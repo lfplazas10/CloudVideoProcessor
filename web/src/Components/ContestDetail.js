@@ -20,19 +20,16 @@ class ContestDetail extends Component {
     constructor(props){
         super(props);
         this.state={
-            id:1,
+            id: this.props.history.location.pathname.split('/')[this.props.history.location.pathname.split('/').length-1],
             submissions:[]
         }
         this.componentDidMount = this.componentDidMount.bind(this)
     }
 
     componentDidMount(){
-        var url = '/contest/1/submissions';
-
         instance().get('contest/'+this.props.match.params.contestId+'/submissions')
             .then((response) => {
-                this.setState({submissions:response.data})
-                console.log(response);
+                this.setState({submissions:response.data});
             })
             .catch((error) => {
                 console.log(error.response)
@@ -41,9 +38,8 @@ class ContestDetail extends Component {
 
     render() {
         const { classes } = this.props;
-
         const props = this.props;
-
+        const contestId = props.match.params.contestId;
         return (
             <div className="main" style={{ marginTop: '75px' }} >
                 <MuiThemeProvider theme={THEME}>
@@ -59,9 +55,9 @@ class ContestDetail extends Component {
                                            margin="normal"
                                 />*/}
                             <Grid container spacing={24} style={{padding: 24}}>
-                                { this.state.submissions.map(tile => (
+                                { this.state.submissions.map(submission => (
                                     <Grid item xs={12} sm={4} md={3} xl={3}>
-                                        <Card style={{padding: 10}} key={tile.id} >
+                                        <Card style={{padding: 10}} key={submission.id} >
                                             <CardMedia
                                                 className={classes.media}
                                                 image="/images.jpeg"
@@ -69,16 +65,16 @@ class ContestDetail extends Component {
                                             />
                                             <CardContent>
                                                 <Typography gutterBottom variant="headline" component="h2">
-                                                    {tile.firstName} {tile.lastName}
+                                                    {submission.firstName} {submission.lastName}
                                                 </Typography>
                                                 <Typography component="p">
-                                                    <strong>Email: </strong>{tile.email}
+                                                    <strong>Email: </strong>{submission.email}
                                                 </Typography>
                                                 <Typography component="p">
-                                                    <strong>Fecha:</strong> {tile.date}
+                                                    <strong>Fecha:</strong> {submission.date}
                                                 </Typography>
                                                 <Typography component="p">
-                                                    <strong>Estado:</strong> {tile.state}
+                                                    <strong>Estado:</strong> {submission.state}
                                                 </Typography>
                                             </CardContent>
                                             <CardActions>
@@ -90,6 +86,15 @@ class ContestDetail extends Component {
                                                 </Button>
                                             </CardActions>
                                         </Card>
+                                      {submission.videoId != null &&
+                                          <video width="140" height="100" controls>
+                                            <source
+                                              type={submission.videoType}
+                                              src={'/api/'+contestId+'/video/'+submission.videoId}/>
+                                            Your browser does not support the video tag.
+                                          </video>
+                                      }
+                                      
                                     </Grid>
                                 ))}
                             </Grid>
