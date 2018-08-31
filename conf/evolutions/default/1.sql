@@ -9,6 +9,7 @@ create table contests (
   url                           varchar(255),
   description                   varchar(255),
   owner_email                   varchar(255),
+  banner_url                    varchar(255),
   start_date                    timestamptz,
   end_date                      timestamptz,
   creation_date                 timestamptz,
