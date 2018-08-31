@@ -28,7 +28,7 @@ create table contestsubmissions (
   state                         integer,
   contest_id                    bigint not null,
   creation_date                 timestamptz,
-  constraint ck_contestsubmissions_state check ( state in (0,1,2,3)),
+  constraint ck_contestsubmissions_state check ( state in (0,1,2)),
   constraint pk_contestsubmissions primary key (id)
 );
 

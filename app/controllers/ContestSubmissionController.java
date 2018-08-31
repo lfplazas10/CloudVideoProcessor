@@ -53,7 +53,7 @@ public class ContestSubmissionController extends BaseController {
             });
             cs.setVideoId(videoId);
             cs.setVideoType(contentType);
-            cs.setState(ContestSubmission.State.Submitted);
+            cs.setState(ContestSubmission.State.Processing);
             cs.update();
             return ok(cs);
 

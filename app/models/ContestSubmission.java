@@ -14,7 +14,6 @@ public class ContestSubmission extends BaseModel {
 
     public enum State {
         Waiting,
-        Submitted,
         Processing,
         Processed
     }
