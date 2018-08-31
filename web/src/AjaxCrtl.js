@@ -1,6 +1,6 @@
 import https from 'https';
 import axios from 'axios';
-const BASE_URL = "api/";
+const BASE_URL = "/api/";
 const inst = axios.create({
   baseURL: BASE_URL,
   httpsAgent: new https.Agent({

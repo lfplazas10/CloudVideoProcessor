@@ -15,6 +15,9 @@ import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import Paper from "@material-ui/core/Paper/Paper";
+import Delete from "@material-ui/icons/Delete";
+import Edit from "@material-ui/icons/Edit";
+
 
 class ContestTable extends React.Component {
   constructor(props) {
@@ -410,14 +413,14 @@ class ContestTable extends React.Component {
             <TableBody>
               {rows.map(row => {
                 return (
-                  <TableRow key={row.id} onClick={() => this.context.router.history.push("/contest/"+row.id)}>
-                    <TableCell  component="th" scope="row">
+                  <TableRow key={row.id} >
+                    <TableCell onClick={() => this.context.router.history.push("contest/"+row.id)}  component="th" scope="row">
                       {row.name}
                     </TableCell>
                     <TableCell >{row.url}</TableCell>
                     <TableCell >{this.formatDate(row.startDate)}</TableCell>
                     <TableCell >{this.formatDate(row.endDate)}</TableCell>
-                    <TableCell ><Button onClick={() => this.setState({
+                    <TableCell ><Button className={classes.button} onClick={() => this.setState({
                       id: row.id,
                       name: row.name,
                       url: row.url,
@@ -425,7 +428,8 @@ class ContestTable extends React.Component {
                       startDate: row.startDate,
                       endDate: row.endDate,
                       winnerPrize: row.description
-                    }, this.viewUpdate)}>Edit Contest</Button><Button onClick={() => this.setState({ id: row.id }, this.viewDelete)}>Delete Contest</Button></TableCell>
+                    }, this.viewUpdate)}><Edit className={classes.icon} /></Button>
+                        <Button className={classes.button} onClick={() => this.setState({ id: row.id }, this.viewDelete)}><Delete className={classes.icon} /></Button></TableCell>
                   </TableRow>
                 );
               })}
@@ -441,4 +445,15 @@ class ContestTable extends React.Component {
 }
 
 
-export default ContestTable;
+const styles = {
+    button: {
+        display: 'inline-block',
+        padding:0,
+        minHeight: 0,
+        minWidth: 0,
+    }
+
+};
+
+
+export default withStyles(styles)(ContestTable);
