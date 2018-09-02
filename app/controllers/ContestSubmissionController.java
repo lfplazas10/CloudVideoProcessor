@@ -100,6 +100,9 @@ public class ContestSubmissionController extends BaseController {
     @With(Session.class)
     public Result get(Long id, Integer pageNum) {
         try {
+            if (Contest.find.byId(id) == null)
+                throw new Exception("The contest doesn't exist");
+
             return ok (ContestSubmission.find.query().where()
                     .eq("contest_id", id)
                     .orderBy("creation_date desc")
