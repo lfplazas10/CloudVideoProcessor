@@ -7,11 +7,15 @@ import org.apache.commons.io.FilenameUtils;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
+import services.EmailService;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -84,7 +88,7 @@ public class ContestSubmissionController extends BaseController {
             if (Contest.find.byId(cs.getContestId()) == null)
                 throw new Exception("The contest doesn't exist, it's kinda hard to create a submission for a non existing contest");
 
-            cs.setCreationDate(OffsetDateTime.now());
+            cs.setCreationDate(Timestamp.from(Instant.now()));
             cs.setState(ContestSubmission.State.Waiting);
             cs.save();
             return ok(cs);
@@ -94,9 +98,33 @@ public class ContestSubmissionController extends BaseController {
     }
 
     @With(Session.class)
-    public Result get(Long id) {
+    public Result get(Long id, Integer pageNum) {
         try {
-            return ok (ContestSubmission.find.query().where().eq("contest_id", id).findList());
+            if (Contest.find.byId(id) == null)
+                throw new Exception("The contest doesn't exist");
+
+            return ok (ContestSubmission.find.query().where()
+                    .eq("contest_id", id)
+                    .orderBy("creation_date desc")
+                    .setFirstRow(50*pageNum - 50)
+                    .setMaxRows(50*pageNum)
+                    .findList());
+        } catch (Exception e){
+            e.printStackTrace();
+            return error(e.getMessage());
+        }
+    }
+
+    public Result getProcessedVideos(Long id, Integer pageNum) {
+        try {
+            return ok (ContestSubmission.find.query().where()
+                    .eq("contest_id", id)
+                    .and()
+                    .eq("state", ContestSubmission.State.Processed)
+                    .orderBy("creation_date desc")
+                    .setFirstRow(50*pageNum - 50)
+                    .setMaxRows(50*pageNum)
+                    .findList());
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());

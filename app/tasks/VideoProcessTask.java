@@ -4,9 +4,11 @@ import akka.actor.ActorSystem;
 import models.ContestSubmission;
 import scala.concurrent.ExecutionContext;
 import scala.concurrent.duration.Duration;
+import services.EmailService;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class VideoProcessTask {
@@ -37,15 +39,24 @@ public class VideoProcessTask {
         videos.stream().forEach((v) -> {
             try {
                 String videoPath = "videos/"+v.getContestId()+"/"+v.getVideoId();
-                String command = "ffmpeg -i "+videoPath+" "+videoPath+".mp4 -hide_banner";
+                String command = "ffmpeg -i "+videoPath+" -preset fast -c:a aac -b:a 128k " +
+                        "-codec:v libx264 -b:v 1000k -minrate 500k -maxrate 2000k -bufsize 2000k" +
+                        " "+videoPath+".mp4 -hide_banner";
                 Process p = Runtime.getRuntime().exec(command);
                 p.waitFor();         //This makes each execution synchronous
                 v.setState(ContestSubmission.State.Processed);
                 v.save();
+                CompletableFuture.runAsync(() -> {
+                    //TODO: Uncomment for production
+//                    EmailService.sendFromGMail("Processed",
+//                            "Your video was successfully processed, you can now watch it in our website",
+//                            v.getEmail());
+                });
                 System.out.println("Processed "+v.getVideoId());
             } catch (IOException | InterruptedException e){
                 e.printStackTrace();
             }
         });
     }
+
 }

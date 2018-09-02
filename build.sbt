@@ -13,7 +13,7 @@ libraryDependencies += guice
 // Test Database
 libraryDependencies += "com.h2database" % "h2" % "1.4.197"
 libraryDependencies += "commons-io" % "commons-io" % "2.6"
-
+libraryDependencies += "com.sun.mail" % "javax.mail" % "1.6.2"
 
 // Testing libraries for dealing with CompletionStage...
 libraryDependencies += "org.assertj" % "assertj-core" % "3.6.2" % Test

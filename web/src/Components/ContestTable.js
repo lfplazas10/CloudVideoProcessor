@@ -17,7 +17,7 @@ import TableBody from "@material-ui/core/TableBody/TableBody";
 import Paper from "@material-ui/core/Paper/Paper";
 import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
-
+import Visibility from "@material-ui/icons/Visibility";
 
 class ContestTable extends React.Component {
   constructor(props) {
@@ -53,12 +53,12 @@ class ContestTable extends React.Component {
     //this.handleClick = this.handleClick.bind(this);
   }
 
-    static contextTypes = {
-        router: PropTypes.object
-    }
+  static contextTypes = {
+    router: PropTypes.object
+  }
 
 
-    componentDidMount(){
+  componentDidMount() {
     instance().get('user')
       .then((response) => {
         this.getAll();
@@ -68,7 +68,7 @@ class ContestTable extends React.Component {
         console.log(error.response)
       });
   }
-  
+
   hideCreate(e) {
     e.preventDefault();
     this.setState({ create: false });
@@ -101,7 +101,7 @@ class ContestTable extends React.Component {
 
   getAll(e) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().get('contest')
+    instance().get('contest/1')
       .then((response) => {
         this.setState({ contests: response.data });
       })
@@ -126,14 +126,16 @@ class ContestTable extends React.Component {
     e.preventDefault();
     let sDate = new Date(this.state.startDate);
     let eDate = new Date(this.state.endDate);
+    sDate.setUTCHours(sDate.getUTCHours() + 24);
+    eDate.setUTCHours(eDate.getUTCHours() + 24);
     instance().post('contest', {
       name: this.state.name,
       url: this.state.url,
       description: this.state.winnerPrize,
       ownerEmail: this.state.user.email,
       creationDate: new Date(),
-      startDate: sDate,
-      endDate: eDate
+      startDate: sDate.getTime(),
+      endDate: eDate.getTime()
     })
       .then((response) => {
         this.setState({
@@ -152,19 +154,15 @@ class ContestTable extends React.Component {
   }
 
   formatDate(date) {
-		var monthNames = [
-		  "Enero", "Febrero", "Marzo",
-		  "Abril", "Mayo", "Junio", "Julio",
-		  "Agosto", "Septiembre", "Octubre",
-		  "Noviembre", "Diciembre"
-		];
-    var d = new Date(date);
-	  var day = d.getDate();
-		var monthIndex = d.getMonth();
-		var year = d.getFullYear();
-	  
-		return day + " " + monthNames[monthIndex] + " " + year;
-	  }
+
+    let d = new Date(date);
+    let day = d.getDate();
+    let monthIndex = d.getMonth();
+    let month = monthIndex < 8 ? "0" + (monthIndex + 1) : monthIndex + 1;
+    let year = d.getFullYear();
+
+    return year + "-" + month + "-" + day;
+  }
 
   updateContest(e) {
     e.preventDefault();
@@ -385,12 +383,12 @@ class ContestTable extends React.Component {
     )
   }
 
-/*    handleClick(event,id) {
-        console.log(event, id)
-        return (
-
-        )
-    }*/
+  /*    handleClick(event,id) {
+          console.log(event, id)
+          return (
+  
+          )
+      }*/
   render() {
     const {
       classes
@@ -414,22 +412,24 @@ class ContestTable extends React.Component {
               {rows.map(row => {
                 return (
                   <TableRow key={row.id} >
-                    <TableCell onClick={() => this.context.router.history.push("contest/"+row.id)}  component="th" scope="row">
+                    <TableCell component="th" scope="row">
                       {row.name}
                     </TableCell>
                     <TableCell >{row.url}</TableCell>
                     <TableCell >{this.formatDate(row.startDate)}</TableCell>
                     <TableCell >{this.formatDate(row.endDate)}</TableCell>
-                    <TableCell ><Button className={classes.button} onClick={() => this.setState({
-                      id: row.id,
-                      name: row.name,
-                      url: row.url,
-                      banner: "",
-                      startDate: row.startDate,
-                      endDate: row.endDate,
-                      winnerPrize: row.description
-                    }, this.viewUpdate)}><Edit className={classes.icon} /></Button>
-                        <Button className={classes.button} onClick={() => this.setState({ id: row.id }, this.viewDelete)}><Delete className={classes.icon} /></Button></TableCell>
+                    <TableCell >
+                      <Button className={classes.button} onClick={() => this.context.router.history.push("contest/" + row.id)}><Visibility className={classes.icon} /></Button>
+                      <Button className={classes.button} onClick={() => this.setState({
+                        id: row.id,
+                        name: row.name,
+                        url: row.url,
+                        banner: row.bannerUrl,
+                        startDate: this.formatDate(row.startDate),
+                        endDate: this.formatDate(row.endDate),
+                        winnerPrize: row.description
+                      }, this.viewUpdate)}><Edit className={classes.icon} /></Button>
+                      <Button className={classes.button} onClick={() => this.setState({ id: row.id }, this.viewDelete)}><Delete className={classes.icon} /></Button></TableCell>
                   </TableRow>
                 );
               })}
@@ -446,12 +446,12 @@ class ContestTable extends React.Component {
 
 
 const styles = {
-    button: {
-        display: 'inline-block',
-        padding:0,
-        minHeight: 0,
-        minWidth: 0,
-    }
+  button: {
+    display: 'inline-block',
+    padding: 0,
+    minHeight: 0,
+    minWidth: 0,
+  }
 
 };
 
