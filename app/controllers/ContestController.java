@@ -10,6 +10,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 public class ContestController extends BaseController {
@@ -48,7 +50,7 @@ public class ContestController extends BaseController {
             if (Contest.find.query().where().eq("url", contest.getUrl()).findOne() != null)
                 throw new Exception("There is already a contest with that URL, please try a different one");
 
-            contest.setCreationDate(OffsetDateTime.now());
+            contest.setCreationDate(Timestamp.from(Instant.now()));
             contest.save();
             return ok(contest);
         } catch (Exception e){

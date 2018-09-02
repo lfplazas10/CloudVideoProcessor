@@ -1,9 +1,11 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.ebean.Finder;
 import models.base.BaseModel;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -12,7 +14,9 @@ public class Contest extends BaseModel {
 
     public static final Finder<Long, Contest> find = new Finder<>(Contest.class);
     private String url, description, ownerEmail, bannerUrl;
-    private OffsetDateTime startDate, endDate, creationDate;
+
+    @JsonFormat(shape=JsonFormat.Shape.NUMBER, pattern="s")
+    private Timestamp startDate, endDate, creationDate;
 
     public String getBannerUrl() {
         return bannerUrl;
@@ -46,28 +50,27 @@ public class Contest extends BaseModel {
         this.ownerEmail = ownerEmail;
     }
 
-    public OffsetDateTime getStartDate() {
+    public Timestamp getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(OffsetDateTime startDate) {
+    public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
     }
 
-    public OffsetDateTime getEndDate() {
+    public Timestamp getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(OffsetDateTime endDate) {
+    public void setEndDate(Timestamp endDate) {
         this.endDate = endDate;
     }
 
-    public OffsetDateTime getCreationDate() {
+    public Timestamp getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(OffsetDateTime creationDate) {
+    public void setCreationDate(Timestamp creationDate) {
         this.creationDate = creationDate;
     }
-
 }
