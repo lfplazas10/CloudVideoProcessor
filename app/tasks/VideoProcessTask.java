@@ -39,7 +39,9 @@ public class VideoProcessTask {
         videos.stream().forEach((v) -> {
             try {
                 String videoPath = "videos/"+v.getContestId()+"/"+v.getVideoId();
-                String command = "ffmpeg -i "+videoPath+" "+videoPath+".mp4 -hide_banner";
+                String command = "ffmpeg -i "+videoPath+" -preset fast -c:a aac -b:a 128k " +
+                        "-codec:v libx264 -b:v 1000k -minrate 500k -maxrate 2000k -bufsize 2000k" +
+                        " "+videoPath+".mp4 -hide_banner";
                 Process p = Runtime.getRuntime().exec(command);
                 p.waitFor();         //This makes each execution synchronous
                 v.setState(ContestSubmission.State.Processed);
