@@ -13,6 +13,7 @@ POST        /api/login                         controllers.AuthController.login(
 POST        /api/logout                        controllers.AuthController.logout()
 
 # Contest endpoints
+GET         /api/contest/:id                   controllers.ContestController.getSingleContest(id:String)
 GET         /api/contest                       controllers.ContestController.getAll()
 POST        /api/contest                       controllers.ContestController.create()
 PUT         /api/contest                       controllers.ContestController.update()

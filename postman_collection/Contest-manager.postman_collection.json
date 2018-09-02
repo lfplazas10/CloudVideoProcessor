@@ -145,6 +145,37 @@
 					"response": []
 				},
 				{
+					"name": "Get single contest",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Csrf-Token",
+								"value": "{{CRSF}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"c3\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/contest/asd",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"contest",
+								"asd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get authenticated manager",
 					"request": {
 						"method": "GET",
@@ -190,7 +221,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"contestUrl\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"bannerUrl\":\"http://maxcdn.inspirationfeed.com/wp-content/uploads/2010/08/elegantbanners1.gif\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
+							"raw": "{\n\t\"name\":\"Win a trip to wonderland\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"wonderland\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"bannerUrl\":\"http://maxcdn.inspirationfeed.com/wp-content/uploads/2010/08/elegantbanners1.gif\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
 						},
 						"url": {
 							"raw": "{{URL}}/contest",
@@ -246,13 +277,13 @@
 						],
 						"body": {},
 						"url": {
-							"raw": "{{URL}}/contest/1",
+							"raw": "{{URL}}/contest/13",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"contest",
-								"1"
+								"13"
 							]
 						}
 					},
@@ -282,13 +313,13 @@
 							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"c3\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/contest/1/submissions",
+							"raw": "{{URL}}/contest/11/submissions",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"contest",
-								"1",
+								"11",
 								"submissions"
 							]
 						}
@@ -315,14 +346,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{URL}}/contestSubmission/video/1",
+							"raw": "{{URL}}/contestSubmission/video/12",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"contestSubmission",
 								"video",
-								"1"
+								"12"
 							]
 						}
 					},
@@ -344,7 +375,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"firstName\": \"Lalo\",\n\t\"lastName\": \"Landa\",\n\t\"email\": \"ll@u.com\",\n\t\"description\": \"This is  a fun video\",\n\t\"contestId\": 1\n}"
+							"raw": "{\n\t\"firstName\": \"Lalo\",\n\t\"lastName\": \"Landa\",\n\t\"email\": \"ll@u.com\",\n\t\"description\": \"This is  a fun video\",\n\t\"contestId\": 13\n}"
 						},
 						"url": {
 							"raw": "{{URL}}/contestSubmission",
@@ -417,19 +448,19 @@
 	],
 	"variable": [
 		{
-			"id": "77887dce-d867-4e2d-8cfc-8800db1cf3be",
+			"id": "b33588b5-7bda-4d2c-bed1-6ad8c3b812be",
 			"key": "CRSF",
-			"value": "d25eab667c32b0f6b30e114f0eea31101f238465-1535253644100-08f49c2809c864410c01d07f",
+			"value": "db8715e74bd621f052a530f1e9c9fdc7440626ee-1535749867890-92e3dd5dbc5a3c721ac05d07",
 			"type": "string"
 		},
 		{
-			"id": "102ece48-f509-4c8d-8946-11fc806e85f2",
+			"id": "a32d8954-07a3-45f3-a837-3bd5f294d5f1",
 			"key": "URL2",
 			"value": "http://172.24.42.55:9000/api",
 			"type": "string"
 		},
 		{
-			"id": "9a6d52f8-4138-4fd8-89de-30e72839b385",
+			"id": "1f036a91-b032-4dbb-8cad-f40a3a9cc964",
 			"key": "URL",
 			"value": "http://localhost:9000/api",
 			"type": "string"

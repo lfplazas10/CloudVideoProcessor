@@ -25,6 +25,19 @@ public class ContestController extends BaseController {
         }
     }
 
+    public Result getSingleContest(String url) {
+        try {
+            Contest contest = Contest.find.query().where().eq("url", url).findOne();
+            if (contest == null)
+                throw new Exception("There is no contest with url "+url);
+
+            contest.setOwnerEmail(null);
+            return ok(contest);
+        } catch (Exception e){
+            return error(e.getMessage());
+        }
+    }
+
     @With(Session.class)
     public Result create() {
         try {
