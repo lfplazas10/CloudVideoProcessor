@@ -194,12 +194,13 @@
 							"raw": "{\n\t\"name\":\"Contest number 1\",\n\t\"description\": \"This is a wonderful contest that blablabla\",\n\t\"url\":\"c3\",\n\t\"ownerEmail\":\"c@u.com\",\n\t\"startDate\": 1534612891736,\n\t\"endDate\": 1534612891736\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/contest/asd",
+							"raw": "{{URL}}/contest/single/asd",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"contest",
+								"single",
 								"asd"
 							]
 						}
@@ -483,19 +484,19 @@
 	],
 	"variable": [
 		{
-			"id": "3b5f7188-3c96-4759-8b41-fb121fc76dce",
+			"id": "bd2a1109-cea3-4af5-a6b2-7d9ae1a37e3e",
 			"key": "CRSF",
 			"value": "77ae3d49604fee7786efc6808a438e5b7a647686-1535923525673-ffc3129ba7140b44f7d9f4d5",
 			"type": "string"
 		},
 		{
-			"id": "3e1b2896-274d-48d1-a1f0-25e9127c2b60",
+			"id": "31276e80-180d-48e8-aaf1-e12ce5d34293",
 			"key": "URL2",
 			"value": "http://172.24.42.55:9000/api",
 			"type": "string"
 		},
 		{
-			"id": "2e342aca-0ed8-48bc-955f-7329d102828d",
+			"id": "3d0cbb44-34a5-43f0-8925-0c1c3722c70e",
 			"key": "URL",
 			"value": "http://localhost:9000/api",
 			"type": "string"
