@@ -6,6 +6,6 @@ public class TasksModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(CodeBlockTask.class).asEagerSingleton();
+        bind(VideoProcessTask.class).asEagerSingleton();
     }
 }
