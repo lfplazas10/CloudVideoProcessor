@@ -126,14 +126,16 @@ class ContestTable extends React.Component {
     e.preventDefault();
     let sDate = new Date(this.state.startDate);
     let eDate = new Date(this.state.endDate);
+    sDate.setUTCHours(sDate.getUTCHours()+24);
+    eDate.setUTCHours(eDate.getUTCHours()+24);
     instance().post('contest', {
       name: this.state.name,
       url: this.state.url,
       description: this.state.winnerPrize,
       ownerEmail: this.state.user.email,
       creationDate: new Date(),
-      startDate: sDate,
-      endDate: eDate
+      startDate: sDate.getTime(),
+      endDate: eDate.getTime()
     })
       .then((response) => {
         this.setState({
