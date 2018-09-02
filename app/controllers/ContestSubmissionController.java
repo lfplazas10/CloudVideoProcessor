@@ -7,6 +7,8 @@ import org.apache.commons.io.FilenameUtils;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
+import services.EmailService;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;

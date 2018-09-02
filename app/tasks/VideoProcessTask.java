@@ -4,9 +4,11 @@ import akka.actor.ActorSystem;
 import models.ContestSubmission;
 import scala.concurrent.ExecutionContext;
 import scala.concurrent.duration.Duration;
+import services.EmailService;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class VideoProcessTask {
@@ -42,10 +44,17 @@ public class VideoProcessTask {
                 p.waitFor();         //This makes each execution synchronous
                 v.setState(ContestSubmission.State.Processed);
                 v.save();
+                CompletableFuture.runAsync(() -> {
+                    //TODO: Uncomment for production
+//                    EmailService.sendFromGMail("Processed",
+//                            "Your video was successfully processed, you can now watch it in our website",
+//                            v.getEmail());
+                });
                 System.out.println("Processed "+v.getVideoId());
             } catch (IOException | InterruptedException e){
                 e.printStackTrace();
             }
         });
     }
+
 }
