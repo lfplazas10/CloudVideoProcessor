@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import instance from "../AjaxCrtl";
 import Header from "./Header";
 import Grid from "@material-ui/core/es/Grid/Grid";
+import Player from "./Player";
 
 
 class ContestDetail extends Component {
@@ -18,7 +19,9 @@ class ContestDetail extends Component {
         super(props);
         this.state={
             id: this.props.history.location.pathname.split('/')[this.props.history.location.pathname.split('/').length-1],
-            submissions:[]
+            submissions:[],
+            playVideo: false,
+            sources:''
         }
         this.componentDidMount = this.componentDidMount.bind(this)
     }
@@ -33,6 +36,23 @@ class ContestDetail extends Component {
                 console.log(error.response)
             });
     }
+
+    togglePlayer(videoId){
+
+/*        instance().get('contest/'+this.props.match.params.contestId+'/video/'+videoId)
+            .then((response) => {
+                this.setState({sources:'{"type": "video/flv", "src":"' + response.data.videoId + '"}'});
+            })
+            .catch((error) => {
+                console.log(error.response)
+            });*/
+        this.setState({sources:'{"type": "video/mp4", "src": "/Westworld.S01E02.mkv"}'});
+
+
+        this.setState({playVideo: !this.state.playVideo})
+        console.log('haloo',this.state.sources,this.state.playVideo)
+    }
+
 
     render() {
         const { classes } = this.props;
@@ -52,6 +72,10 @@ class ContestDetail extends Component {
                                            placeholder="Search for Submissions"
                                            margin="normal"
                                 />*/}
+{/*
+                            <Player sources='{"type": "video/mp4", "src":  "/Westworld.S01E02.mkv"}'/>
+*/}
+
                             <Grid container spacing={24} style={{padding: 24}}>
                                 { this.state.submissions.map(submission => (
                                     <Grid item xs={12} sm={4} md={3} xl={3}>
@@ -76,7 +100,7 @@ class ContestDetail extends Component {
                                                 </Typography>
                                             </CardContent>
                                             <CardActions>
-                                                <Button size="small" color="primary">
+                                                <Button size="small" color="primary"  onClick={() => this.togglePlayer(submission.videoId)}>
                                                     Ver original
                                                 </Button>
                                                 <Button size="small" color="primary">
@@ -84,31 +108,30 @@ class ContestDetail extends Component {
                                                 </Button>
                                             </CardActions>
                                         </Card>
-                                      {submission.videoId != null &&
-                                          <video width="140" height="100" controls>
+                                        {submission.videoId != null &&
+                                        <video width="140" height="100" controls>
                                             <source
-                                              type={submission.videoType}
-                                              src={'/api/'+contestId+'/video/'+submission.videoId}/>
+                                                type={submission.videoType}
+                                                src={'/api/'+contestId+'/video/'+submission.videoId}/>
                                             Your browser does not support the video tag.
-                                          </video>
-                                      }
-                                      
+                                        </video>
+                                        }
+
                                     </Grid>
                                 ))}
                             </Grid>
                         </div>
                     ) : "No courses found" }
 
+
+
+                    {(this.state.playVideo && this.state.sources!=='')&& <Player sources={this.state.sources} togglePlayer={this.togglePlayer}/>}
+
+
+
+
                 </MuiThemeProvider>
-
-
-
-
             </div>
-
-
-
-
         );
     }
 }
