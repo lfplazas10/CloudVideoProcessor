@@ -4,6 +4,7 @@ import io.ebean.Finder;
 import models.base.BaseModel;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -24,7 +25,7 @@ public class ContestSubmission extends BaseModel {
 
     private long contestId;
 
-    private OffsetDateTime creationDate;
+    private Timestamp creationDate;
 
     public String getVideoType() {
         return videoType;
@@ -50,11 +51,11 @@ public class ContestSubmission extends BaseModel {
         this.contestId = contestId;
     }
 
-    public OffsetDateTime getCreationDate() {
+    public Timestamp getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(OffsetDateTime creationDate) {
+    public void setCreationDate(Timestamp creationDate) {
         this.creationDate = creationDate;
     }
 

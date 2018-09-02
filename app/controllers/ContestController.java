@@ -17,10 +17,15 @@ import java.time.OffsetDateTime;
 public class ContestController extends BaseController {
 
     @With(Session.class)
-    public Result getAll() {
+    public Result getAll(Integer pageNum) {
         try {
             String user = session("connected");
-            return ok(Contest.find.query().where().eq("owner_email", user).orderBy("creation_date desc").findList());
+            return ok(Contest.find.query().where()
+                    .eq("owner_email", user)
+                    .orderBy("creation_date desc")
+                    .setFirstRow(50*pageNum - 50)
+                    .setMaxRows(50*pageNum)
+                    .findList());
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());
@@ -29,7 +34,9 @@ public class ContestController extends BaseController {
 
     public Result getSingleContest(String url) {
         try {
-            Contest contest = Contest.find.query().where().eq("url", url).findOne();
+            Contest contest = Contest.find.query().where()
+                    .eq("url", url)
+                    .findOne();
             if (contest == null)
                 throw new Exception("There is no contest with url "+url);
 
@@ -87,15 +94,16 @@ public class ContestController extends BaseController {
                     .where().eq("contest_id", contestId).delete();
 
             //Delete all videos
-            Path path = Paths.get("videos",
-                    String.valueOf(contestId));
+            Path path = Paths.get("videos", String.valueOf(contestId));
 
-            Files.walk(path)
-                    .filter(Files::isRegularFile)
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+            if (Files.exists(path)) {
+                Files.walk(path)
+                        .filter(Files::isRegularFile)
+                        .map(Path::toFile)
+                        .forEach(File::delete);
 
-            Files.delete(path);
+                Files.delete(path);
+            }
 
             return ok("deleted");
         } catch (Exception e){

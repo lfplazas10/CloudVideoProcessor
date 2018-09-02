@@ -13,17 +13,17 @@ POST        /api/login                         controllers.AuthController.login(
 POST        /api/logout                        controllers.AuthController.logout()
 
 # Contest endpoints
-GET         /api/contest/:id                     controllers.ContestController.getSingleContest(id:String)
-GET         /api/contest                         controllers.ContestController.getAll()
+GET         /api/contest/:url/                   controllers.ContestController.getSingleContest(url:String)
+GET         /api/contest/:page                   controllers.ContestController.getAll(page:Integer)
 POST        /api/contest                         controllers.ContestController.create()
 PUT         /api/contest                         controllers.ContestController.update()
 DELETE      /api/contest/:id                     controllers.ContestController.delete(id:Long)
-GET         /api/contest/:id/submissions         controllers.ContestSubmissionController.get(id:Long)
-GET         /api/public/contest/:id/submissions  controllers.ContestSubmissionController.getProcessedVideos(id:Long)
+GET         /api/public/submissions/:id/:page    controllers.ContestSubmissionController.getProcessedVideos(id:Long, page:Integer)
 
 # ContestSubmission endpoints
-POST        /api/contestSubmission             controllers.ContestSubmissionController.create()
-POST        /api/contestSubmission/video/:id   controllers.ContestSubmissionController.receiveVideo(id:Long)
+GET         /api/contest/:id/submissions/:page   controllers.ContestSubmissionController.get(id:Long, page:Integer)
+POST        /api/contestSubmission               controllers.ContestSubmissionController.create()
+POST        /api/contestSubmission/video/:id     controllers.ContestSubmissionController.receiveVideo(id:Long)
 
 # Video endpoints
 GET         /api/:contestId/video/:videoId     controllers.ContestSubmissionController.getVideo(contestId:Long, videoId:String)
