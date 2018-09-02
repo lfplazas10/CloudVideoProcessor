@@ -103,6 +103,18 @@ public class ContestSubmissionController extends BaseController {
         }
     }
 
+    public Result getProcessedVideos(Long id) {
+        try {
+            return ok (ContestSubmission.find.query().where()
+                    .eq("contest_id", id)
+                    .and()
+                    .eq("state", ContestSubmission.State.Processed).findList());
+        } catch (Exception e){
+            e.printStackTrace();
+            return error(e.getMessage());
+        }
+    }
+
     @With(Session.class)
     public Result update() {
         try {

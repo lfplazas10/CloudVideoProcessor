@@ -13,12 +13,13 @@ POST        /api/login                         controllers.AuthController.login(
 POST        /api/logout                        controllers.AuthController.logout()
 
 # Contest endpoints
-GET         /api/contest/:id                   controllers.ContestController.getSingleContest(id:String)
-GET         /api/contest                       controllers.ContestController.getAll()
-POST        /api/contest                       controllers.ContestController.create()
-PUT         /api/contest                       controllers.ContestController.update()
-DELETE      /api/contest/:id                   controllers.ContestController.delete(id:Long)
-GET         /api/contest/:id/submissions       controllers.ContestSubmissionController.get(id:Long)
+GET         /api/contest/:id                     controllers.ContestController.getSingleContest(id:String)
+GET         /api/contest                         controllers.ContestController.getAll()
+POST        /api/contest                         controllers.ContestController.create()
+PUT         /api/contest                         controllers.ContestController.update()
+DELETE      /api/contest/:id                     controllers.ContestController.delete(id:Long)
+GET         /api/contest/:id/submissions         controllers.ContestSubmissionController.get(id:Long)
+GET         /api/public/contest/:id/submissions  controllers.ContestSubmissionController.getProcessedVideos(id:Long)
 
 # ContestSubmission endpoints
 POST        /api/contestSubmission             controllers.ContestSubmissionController.create()
