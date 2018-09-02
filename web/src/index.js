@@ -7,6 +7,7 @@ import { Router, Route, Switch } from 'react-router';
 import createBrowserHistory from 'history/createBrowserHistory';
 import Contest from "./Components/Contest";
 import ContestDetail from "./Components/ContestDetail";
+import ContestPublic from "./Components/ContestPublic";
 import Header from "./Components/Header";
 
 const browserHistory = createBrowserHistory();
@@ -17,6 +18,7 @@ ReactDOM.render(
       <Route exact path="/" component={App}/>
       <Route exact path="/contests" component={Contest}/>
       <Route exact path="/contest/:contestId" component={ContestDetail}/>
+      <Route exact path="/public/contest/:contestUrl" component={ContestPublic}/>
     </Switch>
   </Router>, document.getElementById('root'));
 registerServiceWorker();
