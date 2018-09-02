@@ -34,13 +34,13 @@ public class ContestSubmissionController extends BaseController {
 
             String contentType = video.getContentType();
             File videoFile = video.getFile();
-            String videoId = UUID.randomUUID().toString();
+            String videoId = UUID.randomUUID().toString()+ "." +FilenameUtils.getExtension( video.getFilename() ) ;
             //TODO: When improving performance, create and attach a proper Executor to this future
             CompletableFuture.runAsync(() -> {
                 try {
                     Path path = Paths.get("videos",
                             String.valueOf(cs.getContestId()),
-                            videoId+ "." +FilenameUtils.getExtension( video.getFilename() ));
+                            videoId);
                     byte [] stream = new byte [(int) videoFile.length()];
                     new FileInputStream(videoFile).read(stream);
                     Files.createDirectories( path.getParent() );
@@ -53,7 +53,7 @@ public class ContestSubmissionController extends BaseController {
             });
             cs.setVideoId(videoId);
             cs.setVideoType(contentType);
-            cs.setState(ContestSubmission.State.Submitted);
+            cs.setState(ContestSubmission.State.Processing);
             cs.update();
             return ok(cs);
 
@@ -63,11 +63,26 @@ public class ContestSubmissionController extends BaseController {
         }
     }
 
+    public Result getVideo(Long contestId, String videoId){
+        try {
+            Path path = Paths.get("videos",
+                    String.valueOf(contestId),
+                    videoId);
+            byte [] video = Files.readAllBytes(path);
+            if (video.length <= 0)
+                throw new Exception("Error reading the video");
+
+            return ok(video);
+        } catch (Exception e){
+            return error(e.getMessage());
+        }
+    }
+
     public Result create() {
         try {
             ContestSubmission cs = bodyAs(ContestSubmission.class);
             if (Contest.find.byId(cs.getContestId()) == null)
-                throw new Exception("The contest doesn't exist, it's kinda hard to create a submission on a non existing contest");
+                throw new Exception("The contest doesn't exist, it's kinda hard to create a submission for a non existing contest");
 
             cs.setCreationDate(OffsetDateTime.now());
             cs.setState(ContestSubmission.State.Waiting);

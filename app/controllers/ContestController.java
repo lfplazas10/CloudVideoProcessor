@@ -2,8 +2,14 @@ package controllers;
 
 import controllers.base.BaseController;
 import models.Contest;
+import models.ContestSubmission;
 import play.mvc.Result;
 import play.mvc.With;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 
 public class ContestController extends BaseController {
@@ -15,6 +21,19 @@ public class ContestController extends BaseController {
             return ok(Contest.find.query().where().eq("owner_email", user).orderBy("creation_date desc").findList());
         } catch (Exception e){
             e.printStackTrace();
+            return error(e.getMessage());
+        }
+    }
+
+    public Result getSingleContest(String url) {
+        try {
+            Contest contest = Contest.find.query().where().eq("url", url).findOne();
+            if (contest == null)
+                throw new Exception("There is no contest with url "+url);
+
+            contest.setOwnerEmail(null);
+            return ok(contest);
+        } catch (Exception e){
             return error(e.getMessage());
         }
     }
@@ -60,8 +79,25 @@ public class ContestController extends BaseController {
                 throw new Exception("The user does not own the contest");
 
             Contest.find.deleteById(contestId);
+
+            //Delete all contest submissions
+            ContestSubmission.find.query()
+                    .where().eq("contest_id", contestId).delete();
+
+            //Delete all videos
+            Path path = Paths.get("videos",
+                    String.valueOf(contestId));
+
+            Files.walk(path)
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+
+            Files.delete(path);
+
             return ok("deleted");
         } catch (Exception e){
+            e.printStackTrace();
             return error(e.getMessage());
         }
     }

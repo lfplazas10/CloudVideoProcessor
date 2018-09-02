@@ -11,8 +11,16 @@ import java.time.OffsetDateTime;
 public class Contest extends BaseModel {
 
     public static final Finder<Long, Contest> find = new Finder<>(Contest.class);
-    private String url, description, ownerEmail;
+    private String url, description, ownerEmail, bannerUrl;
     private OffsetDateTime startDate, endDate, creationDate;
+
+    public String getBannerUrl() {
+        return bannerUrl;
+    }
+
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
+    }
 
     public String getUrl() {
         return url;

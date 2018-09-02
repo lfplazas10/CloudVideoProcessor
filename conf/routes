@@ -3,29 +3,32 @@
 # ~~~~
 
 # Endpoint serving the main html file
-GET         /                               controllers.FrontendController.index()
+GET         /                                  controllers.FrontendController.index()
 
 # Authorization endpoints
-GET         /api/token                      controllers.AuthController.getToken()
-GET         /api/user                       controllers.AuthController.getManager()
-POST        /api/signup                     controllers.AuthController.createManager()
-POST        /api/login                      controllers.AuthController.login()
-POST        /api/logout                     controllers.AuthController.logout()
+GET         /api/token                         controllers.AuthController.getToken()
+GET         /api/user                          controllers.AuthController.getManager()
+POST        /api/signup                        controllers.AuthController.createManager()
+POST        /api/login                         controllers.AuthController.login()
+POST        /api/logout                        controllers.AuthController.logout()
 
 # Contest endpoints
-GET         /api/contest                    controllers.ContestController.getAll()
-POST        /api/contest                    controllers.ContestController.create()
-PUT         /api/contest                    controllers.ContestController.update()
-DELETE      /api/contest/:id                controllers.ContestController.delete(id:Long)
-GET         /api/contest/:id/submissions    controllers.ContestSubmissionController.get(id:Long)
+GET         /api/contest/:id                   controllers.ContestController.getSingleContest(id:String)
+GET         /api/contest                       controllers.ContestController.getAll()
+POST        /api/contest                       controllers.ContestController.create()
+PUT         /api/contest                       controllers.ContestController.update()
+DELETE      /api/contest/:id                   controllers.ContestController.delete(id:Long)
+GET         /api/contest/:id/submissions       controllers.ContestSubmissionController.get(id:Long)
+
 # ContestSubmission endpoints
+POST        /api/contestSubmission             controllers.ContestSubmissionController.create()
+POST        /api/contestSubmission/video/:id   controllers.ContestSubmissionController.receiveVideo(id:Long)
 
-
-POST        /api/contestSubmission                    controllers.ContestSubmissionController.create()
-POST        /api/contestSubmission/video/:id          controllers.ContestSubmissionController.receiveVideo(id:Long)
+# Video endpoints
+GET         /api/:contestId/video/:videoId     controllers.ContestSubmissionController.getVideo(contestId:Long, videoId:String)
 
 # An example controller showing how to write asynchronous code
 #GET     /message                    controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /*file                      controllers.FrontendController.assetOrDefault(file)
+GET     /*file                                 controllers.FrontendController.assetOrDefault(file)
