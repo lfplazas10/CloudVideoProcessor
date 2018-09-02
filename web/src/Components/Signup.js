@@ -26,12 +26,37 @@ class Signup extends React.Component {
       pass2: '',
       loading: false
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.showMessage = this.showMessage.bind(this);
+    this.handleSubmit     = this.handleSubmit.bind(this);
+    this.showInputError   = this.showInputError.bind(this);
+    this.showMessage      = this.showMessage.bind(this);
   }
-
+  
+  showInputError(message){
+    return (
+      <Dialog
+        open={true}
+        onClose={this.setState({errorMessage: null})}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Error: "+message}</DialogTitle>
+        <DialogActions>
+          <DialogActions>
+            <Button onClick={() => this.setState({errorMessage: null})} color="primary" autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+  
   handleSubmit(e) {
     e.preventDefault();
+    if(this.state.pass != this.state.pass2) {
+      this.setState({errorMessage: this.showInputError("Passwords don't match")});
+      return;
+    }
     if (!this.state.loading) {
       this.setState({
         success: false,
@@ -181,6 +206,7 @@ class Signup extends React.Component {
           </form>
         </Dialog>
         {this.showMessage()}
+        {this.state.errorMessage}
       </div>
     )
   }
