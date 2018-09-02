@@ -7,11 +7,8 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import GridList from '@material-ui/core/GridList';
 import instance from "../AjaxCrtl";
 import Header from "./Header";
-import Grow from "@material-ui/core/es/Grow/Grow";
-import TextField from "@material-ui/core/es/TextField/TextField";
 import Grid from "@material-ui/core/es/Grid/Grid";
 
 
@@ -27,7 +24,6 @@ class ContestDetail extends Component {
     }
 
     componentDidMount(){
-        var url = '/contest/1/submissions';
 
         instance().get('contest/'+this.props.match.params.contestId+'/submissions')
             .then((response) => {
@@ -95,7 +91,9 @@ class ContestDetail extends Component {
                             </Grid>
                         </div>
                     ) : "No courses found" }
+
                 </MuiThemeProvider>
+
 
 
 
