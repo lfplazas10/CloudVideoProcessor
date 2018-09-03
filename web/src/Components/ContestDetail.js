@@ -11,6 +11,7 @@ import instance from "../AjaxCrtl";
 import Header from "./Header";
 import Grid from "@material-ui/core/es/Grid/Grid";
 import Player from "./Player";
+import {Pager} from "react-bootstrap";
 
 
 class ContestDetail extends Component {
@@ -23,22 +24,46 @@ class ContestDetail extends Component {
             playVideo: false,
             sources:'',
             videoSrc:'',
-            videoType:''
+            videoType:'',
+            prevButton: false,
+            nextButton: false,
+            pageNum: 1
         }
         this.componentDidMount = this.componentDidMount.bind(this);
         this.togglePlayer = this.togglePlayer.bind(this);
+        this.getData = this.getData.bind(this);
+        this.downPage = this.downPage.bind(this);
+        this.upPage=this.upPage.bind(this);
     }
 
     componentDidMount(){
+        this.getData();
+    }
 
-        instance().get('contest/'+this.props.match.params.contestId+'/submissions/1')
+    getData(e){
+        if (e && e.preventDefault) e.preventDefault();
+
+        instance().get('contest/'+this.props.match.params.contestId+'/submissions/'+this.state.pageNum)
             .then((response) => {
-
                 this.setState({submissions:response.data});
             })
             .catch((error) => {
                 console.log(error.response)
             });
+
+        instance().get('contest/'+this.props.match.params.contestId+'/submissions/'+this.state.pageNum+1)
+            .then((response) => {
+                //SI la siguiente página tiene videos mostrar boton de next
+                if(response.data.length !== 0){
+                    console.log('vacioo');
+                    this.setState({nextButton:true})
+                }
+                console.log('responsedata',response.data)
+            })
+            .catch((error) => {
+                console.log(error.response)
+            });
+
     }
 
     togglePlayer(){
@@ -70,6 +95,22 @@ class ContestDetail extends Component {
 
         return year + "-" + month + "-" + day;
     }
+    upPage(e) {
+        e.preventDefault();
+        const newPage = this.state.pageNum + 1;
+        this.setState({ prevButton: true });
+        this.setState({ pageNum: newPage }, this.getData);
+    }
+
+    downPage(e) {
+        e.preventDefault();
+        if (this.state.pageNum !== 1) {
+            const newPage = this.state.pageNum - 1;
+            this.setState({ pageNum: newPage }, this.getData)
+        }
+        else if(this.state.pageNum == 2)
+            this.setState({ prevButton: false});
+    }
 
     render() {
         const { classes } = this.props;
@@ -81,6 +122,11 @@ class ContestDetail extends Component {
                         {...props}
                         brand={'Content manager'}
                         color={'info'}/>
+                    <Pager>
+                        {this.state.prevButton &&  <Pager.Item onClick={this.downPage} previous > &larr; Previous Page </Pager.Item>}
+                        {this.state.nextButton && <Pager.Item  onClick={this.upPage} next> Next Page &rarr; </Pager.Item>}
+                    </Pager>
+
                     { this.state.submissions ? (
                         <div>
                             {/*<TextField style={{padding: 24}}
@@ -88,9 +134,8 @@ class ContestDetail extends Component {
                                            placeholder="Search for Submissions"
                                            margin="normal"
                                 />*/}
-                            {/*
-                            <Player sources='{"type": "video/mp4", "src":  "/Westworld.S01E02.mkv"}'/>
-*/}
+
+                            <Player sources='{"type": "video/avi", "src":  "http://video-js.zencoder.com/oceans-clip.avi"}'/>
 
                             <Grid container spacing={24} style={{padding: 24}}>
                                 { this.state.submissions.map(submission => (
@@ -119,12 +164,10 @@ class ContestDetail extends Component {
                                                 <Button size="small" color="primary"  onClick={() => this.playVideo(submission.videoType,submission.videoId,false)}>
                                                     Ver original
                                                 </Button>
-                                                {
-                                                    submission.state!=='Waiting' &&
-                                                    <Button size="small" color="primary" onClick={() => this.playVideo(submission.videoType, submission.videoId,true)}>
+                                                {console.log('subm state',submission.state)}
+                                                    <Button size="small" color="primary" disabled={submission.state=='Waiting'} onClick={() => this.playVideo(submission.videoType, submission.videoId,true)}>
                                                         Ver video convertido
                                                     </Button>
-                                                }
                                             </CardActions>
                                         </Card>
                                     </Grid>
@@ -155,7 +198,10 @@ const styles = {
         overflow: 'hidden',
         padding: 50,
         height: 'auto',
-    }
+    },
+    flex: {
+        flexGrow: 1,
+    },
 };
 
 const THEME = createMuiTheme({
