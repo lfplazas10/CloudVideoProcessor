@@ -12,7 +12,7 @@
     "react-router": "^4.3.1",
     "react-scripts": "1.1.4"
   },
-  "proxy": "http://localhost:9000",
+  "proxy": "http://172.24.42.55:9000",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

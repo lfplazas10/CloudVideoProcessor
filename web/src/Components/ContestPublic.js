@@ -26,6 +26,7 @@ import GridList from '@material-ui/core/GridList';
 import Header from "./Header";
 import Grow from "@material-ui/core/es/Grow/Grow";
 import Grid from "@material-ui/core/es/Grid/Grid";
+import { Pager } from "react-bootstrap";
 
 
 
@@ -41,10 +42,13 @@ class ContestPublic extends React.Component {
       video: null,
       create: false,
       contest: {},
+      pageNum: 1,
       videoId: 0,
       submissions: [],
       success: false,
       loading: true,
+      prevButton: true,
+      nextButton: false,
       error: null
     };
 
@@ -55,6 +59,8 @@ class ContestPublic extends React.Component {
     this.createSub = this.createSub.bind(this);
     this.sendVideo = this.sendVideo.bind(this);
     this.handleMessageClose = this.handleMessageClose.bind(this);
+    this.upPage = this.upPage.bind(this);
+    this.downPage = this.downPage.bind(this);
   }
 
   static contextTypes = {
@@ -78,9 +84,10 @@ class ContestPublic extends React.Component {
 
   getSubs(e) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().get('public/submissions/' + this.state.contest.id + '/1')
+    instance().get('public/submissions/' + this.state.contest.id + '/' + this.state.pageNum)
       .then((response) => {
-        this.setState({ submissions: response.data });
+        if(response.data.length > 0)  this.setState({ submissions: response.data });
+        else this.setState({nextButton: true}); 
       }).catch((error) => {
         console.log(error.response)
       });
@@ -128,6 +135,21 @@ class ContestPublic extends React.Component {
     this.setState({ create: true });
   }
 
+  upPage(e) {
+    e.preventDefault();
+    const newPage = this.state.pageNum + 1;
+    this.setState({ pageNum: newPage }, this.getSubs);
+  }
+
+  downPage(e) {
+    e.preventDefault();
+    if (this.state.pageNum !== 1) {
+      const newPage = this.state.pageNum - 1;
+      this.setState({ pageNum: newPage }, this.getSubs)
+    }
+    else this.setState({prevButton: true});
+  }
+
   showMessage() {
     if (this.state.error != null)
       return (
@@ -137,9 +159,9 @@ class ContestPublic extends React.Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Error: " + this.state.error.error}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">{"Error: " + this.state.error.message}</DialogTitle>
           <DialogActions>
-            <Button onClick={() => { this.setState({ error: null }) }} color="primary" autoFocus>
+            <Button onClick={() => { this.setState({ error: null, loading: true }) }} color="primary" autoFocus>
               Try again
           </Button>
           </DialogActions>
@@ -153,7 +175,7 @@ class ContestPublic extends React.Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Your video was received. An email will be sent when it's available. Thak you for participating!"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">{"Your video was received. An email will be sent when it's available. Thank you for participating!"}</DialogTitle>
           <DialogActions>
             <Button onClick={this.handleMessageClose} color="primary" autoFocus>
               Continue
@@ -249,7 +271,11 @@ class ContestPublic extends React.Component {
             {...props}
             brand={'Content manager'}
             color={'info'} />
-          <h3 className="centerAlign">Contest <Button onClick={this.viewCreate}>Add Video</Button></h3>
+          <h3 className="centerAlign">{this.state.contest.name} <Button onClick={this.viewCreate}>Add Video</Button></h3>
+          <Pager>
+            <Pager.Item disabled = {this.state.prevButton} onClick={this.downPage} previous > &larr; Previous Page </Pager.Item>
+            <Pager.Item disabled = {this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
+          </Pager>
           {this.state.submissions ? (
             <div>
               <Grid container spacing={24} style={{ padding: 24 }}>
