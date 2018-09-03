@@ -27,7 +27,7 @@ class ContestTable extends React.Component {
     this.state = {
       name: "",
       url: "",
-      banner: "",
+      banner: null,
       startDate: "2018-08-28",
       endDate: "2018-08-28",
       winnerPrize: "",
@@ -52,6 +52,7 @@ class ContestTable extends React.Component {
     this.viewDelete = this.viewDelete.bind(this);
     this.showCreate = this.showCreate.bind(this);
     this.showUpdate = this.showUpdate.bind(this);
+    this.sendImg = this.sendImg.bind(this);
     this.deleteContest = this.deleteContest.bind(this);
     this.formatDate = this.formatDate.bind(this);
     this.upPage = this.upPage.bind(this);
@@ -145,12 +146,12 @@ class ContestTable extends React.Component {
   }
 
   createContest(e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     let sDate = new Date(this.state.startDate);
     let eDate = new Date(this.state.endDate);
     sDate.setUTCHours(sDate.getUTCHours() + 24);
     eDate.setUTCHours(eDate.getUTCHours() + 24);
-    instance().post('contest', {
+    let obj = {
       name: this.state.name,
       url: this.state.url,
       description: this.state.winnerPrize,
@@ -158,19 +159,32 @@ class ContestTable extends React.Component {
       creationDate: new Date(),
       startDate: sDate.getTime(),
       endDate: eDate.getTime()
-    })
+    };
+    instance().post('contest', obj)
       .then((response) => {
         this.setState({
           create: false,
-          name: "",
-          url: "",
-          banner: "",
-          startDate: "2018-08-28",
-          endDate: "2018-08-28",
-          winnerPrize: ""
-        }, this.getAll);
+          imgId: response.data.id
+        }, this.sendImg);
       })
       .catch((error) => {
+        console.log(error.response)
+      });
+  }
+
+  sendImg(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    let formData = new FormData();
+    formData.append('image', this.state.banner);
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    }
+    instance().post('contest/' + this.state.imgId + "/img", formData, config)
+      .then((response) =>
+        this.getAll
+      ).catch((error) => {
         console.log(error.response)
       });
   }
@@ -237,18 +251,18 @@ class ContestTable extends React.Component {
             />
             <TextField
               margin="dense"
-              id="imageUrl"
-              label="Contest banner URL"
-              type="text"
-              value={this.state.banner}
-              onChange={(e) => this.setState({ banner: e.target.value })}
+              id="bannerImage"
+              label="Banner"
+              accept="image/*"
+              type="file"
+              onChange={(e) => this.setState({ banner: e.target.files[0] })}
               required
               fullWidth
             />
             <TextField
               margin="dense"
               id="contestUrl"
-              label="Contest URL"
+              label="Contest Unique URL"
               type="text"
               value={this.state.url}
               onChange={(e) => this.setState({ url: e.target.value })}
@@ -324,9 +338,9 @@ class ContestTable extends React.Component {
               margin="dense"
               id="imageUrl"
               label="Contest banner URL"
-              type="text"
-              value={this.state.banner}
-              onChange={(e) => this.setState({ banner: e.target.value })}
+              type="file"
+              accept="image/gif, image/jpeg, image/png"
+              onChange={(e) => this.setState({ banner: e.target.files[0] })}
               required
               fullWidth
             />
@@ -411,7 +425,7 @@ class ContestTable extends React.Component {
   
           )
       }*/
-  render() {
+  render() {    
     const {
       classes
     } = this.props;

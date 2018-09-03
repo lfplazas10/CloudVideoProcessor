@@ -126,7 +126,7 @@ class ContestPublic extends React.Component {
       .then((response) => {
         this.setState({ create: false, success: true, loading: false});  
       }).catch((error) => {
-          this.setState({ create: false, success: false, loading: false, error: error.response.data });
+          this.setState({ create: false, success: false, loading: false, error: error.response });
         });
   }
 
