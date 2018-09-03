@@ -16,6 +16,7 @@ POST        /api/logout                        controllers.AuthController.logout
 GET         /api/contest/single/:url             controllers.ContestController.getSingleContest(url:String)
 GET         /api/contest/:page                   controllers.ContestController.getAll(page:Integer)
 POST        /api/contest                         controllers.ContestController.create()
+POST        /api/contest/:id/img                 controllers.ContestController.receiveImage(id:Long)
 PUT         /api/contest                         controllers.ContestController.update()
 DELETE      /api/contest/:id                     controllers.ContestController.delete(id:Long)
 GET         /api/public/submissions/:id/:page    controllers.ContestSubmissionController.getProcessedVideos(id:Long, page:Integer)
