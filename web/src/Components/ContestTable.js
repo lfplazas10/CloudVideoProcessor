@@ -18,6 +18,7 @@ import Paper from "@material-ui/core/Paper/Paper";
 import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
 import Visibility from "@material-ui/icons/Visibility";
+import { Pager } from "react-bootstrap";
 
 class ContestTable extends React.Component {
   constructor(props) {
@@ -33,6 +34,9 @@ class ContestTable extends React.Component {
       create: false,
       update: false,
       delete: false,
+      pageNum: 1,
+      prevButton: true,
+      nextButton: false,
       id: 0,
       contests: [],
     };
@@ -50,6 +54,8 @@ class ContestTable extends React.Component {
     this.showUpdate = this.showUpdate.bind(this);
     this.deleteContest = this.deleteContest.bind(this);
     this.formatDate = this.formatDate.bind(this);
+    this.upPage = this.upPage.bind(this);
+    this.downPage = this.downPage.bind(this);
     //this.handleClick = this.handleClick.bind(this);
   }
 
@@ -94,6 +100,21 @@ class ContestTable extends React.Component {
     this.setState({ update: false });
   }
 
+  upPage(e) {
+    e.preventDefault();
+    const newPage = this.state.pageNum + 1;
+    this.setState({ pageNum: newPage }, this.getAll);
+  }
+
+  downPage(e) {
+    e.preventDefault();
+    if (this.state.pageNum != 1) {
+      const newPage = this.state.pageNum - 1;
+      this.setState({ pageNum: newPage }, this.getAll)
+    }
+    else this.setState({ prevButton: true });
+  }
+
   viewUpdate(e) {
     if (e && e.preventDefault) e.preventDefault();
     this.setState({ update: true });
@@ -101,9 +122,10 @@ class ContestTable extends React.Component {
 
   getAll(e) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().get('contest/1')
+    instance().get('contest/' + this.state.pageNum)
       .then((response) => {
-        this.setState({ contests: response.data });
+        if (response.data.length > 0) this.setState({ contests: response.data });
+        else this.setState({ nextButton: true });
       })
       .catch((error) => {
         console.log(error.response)
@@ -398,6 +420,10 @@ class ContestTable extends React.Component {
       <div>
         <Paper className={classes.root} style={{ marginTop: '75px' }}>
           <h3 className="centerAlign">Contest List <Button onClick={this.viewCreate}>Add Contest</Button></h3>
+          <Pager>
+            <Pager.Item disabled={this.state.prevButton} onClick={this.downPage} previous > &larr; Previous Page </Pager.Item>
+            <Pager.Item disabled={this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
+          </Pager>
           <Table className={classes.table} >
             <TableHead>
               <TableRow >
