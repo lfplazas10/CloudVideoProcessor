@@ -21,15 +21,19 @@ class ContestDetail extends Component {
             id: this.props.history.location.pathname.split('/')[this.props.history.location.pathname.split('/').length-1],
             submissions:[],
             playVideo: false,
-            sources:''
+            sources:'',
+            videoSrc:'',
+            videoType:''
         }
-        this.componentDidMount = this.componentDidMount.bind(this)
+        this.componentDidMount = this.componentDidMount.bind(this);
+        this.togglePlayer = this.togglePlayer.bind(this);
     }
 
     componentDidMount(){
 
-        instance().get('contest/'+this.props.match.params.contestId+'/submissions')
+        instance().get('contest/'+this.props.match.params.contestId+'/submissions/1')
             .then((response) => {
+
                 this.setState({submissions:response.data});
             })
             .catch((error) => {
@@ -37,27 +41,39 @@ class ContestDetail extends Component {
             });
     }
 
-    togglePlayer(videoId){
-
-/*        instance().get('contest/'+this.props.match.params.contestId+'/video/'+videoId)
-            .then((response) => {
-                this.setState({sources:'{"type": "video/flv", "src":"' + response.data.videoId + '"}'});
-            })
-            .catch((error) => {
-                console.log(error.response)
-            });*/
-        this.setState({sources:'{"type": "video/mp4", "src": "/Westworld.S01E02.mkv"}'});
-
-
+    togglePlayer(){
         this.setState({playVideo: !this.state.playVideo})
-        console.log('haloo',this.state.sources,this.state.playVideo)
     }
 
+    playVideo(videoType,videoId, converted){
+        const contestId = this.props.match.params.contestId;
+
+        //Distinguir url entre original y procesado
+        if(converted && !videoId.endsWith('.mp4') ){
+            videoId = videoId.slice(0, videoId.indexOf('.')) + '.mp4';
+            console.log('new video', videoId);
+        }
+
+        this.setState({sources:'{"type": "'+videoType+'", "src":"'+videoId+'"}'});
+        this.setState({videoSrc:'/api/'+contestId+'/video/'+videoId,videoType:videoType});
+
+        this.togglePlayer();
+    }
+
+    formatDate(date) {
+
+        let d = new Date(date);
+        let day = d.getDate();
+        let monthIndex = d.getMonth();
+        let month = monthIndex < 8 ? "0" + (monthIndex + 1) : monthIndex + 1;
+        let year = d.getFullYear();
+
+        return year + "-" + month + "-" + day;
+    }
 
     render() {
         const { classes } = this.props;
         const props = this.props;
-        const contestId = props.match.params.contestId;
         return (
             <div className="main" style={{ marginTop: '75px' }} >
                 <MuiThemeProvider theme={THEME}>
@@ -72,14 +88,14 @@ class ContestDetail extends Component {
                                            placeholder="Search for Submissions"
                                            margin="normal"
                                 />*/}
-{/*
+                            {/*
                             <Player sources='{"type": "video/mp4", "src":  "/Westworld.S01E02.mkv"}'/>
 */}
 
                             <Grid container spacing={24} style={{padding: 24}}>
                                 { this.state.submissions.map(submission => (
-                                    <Grid item xs={12} sm={4} md={3} xl={3}>
-                                        <Card style={{padding: 10}} key={submission.id} >
+                                    <Grid key={submission.id} item xs={12} sm={4} md={3} xl={3}>
+                                        <Card style={{padding: 10}}  >
                                             <CardMedia
                                                 className={classes.media}
                                                 image="/images.jpeg"
@@ -93,42 +109,31 @@ class ContestDetail extends Component {
                                                     <strong>Email: </strong>{submission.email}
                                                 </Typography>
                                                 <Typography component="p">
-                                                    <strong>Fecha:</strong> {submission.date}
+                                                    <strong>Fecha:</strong> {this.formatDate(submission.creationDate)}
                                                 </Typography>
                                                 <Typography component="p">
                                                     <strong>Estado:</strong> {submission.state}
                                                 </Typography>
                                             </CardContent>
                                             <CardActions>
-                                                <Button size="small" color="primary"  onClick={() => this.togglePlayer(submission.videoId)}>
+                                                <Button size="small" color="primary"  onClick={() => this.playVideo(submission.videoType,submission.videoId,false)}>
                                                     Ver original
                                                 </Button>
-                                                <Button size="small" color="primary">
-                                                    Ver video convertido
-                                                </Button>
+                                                {
+                                                    submission.state!=='Waiting' &&
+                                                    <Button size="small" color="primary" onClick={() => this.playVideo(submission.videoType, submission.videoId,true)}>
+                                                        Ver video convertido
+                                                    </Button>
+                                                }
                                             </CardActions>
                                         </Card>
-                                        {submission.videoId != null &&
-                                        <video width="140" height="100" controls>
-                                            <source
-                                                type={submission.videoType}
-                                                src={'/api/'+contestId+'/video/'+submission.videoId}/>
-                                            Your browser does not support the video tag.
-                                        </video>
-                                        }
-
                                     </Grid>
                                 ))}
                             </Grid>
                         </div>
                     ) : "No courses found" }
 
-
-
-                    {(this.state.playVideo && this.state.sources!=='')&& <Player sources={this.state.sources} togglePlayer={this.togglePlayer}/>}
-
-
-
+                    {(this.state.playVideo && this.state.sources!=='')&& <Player videoType={this.state.videoType} videoSrc={this.state.videoSrc} sources={this.state.sources} togglePlayer={this.togglePlayer}/>}
 
                 </MuiThemeProvider>
             </div>

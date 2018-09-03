@@ -16,10 +16,6 @@ class Player extends Component{
 
     }
 
-    close(){
-
-    }
-
     render() {
         return(
             <div>
@@ -29,11 +25,11 @@ class Player extends Component{
                     ref="player">
                 </video>*/}
                 <Dialog open={this.state.open}>
-                    <video width="320" height="240" controls>
-                        <source src="/dove.mp4" type="video/mp4"/>
+                    <video width="100%" height="100%" controls>
+                        <source src={this.props.videoSrc} type={this.props.videoType}/>
                     </video>
                     <DialogActions>
-                        <Button onClick={() => this.setState({open:false})} color="primary">
+                        <Button onClick={this.props.togglePlayer} color="primary">
                             Cancel
                         </Button>
                     </DialogActions>
