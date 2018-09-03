@@ -58,6 +58,24 @@ public class ContestController extends BaseController {
         }
     }
 
+    public Result getImage(Long id){
+        try {
+            Contest contest = Contest.find.byId(id);
+            if (contest == null)
+                throw new Exception("That contest doesn't exist");
+
+            Path path = Paths.get("images",
+                    contest.getBannerUrl());
+            byte [] image = Files.readAllBytes(path);
+            if (image.length <= 0)
+                throw new Exception("Error reading the image");
+
+            return ok(image);
+        } catch (Exception e){
+            return error(e.getMessage());
+        }
+    }
+
     public Result receiveImage(long contestId){
         try {
             Contest contest = Contest.find.byId(contestId);
