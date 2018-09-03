@@ -18,6 +18,15 @@ public class Contest extends BaseModel {
     @JsonFormat(shape=JsonFormat.Shape.NUMBER, pattern="s")
     private Timestamp startDate, endDate, creationDate;
 
+    public Contest(String url, String description, String ownerEmail, String bannerUrl, Timestamp startDate, Timestamp endDate) {
+        this.url = url;
+        this.description = description;
+        this.ownerEmail = ownerEmail;
+        this.bannerUrl = bannerUrl;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     public String getBannerUrl() {
         return bannerUrl;
     }

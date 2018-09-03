@@ -1,18 +1,29 @@
 package controllers;
 
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import controllers.base.BaseController;
 import models.Contest;
 import models.ContestSubmission;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import play.libs.Json;
+import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class ContestController extends BaseController {
 
@@ -43,6 +54,66 @@ public class ContestController extends BaseController {
             contest.setOwnerEmail(null);
             return ok(contest);
         } catch (Exception e){
+            return error(e.getMessage());
+        }
+    }
+
+    public Result getImage(Long id){
+        try {
+            Contest contest = Contest.find.byId(id);
+            if (contest == null)
+                throw new Exception("That contest doesn't exist");
+
+            Path path = Paths.get("images",
+                    contest.getBannerUrl());
+            byte [] image = Files.readAllBytes(path);
+            if (image.length <= 0)
+                throw new Exception("Error reading the image");
+
+            return ok(image);
+        } catch (Exception e){
+            return error(e.getMessage());
+        }
+    }
+
+    public Result receiveImage(long contestId){
+        try {
+            Contest contest = Contest.find.byId(contestId);
+
+            if (contest == null)
+                throw new Exception("The contest doesn't exist");
+            if (contest.getBannerUrl() != null)
+                throw new Exception("This contest already has an image");
+
+            Http.MultipartFormData<File> body = request().body().asMultipartFormData();
+            Http.MultipartFormData.FilePart<File> image = body.getFile("image");
+
+            if (image == null)
+                throw new Exception("The image was not received");
+
+            File imageFile = image.getFile();
+            String imageName = contest.getUrl() + "." + FilenameUtils.getExtension( image.getFilename() ) ;
+            //TODO: When improving performance, create and attach a proper Executor to this future
+            CompletableFuture.runAsync(() -> {
+                try {
+                    Path path = Paths.get("images",
+                            imageName);
+                    byte [] stream = new byte [(int) imageFile.length()];
+                    new FileInputStream(imageFile).read(stream);
+                    Files.createDirectories( path.getParent() );
+                    Files.createFile(path);
+                    Files.write(path, stream);
+                } catch (Exception e){
+                    //Notify client about error
+                    e.printStackTrace();
+                }
+            });
+            contest.setBannerUrl(imageName);
+            contest.save();
+            return ok(contest);
+
+        } catch (Exception e){
+            e.printStackTrace();
             return error(e.getMessage());
         }
     }
