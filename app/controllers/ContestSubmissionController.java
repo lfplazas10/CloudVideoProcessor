@@ -24,7 +24,6 @@ public class ContestSubmissionController extends BaseController {
 
     public Result receiveVideo(long contestSubmissionId){
         try {
-
             ContestSubmission cs = ContestSubmission.find.byId(contestSubmissionId);
             if (cs == null)
                 throw new Exception("The submission doesn't exist");
