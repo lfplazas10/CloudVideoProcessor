@@ -433,7 +433,7 @@ class ContestTable extends React.Component {
     return (
       <div>
         <Paper className={classes.root} style={{ marginTop: '75px' }}>
-          <h3 className="centerAlign">Contest List <Button onClick={this.viewCreate}>Add Contest</Button></h3>
+          <h3 className="centerAlign">Contest List <Button variant="contained" color="primary"  onClick={this.viewCreate}>Add Contest</Button></h3>
           <Pager>
             <Pager.Item disabled={this.state.prevButton} onClick={this.downPage} previous > &larr; Previous Page </Pager.Item>
             <Pager.Item disabled={this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
@@ -459,7 +459,7 @@ class ContestTable extends React.Component {
                     <TableCell >{this.formatDate(row.startDate)}</TableCell>
                     <TableCell >{this.formatDate(row.endDate)}</TableCell>
                     <TableCell >
-                      <Button className={classes.button} onClick={() => this.context.router.history.push("contest/" + row.id)}><Visibility className={classes.icon} /></Button>
+                      <Button className={classes.button} onClick={() => this.context.router.history.push("contest/" + row.id, { url: row.url })}><Visibility className={classes.icon} color="primary"/></Button>
                       <Button className={classes.button} onClick={() => this.setState({
                         id: row.id,
                         name: row.name,
@@ -468,8 +468,8 @@ class ContestTable extends React.Component {
                         startDate: this.formatDate(row.startDate),
                         endDate: this.formatDate(row.endDate),
                         winnerPrize: row.description
-                      }, this.viewUpdate)}><Edit className={classes.icon} /></Button>
-                      <Button className={classes.button} onClick={() => this.setState({ id: row.id }, this.viewDelete)}><Delete className={classes.icon} /></Button></TableCell>
+                      }, this.viewUpdate)}><Edit className={classes.icon} color="primary" /></Button>
+                      <Button className={classes.button} onClick={() => this.setState({ id: row.id }, this.viewDelete)}><Delete className={classes.icon} color="primary" /></Button></TableCell>
                   </TableRow>
                 );
               })}

@@ -34,8 +34,6 @@ class Player extends Component{
                             Cancel
                         </Button>
                     </DialogActions>
-
-
                 </Dialog>
             </div>
         )

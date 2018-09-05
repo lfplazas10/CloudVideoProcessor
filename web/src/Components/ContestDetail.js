@@ -12,6 +12,7 @@ import Header from "./Header";
 import Grid from "@material-ui/core/es/Grid/Grid";
 import Player from "./Player";
 import {Pager} from "react-bootstrap";
+import Paper from "@material-ui/core/es/Paper/Paper";
 
 
 class ContestDetail extends Component {
@@ -27,7 +28,8 @@ class ContestDetail extends Component {
             videoType:'',
             prevButton: false,
             nextButton: false,
-            pageNum: 1
+            pageNum: 1,
+            contest:{}
         }
         this.componentDidMount = this.componentDidMount.bind(this);
         this.togglePlayer = this.togglePlayer.bind(this);
@@ -37,11 +39,23 @@ class ContestDetail extends Component {
     }
 
     componentDidMount(){
+
+        console.log("la ruta",'contest/single/'+this.props.location.state.url);
+        instance().get('contest/single/'+this.props.location.state.url)
+            .then((response) => {
+                console.log(response.data);
+                this.setState({contest:response.data});
+            })
+            .catch((error) => {
+                console.log(error.response)
+            });
         this.getData();
     }
 
     getData(e){
         if (e && e.preventDefault) e.preventDefault();
+
+        console.log('location',this.props.location.state.contestName);
 
         instance().get('contest/'+this.props.match.params.contestId+'/submissions/'+this.state.pageNum)
             .then((response) => {
@@ -58,7 +72,6 @@ class ContestDetail extends Component {
                     console.log('vacioo');
                     this.setState({nextButton:true})
                 }
-                console.log('responsedata',response.data)
             })
             .catch((error) => {
                 console.log(error.response)
@@ -76,7 +89,6 @@ class ContestDetail extends Component {
         //Distinguir url entre original y procesado
         if(converted && !videoId.endsWith('.mp4') ){
             videoId = videoId.slice(0, videoId.indexOf('.')) + '.mp4';
-            console.log('new video', videoId);
         }
 
         this.setState({sources:'{"type": "'+videoType+'", "src":"'+videoId+'"}'});
@@ -116,12 +128,37 @@ class ContestDetail extends Component {
         const { classes } = this.props;
         const props = this.props;
         return (
-            <div className="main" style={{ marginTop: '75px' }} >
+            <div className="main" style={{paddingLeft:'7%', marginTop: '75px' }} >
                 <MuiThemeProvider theme={THEME}>
                     <Header
                         {...props}
                         brand={'Content manager'}
                         color={'info'}/>
+                    <Grid container className={classes.root} spacing={24} >
+                        <Grid item xs={8}>
+                            <Paper className={classes.paper} elevation={1}>
+                                <Typography variant="display3" gutterBottom>
+                                    {this.state.contest.name}
+                                </Typography>
+                                <Typography variant="display1" gutterBottom>
+                                    {this.state.contest.description}
+                                </Typography>
+                                <Typography style={{paddingTop:'2%'}} variant="body1" gutterBottom align="right" color="textSecondary">
+                                    <strong>Start date </strong> {this.formatDate(this.state.contest.startDate)}
+                                    <br/>
+                                    <strong>End date </strong> {this.formatDate(this.state.contest.endDate)}
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <img className={classes.img} src={"/api/contest/"+this.state.contest.id+"/img"}/>
+                        </Grid>
+                    </Grid>
+
+                    <Typography style={{paddingTop:'2%'}} variant="display3" gutterBottom>
+                        Submissions
+                    </Typography>
+
                     <Pager>
                         {this.state.prevButton &&  <Pager.Item onClick={this.downPage} previous > &larr; Previous Page </Pager.Item>}
                         {this.state.nextButton && <Pager.Item  onClick={this.upPage} next> Next Page &rarr; </Pager.Item>}
@@ -129,47 +166,32 @@ class ContestDetail extends Component {
 
                     { this.state.submissions ? (
                         <div>
-                            {/*<TextField style={{padding: 24}}
-                                           id="searchInput"
-                                           placeholder="Search for Submissions"
-                                           margin="normal"
-                                />*/}
-
-{/*
-                            <Player sources='{"type": "video/avi", "src":  "http://video-js.zencoder.com/oceans-clip.avi"}'/>
-*/}
-
-                            <Grid container spacing={24} style={{padding: 24}}>
+                            <Grid container spacing={24}>
                                 { this.state.submissions.map(submission => (
                                     <Grid key={submission.id} item xs={12} sm={4} md={3} xl={3}>
                                         <Card style={{padding: 10}}  >
-                                            <CardMedia
-                                                className={classes.media}
-                                                image="/images.jpeg"
-                                                title="video"
-                                            />
+
                                             <CardContent>
-                                                <Typography gutterBottom variant="headline" component="h2">
+                                                <Typography gutterBottom variant="headline">
                                                     {submission.firstName} {submission.lastName}
                                                 </Typography>
-                                                <Typography component="p">
+                                                <Typography variant='subheading' gutterBottom>
                                                     <strong>Email: </strong>{submission.email}
                                                 </Typography>
-                                                <Typography component="p">
-                                                    <strong>Fecha:</strong> {this.formatDate(submission.creationDate)}
+                                                <Typography variant='subheading' gutterBottom>
+                                                    <strong>Date:</strong> {this.formatDate(submission.creationDate)}
                                                 </Typography>
-                                                <Typography component="p">
-                                                    <strong>Estado:</strong> {submission.state}
+                                                <Typography variant='subheading' gutterBottom>
+                                                    <strong>State:</strong> {submission.state}
                                                 </Typography>
                                             </CardContent>
                                             <CardActions>
                                                 <Button size="small" color="primary"  onClick={() => this.playVideo(submission.videoType,submission.videoId,false)}>
-                                                    Ver original
+                                                    Play original
                                                 </Button>
-                                                {console.log('subm state',submission.state)}
-                                                    <Button size="small" color="primary" disabled={submission.state=='Waiting'} onClick={() => this.playVideo(submission.videoType, submission.videoId,true)}>
-                                                        Ver video convertido
-                                                    </Button>
+                                                <Button size="small" color="primary" disabled={submission.state=='Waiting'} onClick={() => this.playVideo(submission.videoType, submission.videoId,true)}>
+                                                    Play converted video
+                                                </Button>
                                             </CardActions>
                                         </Card>
                                     </Grid>
@@ -187,7 +209,7 @@ class ContestDetail extends Component {
 }
 
 
-const styles = {
+const styles =  theme => ({
 
     media: {
         height: 0,
@@ -198,13 +220,24 @@ const styles = {
         flexWrap: 'wrap',
         //justifyContent: 'space-around',
         overflow: 'hidden',
-        padding: 50,
-        height: 'auto',
+        height: 'auto'
+
+    },
+    paper:{
+        ...theme.mixins.gutters(),
+        paddingTop: theme.spacing.unit *7,
+        paddingBottom: theme.spacing.unit *7,
+        height:300
     },
     flex: {
         flexGrow: 1,
     },
-};
+    img:{
+        width:300,
+        height:300
+    }
+});
+
 
 const THEME = createMuiTheme({
     typography: {
