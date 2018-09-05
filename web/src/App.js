@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './App.css';
 import Header from "./Components/Header";
 import Home from "./Components/PublicView/Home";
-import authChecker from './Helpers/UserManagement.js'
+import authManager from './Helpers/UserManagement.js'
 
 class App extends Component {
   
@@ -17,7 +17,7 @@ class App extends Component {
     };
     this.toggleSignup = this.toggleSignup.bind(this);
     this.toggleLogin = this.toggleLogin.bind(this);
-    authChecker();
+    authManager.validateUser();
   }
 
   toggleSignup(){
@@ -35,8 +35,8 @@ class App extends Component {
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
+            isLogged={false}
             brand={'Smart tools'}
-
             color={'info'}/>
           <Home
             {...props}

@@ -3,7 +3,7 @@ import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/
 import PropTypes from 'prop-types';
 import Header from "../Header";
 import ContestTable from "./ContestTable";
-import authChecker from '../../Helpers/UserManagement.js'
+import authManager from '../../Helpers/UserManagement.js'
 
 class Contest extends Component {
 
@@ -16,7 +16,7 @@ class Contest extends Component {
         };
         this.toggleSignup = this.toggleSignup.bind(this);
         this.toggleLogin = this.toggleLogin.bind(this);
-        authChecker();
+      authManager.validateUser();
     }
 
     toggleSignup(){
@@ -34,6 +34,7 @@ class Contest extends Component {
         <MuiThemeProvider theme={THEME}>
                   <Header
                     {...props}
+                    isLogged={true}
                     brand={'Content manager'}
                     color={'info'}/>
           <ContestTable

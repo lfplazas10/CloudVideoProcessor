@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { Router, Route, Switch } from 'react-router';
-import browserHist from './BrowserHistory.js';
+import browserHist from './Helpers/BrowserHistory.js';
 import Contest from "./Components/ManagerView/Contest";
 import ContestDetail from "./Components/ManagerView/ContestDetail";
 import ContestPublic from "./Components/PublicView/ContestPublic";

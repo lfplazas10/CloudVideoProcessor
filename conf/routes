@@ -10,6 +10,7 @@ GET         /api/token                         controllers.AuthController.getTok
 GET         /api/user                          controllers.AuthController.getManager()
 POST        /api/signup                        controllers.AuthController.createManager()
 POST        /api/login                         controllers.AuthController.login()
++ nocsrf
 POST        /api/logout                        controllers.AuthController.logout()
 GET         /api/active                        controllers.AuthController.isActiveUser()
 
