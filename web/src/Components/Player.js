@@ -19,13 +19,13 @@ class Player extends Component{
     render() {
         return(
             <div>
-                <video
+{/*                <video
                     className="video-js"
                     controls
                     ref="player"
                     data-setup='{ "techOrder": ["java"] }'>
-                </video>
-{/*                <Dialog open={this.state.open}>
+                </video>*/}
+                <Dialog open={this.state.open}>
                     <video width="100%" height="100%" controls>
                         <source src={this.props.videoSrc} type={this.props.videoType}/>
                     </video>
@@ -36,17 +36,17 @@ class Player extends Component{
                     </DialogActions>
 
 
-                </Dialog>*/}
+                </Dialog>
             </div>
         )
     }
 
     componentDidMount() {
-        console.log('player comp', this.props.sources, this.refs.player );
+/*        console.log('player comp', this.props.sources, this.refs.player );
         var player = window.videojs(this.refs.player, {}).ready(() => {
             player.src(JSON.parse(this.props.sources));
             player.play();
-        });
+        });*/
 /*
         var ModalDialog = window.videojs.getComponent('ModalDialog');
 
@@ -69,7 +69,9 @@ class Player extends Component{
     }
 
     componentWillUnmount() {
+/*
         this.player.dispose();
+*/
     }
 }
 

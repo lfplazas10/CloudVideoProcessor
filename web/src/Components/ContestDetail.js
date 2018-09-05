@@ -135,7 +135,9 @@ class ContestDetail extends Component {
                                            margin="normal"
                                 />*/}
 
+{/*
                             <Player sources='{"type": "video/avi", "src":  "http://video-js.zencoder.com/oceans-clip.avi"}'/>
+*/}
 
                             <Grid container spacing={24} style={{padding: 24}}>
                                 { this.state.submissions.map(submission => (
