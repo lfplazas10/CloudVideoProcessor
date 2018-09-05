@@ -13,7 +13,7 @@ import Grid from "@material-ui/core/es/Grid/Grid";
 import Player from "../Player";
 import {Pager} from "react-bootstrap";
 import Paper from "@material-ui/core/es/Paper/Paper";
-
+import authManager from '../../Helpers/UserManagement.js'
 
 class ContestDetail extends Component {
   
@@ -36,10 +36,14 @@ class ContestDetail extends Component {
     this.getData = this.getData.bind(this);
     this.downPage = this.downPage.bind(this);
     this.upPage = this.upPage.bind(this);
+    authManager.validateUser();
+  }
+  
+  componentWillMount(){
+  
   }
   
   componentDidMount() {
-    
     console.log("la ruta", 'contest/single/' + this.props.location.state.url);
     instance().get('contest/single/' + this.props.location.state.url)
       .then((response) => {
@@ -135,6 +139,7 @@ class ContestDetail extends Component {
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
+            isLogged={true}
             brand={'Content manager'}
             color={'info'}/>
           <Grid container className={classes.root} spacing={24}>

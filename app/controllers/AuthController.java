@@ -49,6 +49,7 @@ public class AuthController extends BaseController {
         }
     }
 
+    @AddCSRFToken
     public Result login() {
         try {
             JsonNode request = request().body().asJson();

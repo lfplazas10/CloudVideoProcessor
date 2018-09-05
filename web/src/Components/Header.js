@@ -9,6 +9,8 @@ import Drawer from "@material-ui/core/Drawer";
 import Menu from "@material-ui/icons/Menu";
 import Signup from "./Authentication/Signup";
 import Login from "./Authentication/Login";
+import authManager from "../Helpers/UserManagement.js"
+import { Link } from 'react-router-dom'
 
 class Header extends React.Component {
   constructor(props) {
@@ -28,7 +30,6 @@ class Header extends React.Component {
   }
   
   toggleSignup(login){
-    console.log(login)
     this.setState({
       signup  : !this.state.signup,
       login   : login === true ? true : this.state.login
@@ -49,16 +50,27 @@ class Header extends React.Component {
         <Toolbar className={classes.container}>
           <div className={classes.flex}>
             <Typography variant="display1" color="inherit" className={this.props.classes.flex}>
-              Smart Tools
+              <Link to={this.props.isLogged? '/contests':'/'} className="mainKind">
+                Smart Tools
+              </Link>
             </Typography>
           </div>
           <Hidden smDown implementation="css">
+            {!this.props.isLogged &&
             <Button color="inherit" onClick={() => this.toggleSignup(false)}>
               Signup
             </Button>
+            }
+            {!this.props.isLogged &&
             <Button color="inherit" onClick={this.toggleLogin}>
               Login
             </Button>
+            }
+            {this.props.isLogged &&
+            <Button color="inherit" onClick={() => authManager.logout()}>
+              Logout
+            </Button>
+            }
           </Hidden>
           <Hidden mdUp>
             <IconButton
@@ -81,13 +93,22 @@ class Header extends React.Component {
             onClose={this.handleDrawerToggle}
           >
             <div className={classes.appResponsive}>
-              {/*toggled*/}
+              {!this.props.isLogged &&
               <Button color="inherit" onClick={() => this.toggleSignup(false)}>
                 Signup
-              </Button>
-              <Button color="inherit" onClick={this.toggleLogin}>
+                </Button>
+              }
+              {!this.props.isLogged &&
+              < Button color="inherit" onClick={this.toggleLogin}>
                 Login
               </Button>
+              }
+              {this.props.isLogged &&
+              < Button color="inherit" onClick={() => authManager.logout()}>
+                Logout
+              </Button>
+              }
+              
             </div>
           </Drawer>
         </Hidden>

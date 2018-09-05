@@ -287,6 +287,7 @@ class ContestPublic extends React.Component {
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
+            isLogged={false}
             brand={'Content manager'}
             color={'info'}/>
           <Grid container className={classes.root} spacing={24}>
