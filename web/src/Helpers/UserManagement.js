@@ -1,12 +1,11 @@
 import instance from './AjaxCrtl.js'
+import browserHistory from '../BrowserHistory.js';
 
 export default function (){
   instance().get('active')
     .then(response => {
-      console.log(response)
-      if (response.data){
-      
-      }
+      if (!response.data)
+        browserHistory.push('/');
     }).catch(error => {
       console.log(error);
   });

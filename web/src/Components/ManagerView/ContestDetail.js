@@ -13,7 +13,7 @@ import Grid from "@material-ui/core/es/Grid/Grid";
 import Player from "../Player";
 import {Pager} from "react-bootstrap";
 import Paper from "@material-ui/core/es/Paper/Paper";
-
+import authChecker from '../../Helpers/UserManagement.js'
 
 class ContestDetail extends Component {
   
@@ -36,10 +36,14 @@ class ContestDetail extends Component {
     this.getData = this.getData.bind(this);
     this.downPage = this.downPage.bind(this);
     this.upPage = this.upPage.bind(this);
+    authChecker();
+  }
+  
+  componentWillMount(){
+  
   }
   
   componentDidMount() {
-    
     console.log("la ruta", 'contest/single/' + this.props.location.state.url);
     instance().get('contest/single/' + this.props.location.state.url)
       .then((response) => {

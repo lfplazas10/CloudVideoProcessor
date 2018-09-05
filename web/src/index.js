@@ -4,14 +4,13 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { Router, Route, Switch } from 'react-router';
-import createBrowserHistory from 'history/createBrowserHistory';
+import browserHist from './BrowserHistory.js';
 import Contest from "./Components/ManagerView/Contest";
 import ContestDetail from "./Components/ManagerView/ContestDetail";
 import ContestPublic from "./Components/PublicView/ContestPublic";
-import authChecker from './Helpers/UserManagement.js'
 
-const browserHistory = createBrowserHistory();
-authChecker();
+const browserHistory = browserHist;
+
 ReactDOM.render(
     <Router history={browserHistory}>
     <Switch>
