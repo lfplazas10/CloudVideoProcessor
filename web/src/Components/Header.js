@@ -7,8 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import Hidden from "@material-ui/core/Hidden";
 import Drawer from "@material-ui/core/Drawer";
 import Menu from "@material-ui/icons/Menu";
-import Signup from "./Signup";
-import Login from "./Login";
+import Signup from "./Authentication/Signup";
+import Login from "./Authentication/Login";
 
 class Header extends React.Component {
   constructor(props) {

@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button/Button";
 import PropTypes from "prop-types";
-import instance from "../AjaxCrtl.js"
+import instance from "../../Helpers/AjaxCrtl.js"
 
 class Login extends React.Component {
 

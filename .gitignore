@@ -4,6 +4,7 @@ build
 *.ipr
 *.iws
 videos
+images
 /.idea
 /.idea_modules
 /.classpath

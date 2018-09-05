@@ -11,6 +11,7 @@ GET         /api/user                          controllers.AuthController.getMan
 POST        /api/signup                        controllers.AuthController.createManager()
 POST        /api/login                         controllers.AuthController.login()
 POST        /api/logout                        controllers.AuthController.logout()
+GET         /api/active                        controllers.AuthController.isActiveUser()
 
 # Contest endpoints
 GET         /api/contest/single/:url             controllers.ContestController.getSingleContest(url:String)

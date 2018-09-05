@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import Header from "./Header";
+import Header from "../Header";
 import ContestTable from "./ContestTable";
 
 class Contest extends Component {
