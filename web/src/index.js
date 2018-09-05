@@ -8,7 +8,6 @@ import createBrowserHistory from 'history/createBrowserHistory';
 import Contest from "./Components/Contest";
 import ContestDetail from "./Components/ContestDetail";
 import ContestPublic from "./Components/ContestPublic";
-import Header from "./Components/Header";
 
 const browserHistory = createBrowserHistory();
 
