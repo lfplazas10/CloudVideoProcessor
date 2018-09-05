@@ -8,7 +8,6 @@ import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button/Button";
 import PropTypes from "prop-types";
 import instance from "../AjaxCrtl.js"
-import axios from 'axios';
 
 class Login extends React.Component {
 

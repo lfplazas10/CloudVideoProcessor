@@ -13,7 +13,6 @@ import Paper from "@material-ui/core/Paper/Paper";
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Header from "./Header";
 import Grid from "@material-ui/core/es/Grid/Grid";
