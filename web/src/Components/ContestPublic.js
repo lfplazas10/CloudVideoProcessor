@@ -271,7 +271,11 @@ class ContestPublic extends React.Component {
     playVideo(videoType,videoId){
 
         this.setState({sources:'{"type": "'+videoType+'", "src":"'+videoId+'"}'});
-        this.setState({videoSrc:'/api/'+this.state.contest.id+'/video/'+videoId,videoType:videoType});
+        console.log('/api/'+this.state.contest.id+'/video/'+videoId+'.mp4')
+        this.setState({
+          videoSrc  :'/api/'+this.state.contest.id+'/video/'+videoId+'.mp4',
+          videoType : 'video/mp4'
+        });
 
         this.togglePlayer();
     }
@@ -347,7 +351,12 @@ class ContestPublic extends React.Component {
                 ) : "No courses found"}
                 {this.showCreate()}
                 {this.showMessage()}
-                {(this.state.playVideo && this.state.sources!=='')&& <Player videoType={this.state.videoType} videoSrc={this.state.videoSrc} sources={this.state.sources} togglePlayer={this.togglePlayer}/>}
+                {(this.state.playVideo && this.state.sources!=='')&&
+                <Player videoType={this.state.videoType}
+                        videoSrc={this.state.videoSrc}
+                        sources={this.state.sources}
+                        togglePlayer={this.togglePlayer}/>
+                }
                 </MuiThemeProvider>
             </div>
         );
