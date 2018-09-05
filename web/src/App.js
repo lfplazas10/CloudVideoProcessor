@@ -3,7 +3,7 @@ import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/
 import PropTypes from 'prop-types';
 import './App.css';
 import Header from "./Components/Header";
-import Home from "./Components/Home";
+import Home from "./Components/PublicView/Home";
 //import Contest from "./Components/Contest";
 
 

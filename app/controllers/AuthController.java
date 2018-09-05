@@ -40,10 +40,9 @@ public class AuthController extends BaseController {
         }
     }
 
-    public Result test() {
+    public Result isActiveUser() {
         try {
-            String user = session("connected");
-            return ok(user);
+            return ok(session("connected") != null);
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());

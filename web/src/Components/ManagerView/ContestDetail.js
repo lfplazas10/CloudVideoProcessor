@@ -7,10 +7,10 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import instance from "../AjaxCrtl";
-import Header from "./Header";
+import instance from "../../Helpers/AjaxCrtl";
+import Header from "../Header";
 import Grid from "@material-ui/core/es/Grid/Grid";
-import Player from "./Player";
+import Player from "../Player";
 import {Pager} from "react-bootstrap";
 import Paper from "@material-ui/core/es/Paper/Paper";
 

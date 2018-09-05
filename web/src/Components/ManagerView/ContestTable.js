@@ -6,7 +6,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button/Button";
-import instance from "../AjaxCrtl.js"
+import instance from "../../Helpers/AjaxCrtl.js"
 import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import PropTypes from 'prop-types';
