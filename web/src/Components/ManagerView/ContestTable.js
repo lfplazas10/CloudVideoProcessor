@@ -311,16 +311,16 @@ class ContestTable extends React.Component {
               required
               fullWidth
             />
-            <TextField
-              margin="dense"
-              id="imageUrl"
-              label="Contest banner URL"
-              type="file"
-              accept="image/gif, image/jpeg, image/png"
-              onChange={(e) => this.setState({ banner: e.target.files[0] })}
-              required
-              fullWidth
-            />
+            <label htmlFor='imageTag' className='videoLabel'>
+              Upload banner image:
+              <input
+                type="file"
+                accept="image/*"
+                label="Image"
+                required
+                onChange={(e) => this.setState({video: e.target.files[0]})}
+              />
+            </label>
             <TextField
               margin="dense"
               id="contestUrl"

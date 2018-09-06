@@ -21,7 +21,8 @@ import Player from "../Player";
 import classNames from 'classnames';
 import Input from '@material-ui/core/Input';
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
-
+import ErrorMessage from "../../Helpers/ErrorMessage";
+import BrowserHistory from '../../Helpers/BrowserHistory.js'
 
 class ContestPublic extends React.Component {
   constructor(props) {
@@ -69,6 +70,10 @@ class ContestPublic extends React.Component {
       .then((response) => {
         this.setState({contest: response.data}, this.getSubs);
       }).catch((error) => {
+      this.setState({
+        errorMessage: error.response,
+        errorAfterFunction : () => BrowserHistory.push('/')
+      })
       console.log(error.response)
     });
   }
@@ -105,6 +110,7 @@ class ContestPublic extends React.Component {
     }).then((response) => {
       this.setState({videoId: response.data.id}, this.sendVideo);
     }).catch((error) => {
+      this.setState({errorMessage: error.response});
       console.log(error.response)
     });
   }
@@ -397,6 +403,15 @@ class ContestPublic extends React.Component {
                   togglePlayer={this.togglePlayer}/>
           }
         </MuiThemeProvider>
+        {this.state.errorMessage ?
+          <ErrorMessage
+            close={() => {
+              this.setState({errorMessage: null});
+              if (this.state.errorAfterFunction)
+                this.state.errorAfterFunction();
+            }}
+            errorData={this.state.errorMessage}
+          /> : null}
       </div>
     );
   }
