@@ -263,7 +263,7 @@ class ContestPublic extends React.Component {
         return year + "-" + month + "-" + day;
     }
 
-    togglePlayer(){
+        togglePlayer(){
         this.setState({playVideo: !this.state.playVideo})
     }
 

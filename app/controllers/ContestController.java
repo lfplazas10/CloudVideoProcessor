@@ -82,8 +82,10 @@ public class ContestController extends BaseController {
 
             if (contest == null)
                 throw new Exception("The contest doesn't exist");
+
+/*          Commented out this to be able to update a contest banner image
             if (contest.getBannerUrl() != null)
-                throw new Exception("This contest already has an image");
+                throw new Exception("This contest already has an image");*/
 
             Http.MultipartFormData<File> body = request().body().asMultipartFormData();
             Http.MultipartFormData.FilePart<File> image = body.getFile("image");
@@ -144,8 +146,10 @@ public class ContestController extends BaseController {
             if (!Contest.find.byId(contest.getId()).getOwnerEmail().equals(user))
                 throw new Exception("The user does not own the contest");
 
-            if (Contest.find.query().where().eq("url", contest.getUrl()).findOne() != null)
-                throw new Exception("There is already a contest with that URL, please try a different one");
+            if(contest.getUrl()!=null){
+                if (Contest.find.query().where().eq("url", contest.getUrl()).findOne() != null)
+                    throw new Exception("There is already a contest with that URL, please try a different one");
+            }
 
             contest.update();
             return ok(contest);
