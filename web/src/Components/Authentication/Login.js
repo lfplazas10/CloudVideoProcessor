@@ -9,6 +9,8 @@ import Button from "@material-ui/core/Button/Button";
 import PropTypes from "prop-types";
 import instance from "../../Helpers/AjaxCrtl.js"
 
+import browserHistory from "../../Helpers/BrowserHistory.js"
+
 class Login extends React.Component {
 
   constructor() {
@@ -65,7 +67,7 @@ class Login extends React.Component {
         >
           <DialogTitle id="alert-dialog-title">{"Login successful."}</DialogTitle>
           <DialogActions>
-            <Button onClick={() => this.context.router.history.push("/contests")} color="primary" autoFocus>
+            <Button onClick={() => browserHistory.push("/contests")} color="primary" autoFocus>
               Continue
             </Button>
           </DialogActions>

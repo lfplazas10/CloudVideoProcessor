@@ -313,6 +313,9 @@ class ContestPublic extends React.Component {
   
   playVideo(videoType, videoId) {
     this.setState({sources: '{"type": "' + videoType + '", "src":"' + videoId + '"}'});
+    if (videoType != 'video/mp4'){
+      videoId = videoId + '.mp4';
+    }
     this.setState({
       videoSrc: '/api/' + this.state.contest.id + '/video/' + videoId,
       videoType: 'video/mp4'
