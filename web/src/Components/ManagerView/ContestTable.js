@@ -171,11 +171,12 @@ class ContestTable extends React.Component {
     formatDate(date) {
         let d = new Date(date);
         let day = d.getDate();
+        let fDay = day < 10 ? "0" + day: day;
         let monthIndex = d.getMonth();
         let month = monthIndex < 8 ? "0" + (monthIndex + 1) : monthIndex + 1;
         let year = d.getFullYear();
 
-        return year + "-" + month + "-" + day;
+        return year + "-" + month + "-" + fDay;
     }
 
     formatDateISO(date){
@@ -186,6 +187,10 @@ class ContestTable extends React.Component {
 
     updateContest(e) {
         e.preventDefault();
+        let sDate = new Date(this.state.startDate);
+        let eDate = new Date(this.state.endDate);
+        sDate.setUTCHours(sDate.getUTCHours() + 24);
+        eDate.setUTCHours(eDate.getUTCHours() + 24);
         console.log('state',this.state);
         instance().put('contest', {
             id: this.state.id,
@@ -194,8 +199,8 @@ class ContestTable extends React.Component {
             description: this.state.winnerPrize,
             ownerEmail: this.state.user.email,
             creationDate: new Date(),
-            startDate: new Date(this.state.startDate),
-            endDate: new Date(this.state.endDate)
+            startDate: sDate.getTime(),
+            endDate: eDate.getTime()
         })
             .then((response) => {
                 this.setState({
