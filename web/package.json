@@ -15,9 +15,9 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4"
   },
-  "proxy": "http://172.24.42.55:9000",
+  "proxy": "http://localhost:9000",
   "scripts": {
-    "start": "PORT=8001 react-scripts start",
+    "start": "PORT=8080 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
