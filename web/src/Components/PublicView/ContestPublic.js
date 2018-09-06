@@ -19,6 +19,7 @@ import Grid from "@material-ui/core/es/Grid/Grid";
 import {Pager} from "react-bootstrap";
 import Player from "../Player";
 import classNames from 'classnames';
+import Input from '@material-ui/core/Input';
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 
 
@@ -60,7 +61,7 @@ class ContestPublic extends React.Component {
   
   static contextTypes = {
     router: PropTypes.object
-  }
+  };
   
   componentDidMount() {
     const url = this.props.match.params.contestUrl;
@@ -253,16 +254,16 @@ class ContestPublic extends React.Component {
               required
               fullWidth
             />
-            <TextField
-              margin="dense"
-              id="video"
-              label="Video"
-              accept="video/*"
+            <label htmlFor='videoTag' className='videoLabel'>
+              Choose file:
+            <input
               type="file"
-              onChange={(e) => this.setState({video: e.target.files[0]})}
+              accept="video/*"
+              label="Video"
               required
-              fullWidth
+              onChange={(e) => this.setState({video: e.target.files[0]})}
             />
+            </label>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.hideCreate} color="primary">
