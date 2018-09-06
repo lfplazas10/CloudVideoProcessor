@@ -57,7 +57,6 @@ class ContestTable extends React.Component {
     this.formatDate = this.formatDate.bind(this);
     this.upPage = this.upPage.bind(this);
     this.downPage = this.downPage.bind(this);
-    //this.handleClick = this.handleClick.bind(this);
   }
 
   static contextTypes = {
@@ -125,8 +124,9 @@ class ContestTable extends React.Component {
     if (e && e.preventDefault) e.preventDefault();
     instance().get('contest/' + this.state.pageNum)
       .then((response) => {
-        if (response.data.length > 0) this.setState({ contests: response.data });
-        else this.setState({ nextButton: true });
+        this.setState({ contests: response.data });
+        if (response.data.length >= 0)
+          this.setState({ nextButton: true });
       })
       .catch((error) => {
         console.log(error.response)
@@ -138,7 +138,7 @@ class ContestTable extends React.Component {
     const url = 'contest/' + this.state.id;
     instance().delete(url)
       .then((response) => {
-        this.setState({ delete: false }, this.getAll);
+        this.setState({ delete: false }, () => this.getAll());
       })
       .catch((error) => {
         console.log(error.response)
@@ -165,7 +165,10 @@ class ContestTable extends React.Component {
         this.setState({
           create: false,
           imgId: response.data.id
-        }, this.sendImg);
+        }, () => {
+          this.getAll()
+          this.sendImg();
+        });
       })
       .catch((error) => {
         console.log(error.response)
