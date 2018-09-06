@@ -49,3 +49,7 @@
 .pull-right{
   right: 0px;
 }
+.playerDialog{
+  margin-top: 12px;
+  font-size: 18px;
+}
