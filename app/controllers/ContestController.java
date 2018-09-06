@@ -15,9 +15,8 @@ import play.mvc.With;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileWriter;
+import java.nio.file.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -97,15 +96,23 @@ public class ContestController extends BaseController {
             String imageName = contest.getUrl() + "." + FilenameUtils.getExtension( image.getFilename() ) ;
             //TODO: When improving performance, create and attach a proper Executor to this future
             CompletableFuture.runAsync(() -> {
+
                 try {
                     Path path = Paths.get("images",
                             imageName);
                     byte [] stream = new byte [(int) imageFile.length()];
                     new FileInputStream(imageFile).read(stream);
                     Files.createDirectories( path.getParent() );
-                    Files.createFile(path);
-                    Files.write(path, stream);
-                } catch (Exception e){
+                    try {
+                        Files.createFile(path);
+                    } catch (FileAlreadyExistsException fae){
+                        //This is perfectly normal, might happen if
+                        //1. The user is updating the contest image
+                        //2. The user has the same image for 2 different contests.
+                    }
+                    Files.write(path, stream, StandardOpenOption.TRUNCATE_EXISTING);
+                }
+                catch (Exception e){
                     //Notify client about error
                     e.printStackTrace();
                 }
@@ -143,13 +150,14 @@ public class ContestController extends BaseController {
         try {
             String user = session("connected");
             Contest contest = bodyAs(Contest.class);
-            if (!Contest.find.byId(contest.getId()).getOwnerEmail().equals(user))
+            Contest oldContest = Contest.find.byId(contest.getId());
+            if (! oldContest.getOwnerEmail().equals(user))
                 throw new Exception("The user does not own the contest");
+            System.out.println("old "+oldContest.getUrl()+" new "+contest.getUrl());
+            if (Contest.find.query().where().eq("url", contest.getUrl()).findOne() != null
+                && !contest.getUrl().equals( oldContest.getUrl() ))
+                throw new Exception("There is already a contest with that URL, please try a different one");
 
-            if(contest.getUrl()!=null){
-                if (Contest.find.query().where().eq("url", contest.getUrl()).findOne() != null)
-                    throw new Exception("There is already a contest with that URL, please try a different one");
-            }
 
             contest.update();
             return ok(contest);
