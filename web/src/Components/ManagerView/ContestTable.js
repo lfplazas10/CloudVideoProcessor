@@ -20,6 +20,7 @@ import Edit from "@material-ui/icons/Edit";
 import Visibility from "@material-ui/icons/Visibility";
 import { Pager } from "react-bootstrap";
 import ErrorMessage from "../../Helpers/ErrorMessage";
+import browserHistory from "../../Helpers/BrowserHistory.js"
 
 class ContestTable extends React.Component {
   constructor(props) {
@@ -233,7 +234,7 @@ class ContestTable extends React.Component {
                 accept="image/*"
                 label="Image"
                 required
-                onChange={(e) => this.setState({video: e.target.files[0]})}
+                onChange={(e) => this.setState({banner: e.target.files[0]})}
               />
             </label>
             <TextField
@@ -318,7 +319,7 @@ class ContestTable extends React.Component {
                 accept="image/*"
                 label="Image"
                 required
-                onChange={(e) => this.setState({video: e.target.files[0]})}
+                onChange={(e) => this.setState({image: e.target.files[0]})}
               />
             </label>
             <TextField
@@ -405,7 +406,7 @@ class ContestTable extends React.Component {
       <div>
         <Paper className={classes.root} style={{ marginTop: '75px' }}>
           <h3 className="centerAlign">Contest List
-            <Button variant="contained" color="primary"
+            <Button variant="contained" color="primary" className='pull-right'
                     onClick={() => this.setState({ create: true })}>
               Add Contest
             </Button>
@@ -435,7 +436,9 @@ class ContestTable extends React.Component {
                     <TableCell >{this.formatDate(row.startDate)}</TableCell>
                     <TableCell >{this.formatDate(row.endDate)}</TableCell>
                     <TableCell >
-                      <Button className={classes.button} onClick={() => this.context.router.history.push("contest/" + row.id, { url: row.url })}><Visibility className={classes.icon} color="primary"/></Button>
+                      <Button className={classes.button} onClick={() => browserHistory.push("contest/" + row.id, { url: row.url })}>
+                        <Visibility className={classes.icon} color="primary"/>
+                      </Button>
                       <Button className={classes.button} onClick={() => this.setState({
                         id: row.id,
                         name: row.name,
