@@ -158,6 +158,9 @@ class ContestDetail extends Component {
                   <br/>
                   <strong>End date </strong> {this.formatDate(this.state.contest.endDate)}
                 </Typography>
+                <Typography variant="Subheading" gutterBottom>
+                  <a target="_blank" href={'/public/contest/'+this.state.contest.url}>Click here</a> to watch your contest's public page:
+                </Typography>
               </Paper>
             </Grid>
             <Grid item xs={4}>
