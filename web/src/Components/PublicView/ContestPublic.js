@@ -18,14 +18,18 @@ import Header from "../Header";
 import Grid from "@material-ui/core/es/Grid/Grid";
 import {Pager} from "react-bootstrap";
 import Player from "../Player";
-
+import classNames from 'classnames';
+import Input from '@material-ui/core/Input';
+import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import ErrorMessage from "../../Helpers/ErrorMessage";
+import BrowserHistory from '../../Helpers/BrowserHistory.js'
 
 class ContestPublic extends React.Component {
   constructor(props) {
     super(props);
     
     this.state = {
-      firtsName: "",
+      firstName: "",
       lastName: "",
       email: "",
       desc: "",
@@ -36,10 +40,11 @@ class ContestPublic extends React.Component {
       videoId: 0,
       submissions: [],
       success: false,
-      loading: true,
+      loading: false,
       prevButton: true,
       nextButton: false,
-      error: null
+      error: null,
+      showDialogMessage : false
     };
     
     this.hideCreate = this.hideCreate.bind(this);
@@ -57,7 +62,7 @@ class ContestPublic extends React.Component {
   
   static contextTypes = {
     router: PropTypes.object
-  }
+  };
   
   componentDidMount() {
     const url = this.props.match.params.contestUrl;
@@ -65,13 +70,17 @@ class ContestPublic extends React.Component {
       .then((response) => {
         this.setState({contest: response.data}, this.getSubs);
       }).catch((error) => {
+      this.setState({
+        errorMessage: error.response,
+        errorAfterFunction : () => BrowserHistory.push('/')
+      })
       console.log(error.response)
     });
   }
   
   handleMessageClose(e) {
     if (e && e.preventDefault) e.preventDefault();
-    this.setState({loading: true});
+    this.setState({showDialogMessage: false});
   }
   
   getSubs(e) {
@@ -101,25 +110,42 @@ class ContestPublic extends React.Component {
     }).then((response) => {
       this.setState({videoId: response.data.id}, this.sendVideo);
     }).catch((error) => {
+      this.setState({errorMessage: error.response});
       console.log(error.response)
     });
   }
   
   sendVideo(e) {
     if (e && e.preventDefault) e.preventDefault();
-    let formData = new FormData();
-    formData.append('video', this.state.video);
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data'
-      }
+  
+    if (!this.state.loading) {
+      this.setState({
+        success: false,
+        loading: true,
+      }, () => {
+        let formData = new FormData();
+        formData.append('video', this.state.video);
+        const config = {
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        };
+        instance().post('contestSubmission/video/' + this.state.videoId, formData, config)
+          .then((response) => {
+            this.setState({create: false,
+              success: true,
+              showDialogMessage : true,
+              loading: false});
+          }).catch((error) => {
+          this.setState({
+            create: false,
+            success: false,
+            loading: false,
+            showDialogMessage: true,
+            error: error.response});
+        });
+      });
     }
-    instance().post('contestSubmission/video/' + this.state.videoId, formData, config)
-      .then((response) => {
-        this.setState({create: false, success: true, loading: false});
-      }).catch((error) => {
-      this.setState({create: false, success: false, loading: false, error: error.response});
-    });
   }
   
   viewCreate(e) {
@@ -146,7 +172,7 @@ class ContestPublic extends React.Component {
     if (this.state.error != null)
       return (
         <Dialog
-          open={this.state.error != null && !this.state.loading}
+          open={this.state.showDialogMessage}
           onClose={this.handleMessageClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
@@ -162,7 +188,7 @@ class ContestPublic extends React.Component {
     else
       return (
         <Dialog
-          open={this.state.success && !this.state.loading}
+          open={this.state.success && this.state.showDialogMessage}
           onClose={this.handleMessageClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
@@ -179,6 +205,11 @@ class ContestPublic extends React.Component {
   }
   
   showCreate() {
+    const { loading, success } = this.state;
+    const { classes } = this.props;
+    const buttonClassname = classNames({
+      [classes.buttonSuccess]: success,
+    });
     return (
       <Dialog
         open={this.state.create}
@@ -229,24 +260,37 @@ class ContestPublic extends React.Component {
               required
               fullWidth
             />
-            <TextField
-              margin="dense"
-              id="video"
-              label="Video"
-              accept="video/*"
+            <label htmlFor='videoTag' className='videoLabel'>
+              Choose file:
+            <input
               type="file"
-              onChange={(e) => this.setState({video: e.target.files[0]})}
+              accept="video/*"
+              label="Video"
               required
-              fullWidth
+              onChange={(e) => this.setState({video: e.target.files[0]})}
             />
+            </label>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.hideCreate} color="primary">
               Cancel
             </Button>
-            <Button color="primary" type="submit">
-              Submit
-            </Button>
+            <div className={classes.wrapper}>
+              <Button
+                variant="contained"
+                color="primary"
+                className={buttonClassname}
+                disabled={loading}
+                type="submit"
+                onClick={this.handleButtonClick}
+              >
+                Send
+              </Button>
+              {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+            </div>
+            {/*<Button color="primary" type="submit">*/}
+              {/*Submit*/}
+            {/*</Button>*/}
           </DialogActions>
         </form>
       </Dialog>
@@ -254,7 +298,6 @@ class ContestPublic extends React.Component {
   }
   
   formatDate(date) {
-    
     let d = new Date(date);
     let day = d.getDate();
     let monthIndex = d.getMonth();
@@ -283,7 +326,7 @@ class ContestPublic extends React.Component {
     const {classes} = this.props;
     const props = this.props;
     return (
-      <div className="main" style={{paddingLeft: '7%', marginTop: '75px'}}>
+      <div className="main">
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
@@ -360,6 +403,15 @@ class ContestPublic extends React.Component {
                   togglePlayer={this.togglePlayer}/>
           }
         </MuiThemeProvider>
+        {this.state.errorMessage ?
+          <ErrorMessage
+            close={() => {
+              this.setState({errorMessage: null});
+              if (this.state.errorAfterFunction)
+                this.state.errorAfterFunction();
+            }}
+            errorData={this.state.errorMessage}
+          /> : null}
       </div>
     );
   }

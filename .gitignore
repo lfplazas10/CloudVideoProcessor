@@ -1,4 +1,6 @@
 logs
+conf/evolutions/default/*
+.env
 target
 build
 *.ipr

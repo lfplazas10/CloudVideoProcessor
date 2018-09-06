@@ -19,6 +19,7 @@ import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
 import Visibility from "@material-ui/icons/Visibility";
 import { Pager } from "react-bootstrap";
+import ErrorMessage from "../../Helpers/ErrorMessage";
 
 class ContestTable extends React.Component {
   constructor(props) {
@@ -44,12 +45,8 @@ class ContestTable extends React.Component {
     this.getAll = this.getAll.bind(this);
     this.createContest = this.createContest.bind(this);
     this.updateContest = this.updateContest.bind(this);
-    this.hideCreate = this.hideCreate.bind(this);
-    this.viewCreate = this.viewCreate.bind(this);
     this.hideUpdate = this.hideUpdate.bind(this);
     this.viewUpdate = this.viewUpdate.bind(this);
-    this.hideDelete = this.hideDelete.bind(this);
-    this.viewDelete = this.viewDelete.bind(this);
     this.showCreate = this.showCreate.bind(this);
     this.showUpdate = this.showUpdate.bind(this);
     this.sendImg = this.sendImg.bind(this);
@@ -57,13 +54,7 @@ class ContestTable extends React.Component {
     this.formatDate = this.formatDate.bind(this);
     this.upPage = this.upPage.bind(this);
     this.downPage = this.downPage.bind(this);
-    //this.handleClick = this.handleClick.bind(this);
   }
-
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
 
   componentDidMount() {
     instance().get('user')
@@ -74,26 +65,6 @@ class ContestTable extends React.Component {
       .catch((error) => {
         console.log(error.response)
       });
-  }
-
-  hideCreate(e) {
-    e.preventDefault();
-    this.setState({ create: false });
-  }
-
-  viewCreate(e) {
-    e.preventDefault();
-    this.setState({ create: true });
-  }
-
-  hideDelete(e) {
-    e.preventDefault();
-    this.setState({ delete: false });
-  }
-
-  viewDelete(e) {
-    if (e && e.preventDefault) e.preventDefault();
-    this.setState({ delete: true });
   }
 
   hideUpdate(e) {
@@ -125,10 +96,12 @@ class ContestTable extends React.Component {
     if (e && e.preventDefault) e.preventDefault();
     instance().get('contest/' + this.state.pageNum)
       .then((response) => {
-        if (response.data.length > 0) this.setState({ contests: response.data });
-        else this.setState({ nextButton: true });
+        this.setState({ contests: response.data });
+        if (response.data.length >= 0)
+          this.setState({ nextButton: true });
       })
       .catch((error) => {
+        this.setState({errorMessage: error.response});
         console.log(error.response)
       });
   }
@@ -138,9 +111,10 @@ class ContestTable extends React.Component {
     const url = 'contest/' + this.state.id;
     instance().delete(url)
       .then((response) => {
-        this.setState({ delete: false }, this.getAll);
+        this.setState({ delete: false }, () => this.getAll());
       })
       .catch((error) => {
+        this.setState({errorMessage: error.response});
         console.log(error.response)
       });
   }
@@ -165,10 +139,13 @@ class ContestTable extends React.Component {
         this.setState({
           create: false,
           imgId: response.data.id
-        }, this.sendImg);
+        }, () => {
+          this.getAll();
+          this.sendImg();
+        });
       })
       .catch((error) => {
-        console.log(error.response)
+        this.setState({errorMessage: error.response});
       });
   }
 
@@ -190,7 +167,6 @@ class ContestTable extends React.Component {
   }
 
   formatDate(date) {
-
     let d = new Date(date);
     let day = d.getDate();
     let monthIndex = d.getMonth();
@@ -224,6 +200,7 @@ class ContestTable extends React.Component {
         }, this.getAll);
       })
       .catch((error) => {
+        this.setState({errorMessage: error.response});
         console.log(error.response)
       });
   }
@@ -249,16 +226,16 @@ class ContestTable extends React.Component {
               required
               fullWidth
             />
-            <TextField
-              margin="dense"
-              id="bannerImage"
-              label="Banner"
-              accept="image/*"
-              type="file"
-              onChange={(e) => this.setState({ banner: e.target.files[0] })}
-              required
-              fullWidth
-            />
+            <label htmlFor='imageTag' className='videoLabel'>
+              Upload banner image:
+              <input
+                type="file"
+                accept="image/*"
+                label="Image"
+                required
+                onChange={(e) => this.setState({video: e.target.files[0]})}
+              />
+            </label>
             <TextField
               margin="dense"
               id="contestUrl"
@@ -301,7 +278,7 @@ class ContestTable extends React.Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.hideCreate} color="primary">
+            <Button onClick={() => this.setState({ create: false })} color="primary">
               Cancel
           </Button>
             <Button color="primary" type="submit">
@@ -334,16 +311,16 @@ class ContestTable extends React.Component {
               required
               fullWidth
             />
-            <TextField
-              margin="dense"
-              id="imageUrl"
-              label="Contest banner URL"
-              type="file"
-              accept="image/gif, image/jpeg, image/png"
-              onChange={(e) => this.setState({ banner: e.target.files[0] })}
-              required
-              fullWidth
-            />
+            <label htmlFor='imageTag' className='videoLabel'>
+              Upload banner image:
+              <input
+                type="file"
+                accept="image/*"
+                label="Image"
+                required
+                onChange={(e) => this.setState({video: e.target.files[0]})}
+              />
+            </label>
             <TextField
               margin="dense"
               id="contestUrl"
@@ -402,13 +379,13 @@ class ContestTable extends React.Component {
     return (
       <Dialog
         open={this.state.delete}
-        onClose={this.hideDelete}
+        onClose={() => this.setState({ delete: false })}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{"Are you sure you want to delete this contest? "}</DialogTitle>
         <DialogActions>
-          <Button onClick={this.hideDelete} color="primary" autoFocus>
+          <Button onClick={() => this.setState({ delete: false })} color="primary" autoFocus>
             Cancel
             </Button>
           <Button onClick={this.deleteContest} color="primary" autoFocus>
@@ -418,13 +395,7 @@ class ContestTable extends React.Component {
       </Dialog>
     )
   }
-
-  /*    handleClick(event,id) {
-          console.log(event, id)
-          return (
   
-          )
-      }*/
   render() {    
     const {
       classes
@@ -433,7 +404,12 @@ class ContestTable extends React.Component {
     return (
       <div>
         <Paper className={classes.root} style={{ marginTop: '75px' }}>
-          <h3 className="centerAlign">Contest List <Button variant="contained" color="primary"  onClick={this.viewCreate}>Add Contest</Button></h3>
+          <h3 className="centerAlign">Contest List
+            <Button variant="contained" color="primary"
+                    onClick={() => this.setState({ create: true })}>
+              Add Contest
+            </Button>
+          </h3>
           <Pager>
             <Pager.Item disabled={this.state.prevButton} onClick={this.downPage} previous > &larr; Previous Page </Pager.Item>
             <Pager.Item disabled={this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
@@ -469,7 +445,12 @@ class ContestTable extends React.Component {
                         endDate: this.formatDate(row.endDate),
                         winnerPrize: row.description
                       }, this.viewUpdate)}><Edit className={classes.icon} color="primary" /></Button>
-                      <Button className={classes.button} onClick={() => this.setState({ id: row.id }, this.viewDelete)}><Delete className={classes.icon} color="primary" /></Button></TableCell>
+                      <Button className={classes.button}
+                              onClick={() => this.setState({ id: row.id },
+                                () => this.setState({ delete: true }))}>
+                        <Delete className={classes.icon} color="primary" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -479,6 +460,11 @@ class ContestTable extends React.Component {
         {this.showCreate()}
         {this.showUpdate()}
         {this.showDelete()}
+        {this.state.errorMessage ?
+          <ErrorMessage
+            close={() => this.setState({errorMessage: null})}
+            errorData={this.state.errorMessage}
+          /> : null}
       </div>
     );
   }

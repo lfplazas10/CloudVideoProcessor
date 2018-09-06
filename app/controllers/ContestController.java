@@ -144,6 +144,9 @@ public class ContestController extends BaseController {
             if (!Contest.find.byId(contest.getId()).getOwnerEmail().equals(user))
                 throw new Exception("The user does not own the contest");
 
+            if (Contest.find.query().where().eq("url", contest.getUrl()).findOne() != null)
+                throw new Exception("There is already a contest with that URL, please try a different one");
+
             contest.update();
             return ok(contest);
         } catch (Exception e){

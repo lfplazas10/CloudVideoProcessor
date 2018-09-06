@@ -14,6 +14,7 @@ import Player from "../Player";
 import {Pager} from "react-bootstrap";
 import Paper from "@material-ui/core/es/Paper/Paper";
 import authManager from '../../Helpers/UserManagement.js'
+import ErrorMessage from "../../Helpers/ErrorMessage";
 
 class ContestDetail extends Component {
   
@@ -38,11 +39,7 @@ class ContestDetail extends Component {
     this.upPage = this.upPage.bind(this);
     authManager.validateUser();
   }
-  
-  componentWillMount(){
-  
-  }
-  
+
   componentDidMount() {
     console.log("la ruta", 'contest/single/' + this.props.location.state.url);
     instance().get('contest/single/' + this.props.location.state.url)
@@ -51,6 +48,7 @@ class ContestDetail extends Component {
         this.setState({contest: response.data});
       })
       .catch((error) => {
+        this.setState({errorMessage: error.response});
         console.log(error.response)
       });
     this.getData();
@@ -66,6 +64,7 @@ class ContestDetail extends Component {
         this.setState({submissions: response.data});
       })
       .catch((error) => {
+        this.setState({errorMessage: error.response});
         console.log(error.response)
       });
     
@@ -78,6 +77,7 @@ class ContestDetail extends Component {
         }
       })
       .catch((error) => {
+        this.setState({errorMessage: error.response});
         console.log(error.response)
       });
     
@@ -135,7 +135,7 @@ class ContestDetail extends Component {
     const {classes} = this.props;
     const props = this.props;
     return (
-      <div className="main" style={{paddingLeft: '7%', marginTop: '75px'}}>
+      <div className="main">
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
@@ -219,6 +219,11 @@ class ContestDetail extends Component {
             togglePlayer={this.togglePlayer}/>}
         
         </MuiThemeProvider>
+        {this.state.errorMessage ?
+          <ErrorMessage
+            close={() => this.setState({errorMessage: null})}
+            errorData={this.state.errorMessage}
+          /> : null}
       </div>
     );
   }
