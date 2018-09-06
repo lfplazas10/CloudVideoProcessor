@@ -188,7 +188,7 @@ class Signup extends React.Component {
             <DialogActions>
               <Button onClick={this.props.toggleSignup} color="primary">
                 Cancel
-            </Button>
+              </Button>
               <div className={classes.wrapper}>
                 <Button
                   variant="contained"

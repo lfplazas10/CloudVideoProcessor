@@ -38,3 +38,8 @@
   background-size: cover;
   overflow: hidden;
 }
+.main{
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  margin-top: 75px;
+}

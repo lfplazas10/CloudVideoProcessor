@@ -418,13 +418,7 @@ class ContestTable extends React.Component {
       </Dialog>
     )
   }
-
-  /*    handleClick(event,id) {
-          console.log(event, id)
-          return (
   
-          )
-      }*/
   render() {    
     const {
       classes

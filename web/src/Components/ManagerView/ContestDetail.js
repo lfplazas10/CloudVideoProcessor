@@ -134,7 +134,7 @@ class ContestDetail extends Component {
     const {classes} = this.props;
     const props = this.props;
     return (
-      <div className="main" style={{paddingLeft: '7%', marginTop: '75px'}}>
+      <div className="main">
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}

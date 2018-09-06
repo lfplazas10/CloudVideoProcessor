@@ -18,6 +18,8 @@ import Header from "../Header";
 import Grid from "@material-ui/core/es/Grid/Grid";
 import {Pager} from "react-bootstrap";
 import Player from "../Player";
+import classNames from 'classnames';
+import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 
 
 class ContestPublic extends React.Component {
@@ -25,7 +27,7 @@ class ContestPublic extends React.Component {
     super(props);
     
     this.state = {
-      firtsName: "",
+      firstName: "",
       lastName: "",
       email: "",
       desc: "",
@@ -36,7 +38,7 @@ class ContestPublic extends React.Component {
       videoId: 0,
       submissions: [],
       success: false,
-      loading: true,
+      loading: false,
       prevButton: true,
       nextButton: false,
       error: null
@@ -107,19 +109,27 @@ class ContestPublic extends React.Component {
   
   sendVideo(e) {
     if (e && e.preventDefault) e.preventDefault();
-    let formData = new FormData();
-    formData.append('video', this.state.video);
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data'
-      }
+  
+    if (!this.state.loading) {
+      this.setState({
+        success: false,
+        loading: true,
+      }, () => {
+        let formData = new FormData();
+        formData.append('video', this.state.video);
+        const config = {
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        };
+        instance().post('contestSubmission/video/' + this.state.videoId, formData, config)
+          .then((response) => {
+            this.setState({create: false, success: true, loading: false});
+          }).catch((error) => {
+          this.setState({create: false, success: false, loading: false, error: error.response});
+        });
+      });
     }
-    instance().post('contestSubmission/video/' + this.state.videoId, formData, config)
-      .then((response) => {
-        this.setState({create: false, success: true, loading: false});
-      }).catch((error) => {
-      this.setState({create: false, success: false, loading: false, error: error.response});
-    });
   }
   
   viewCreate(e) {
@@ -179,6 +189,11 @@ class ContestPublic extends React.Component {
   }
   
   showCreate() {
+    const { loading, success } = this.state;
+    const { classes } = this.props;
+    const buttonClassname = classNames({
+      [classes.buttonSuccess]: success,
+    });
     return (
       <Dialog
         open={this.state.create}
@@ -244,9 +259,22 @@ class ContestPublic extends React.Component {
             <Button onClick={this.hideCreate} color="primary">
               Cancel
             </Button>
-            <Button color="primary" type="submit">
-              Submit
-            </Button>
+            <div className={classes.wrapper}>
+              <Button
+                variant="contained"
+                color="primary"
+                className={buttonClassname}
+                disabled={loading}
+                type="submit"
+                onClick={this.handleButtonClick}
+              >
+                Send
+              </Button>
+              {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+            </div>
+            {/*<Button color="primary" type="submit">*/}
+              {/*Submit*/}
+            {/*</Button>*/}
           </DialogActions>
         </form>
       </Dialog>
@@ -283,7 +311,7 @@ class ContestPublic extends React.Component {
     const {classes} = this.props;
     const props = this.props;
     return (
-      <div className="main" style={{paddingLeft: '7%', marginTop: '75px'}}>
+      <div className="main">
         <MuiThemeProvider theme={THEME}>
           <Header
             {...props}
