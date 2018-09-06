@@ -1,4 +1,6 @@
 logs
+conf/evolutions/default/1.sql
+.env
 target
 build
 *.ipr
