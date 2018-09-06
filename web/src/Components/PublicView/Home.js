@@ -3,7 +3,7 @@ import Paper from "@material-ui/core/Paper/Paper";
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import Grid from "@material-ui/core/es/Grid/Grid";
+import Grid from "@material-ui/core/Grid/Grid";
 
 class Home extends  Component{
 

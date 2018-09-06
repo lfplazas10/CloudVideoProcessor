@@ -20,7 +20,7 @@ import Visibility from "@material-ui/icons/Visibility";
 import { Pager } from "react-bootstrap";
 import ErrorMessage from "../../Helpers/ErrorMessage";
 import browserHistory from "../../Helpers/BrowserHistory.js"
-import Typography from "@material-ui/core/es/Typography/Typography";
+import Typography from "@material-ui/core/Typography/Typography";
 
 class ContestTable extends React.Component {
     constructor(props) {
@@ -159,7 +159,6 @@ class ContestTable extends React.Component {
                 'content-type': 'multipart/form-data'
             }
         }
-        console.log('state',this.state);
         instance().post('contest/' + this.state.imgId + "/img", formData, config)
             .then((response) =>
                 this.getAll
@@ -191,7 +190,6 @@ class ContestTable extends React.Component {
         let eDate = new Date(this.state.endDate);
         sDate.setUTCHours(sDate.getUTCHours() + 24);
         eDate.setUTCHours(eDate.getUTCHours() + 24);
-        console.log('state',this.state);
         instance().put('contest', {
             id: this.state.id,
             name: this.state.name,

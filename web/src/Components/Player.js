@@ -16,9 +16,6 @@ class Player extends Component {
       error: null,
       cantPlay: false
     };
-/*
-    console.log("video data ",this.props.videoSrc,this.props.videoType)
-*/
   }
   
   render() {

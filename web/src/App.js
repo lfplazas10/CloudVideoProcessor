@@ -21,7 +21,6 @@ class App extends Component {
   }
 
   toggleSignup(){
-    console.log("hayyyyyy")
     this.setState({signup : !this.state.signup})
   }
 

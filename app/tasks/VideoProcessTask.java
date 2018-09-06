@@ -49,7 +49,7 @@ public class VideoProcessTask {
                     Process p = Runtime.getRuntime().exec(command);
                     p.waitFor();         //This makes each execution synchronous
                 }
-                
+
                 v.setState(ContestSubmission.State.Processed);
                 v.save();
                 CompletableFuture.runAsync(() -> {

@@ -41,7 +41,6 @@ class ContestDetail extends Component {
   }
 
   componentDidMount() {
-    console.log("la ruta", 'contest/single/' + this.props.location.state.url);
     instance().get('contest/single/' + this.props.location.state.url)
       .then((response) => {
         console.log(response.data);
@@ -57,7 +56,7 @@ class ContestDetail extends Component {
   getData(e) {
     if (e && e.preventDefault) e.preventDefault();
     
-    console.log('location', this.props.location.state.contestName);
+    // console.log('location', this.props.location.state.contestName);
     
     instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + this.state.pageNum)
       .then((response) => {
@@ -72,7 +71,6 @@ class ContestDetail extends Component {
       .then((response) => {
         //SI la siguiente página tiene videos mostrar boton de next
         if (response.data.length !== 0) {
-          console.log('vacioo');
           this.setState({nextButton: true})
         }
       })
