@@ -1,5 +1,5 @@
 logs
-conf/evolutions/default/1.sql
+conf/evolutions/default/*
 .env
 target
 build
