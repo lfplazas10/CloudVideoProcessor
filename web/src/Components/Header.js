@@ -57,7 +57,7 @@ class Header extends React.Component {
           </div>
           <Hidden smDown implementation="css">
             {!this.props.isLogged &&
-            <Button color="inherit" onClick={() => this.toggleSignup(false)}>
+            <Button  color="inherit" onClick={() => this.toggleSignup(false)}>
               Signup
             </Button>
             }
