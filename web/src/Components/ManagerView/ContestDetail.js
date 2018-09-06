@@ -9,10 +9,10 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import instance from "../../Helpers/AjaxCrtl";
 import Header from "../Header";
-import Grid from "@material-ui/core/es/Grid/Grid";
+import Grid from "@material-ui/core/Grid/Grid";
 import Player from "../Player";
 import {Pager} from "react-bootstrap";
-import Paper from "@material-ui/core/es/Paper/Paper";
+import Paper from "@material-ui/core/Paper/Paper";
 import authManager from '../../Helpers/UserManagement.js'
 import ErrorMessage from "../../Helpers/ErrorMessage";
 
