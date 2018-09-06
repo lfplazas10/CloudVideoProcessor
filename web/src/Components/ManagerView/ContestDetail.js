@@ -92,7 +92,9 @@ class ContestDetail extends Component {
     
     //Add extension and file type for processed video
     if (converted) {
-      videoId = videoId + '.mp4';
+      if (videoType != 'video/mp4'){
+        videoId = videoId + '.mp4';
+      }
       videoType = 'video/mp4';
     }
     
