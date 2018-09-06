@@ -112,7 +112,7 @@ class Header extends React.Component {
             </div>
           </Drawer>
         </Hidden>
-        {this.state.signup && <Signup toggleSignup={this.toggleSignup}/>}
+        {this.state.signup && <Signup {...this.props} toggleSignup={this.toggleSignup}/>}
         {this.state.login && <Login toggleLogin={this.toggleLogin}/>}
       </AppBar>
     );

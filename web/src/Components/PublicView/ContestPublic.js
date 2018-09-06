@@ -41,7 +41,8 @@ class ContestPublic extends React.Component {
       loading: false,
       prevButton: true,
       nextButton: false,
-      error: null
+      error: null,
+      showDialogMessage : false
     };
     
     this.hideCreate = this.hideCreate.bind(this);
@@ -73,7 +74,7 @@ class ContestPublic extends React.Component {
   
   handleMessageClose(e) {
     if (e && e.preventDefault) e.preventDefault();
-    this.setState({loading: true});
+    this.setState({showDialogMessage: false});
   }
   
   getSubs(e) {
@@ -124,9 +125,17 @@ class ContestPublic extends React.Component {
         };
         instance().post('contestSubmission/video/' + this.state.videoId, formData, config)
           .then((response) => {
-            this.setState({create: false, success: true, loading: false});
+            this.setState({create: false,
+              success: true,
+              showDialogMessage : true,
+              loading: false});
           }).catch((error) => {
-          this.setState({create: false, success: false, loading: false, error: error.response});
+          this.setState({
+            create: false,
+            success: false,
+            loading: false,
+            showDialogMessage: true,
+            error: error.response});
         });
       });
     }
@@ -156,7 +165,7 @@ class ContestPublic extends React.Component {
     if (this.state.error != null)
       return (
         <Dialog
-          open={this.state.error != null && !this.state.loading}
+          open={this.state.showDialogMessage}
           onClose={this.handleMessageClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
@@ -172,7 +181,7 @@ class ContestPublic extends React.Component {
     else
       return (
         <Dialog
-          open={this.state.success && !this.state.loading}
+          open={this.state.success && this.state.showDialogMessage}
           onClose={this.handleMessageClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
@@ -282,7 +291,6 @@ class ContestPublic extends React.Component {
   }
   
   formatDate(date) {
-    
     let d = new Date(date);
     let day = d.getDate();
     let monthIndex = d.getMonth();
