@@ -43,7 +43,7 @@ public class VideoProcessTask {
             try {
                 long initialTime = System.currentTimeMillis();
 
-                String videoPath = Paths.get("video", v.getContestId()+"", v.getVideoId()).toAbsolutePath().toString();
+                String videoPath = Paths.get("videos", v.getContestId()+"", v.getVideoId()).toAbsolutePath().toString();
                 if (!v.getVideoId().endsWith(".mp4")) {
                     Logger.debug(videoPath);
                     String command = "ffmpeg -i " + videoPath + " -preset fast -c:a aac -b:a 128k " +
@@ -52,7 +52,7 @@ public class VideoProcessTask {
                     Process p = Runtime.getRuntime().exec(command);
                     p.waitFor(); //This makes each execution synchronous
                     long timeTaken = System.currentTimeMillis() - initialTime;
-                    Logger.debug("Processed " + v.getVideoId()+" in "+timeTaken);
+                    Logger.debug("Processed " + v.getVideoId()+" in "+(timeTaken/1000)+"s");
                 }
                 v.setState(ContestSubmission.State.Processed);
                 v.save();
