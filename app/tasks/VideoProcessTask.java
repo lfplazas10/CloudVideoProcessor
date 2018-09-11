@@ -45,7 +45,6 @@ public class VideoProcessTask {
 
                 String videoPath = Paths.get("videos", v.getContestId()+"", v.getVideoId()).toAbsolutePath().toString();
                 if (!v.getVideoId().endsWith(".mp4")) {
-                    Logger.debug(videoPath);
                     String command = "ffmpeg -i " + videoPath + " -preset fast -c:a aac -b:a 128k " +
                             "-codec:v libx264 -b:v 1000k -minrate 500k -maxrate 2000k -bufsize 2000k" + " "
                             + videoPath + ".mp4 -hide_banner";
