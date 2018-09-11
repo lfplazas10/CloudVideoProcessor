@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.base.BaseController;
 import models.Manager;
 import models.base.User;
+import play.Logger;
 import play.filters.csrf.AddCSRFToken;
 import play.filters.csrf.CSRF;
 import play.mvc.Result;
@@ -25,6 +26,7 @@ public class AuthController extends BaseController {
 
     public Result createManager() {
         try {
+            long inTime = System.currentTimeMillis();
             Manager user = bodyAs(Manager.class);
             boolean exists = Manager.find.query().where()
                     .eq("email", user.getEmail()).findOne() != null;
@@ -34,6 +36,7 @@ public class AuthController extends BaseController {
 
             user.hashAndSavePassword();
             user.save();
+            Logger.debug("Created manager " +((System.currentTimeMillis()-inTime)/1000)+"s");
             return ok(user);
         } catch (Exception e){
             return error(e.getMessage());
