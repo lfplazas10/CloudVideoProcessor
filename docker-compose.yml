@@ -14,12 +14,6 @@ services:
     ports:
       - 9000:9000
     entrypoint: /root/server/bin/./play-java-starter-example -Dplay.evolutions.db.default.autoApply=true
-#    networks:
-#    - backend
-#    depends_on:
-#    - 'postgres'
-#    links:
-#      - postgres
   postgres:
     image: postgres
     restart: always
@@ -28,8 +22,3 @@ services:
       POSTGRES_USER: ${DATABASE_USER}
     ports:
       - 5434:5432
-#    networks:
-#      - backend
-#networks:
-#  backend:
-#    driver: "bridge"
