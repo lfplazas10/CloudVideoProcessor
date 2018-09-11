@@ -42,9 +42,13 @@ public class VideoProcessTask {
         videos.stream().forEach((v) -> {
             try {
                 long initialTime = System.currentTimeMillis();
-                String videoPath = "videos/" + v.getContestId() + "/" + v.getVideoId();
+
+                String videoPath = Paths.get("video", v.getContestId()+"", v.getVideoId()).toAbsolutePath().toString();
                 if (!v.getVideoId().endsWith(".mp4")) {
-                    String command = "ffmpeg -i " + videoPath + " -preset fast -c:a aac -b:a 128k " + "-codec:v libx264 -b:v 1000k -minrate 500k -maxrate 2000k -bufsize 2000k" + " " + videoPath + ".mp4 -hide_banner";
+                    Logger.debug(videoPath);
+                    String command = "ffmpeg -i " + videoPath + " -preset fast -c:a aac -b:a 128k " +
+                            "-codec:v libx264 -b:v 1000k -minrate 500k -maxrate 2000k -bufsize 2000k" + " "
+                            + videoPath + ".mp4 -hide_banner";
                     Process p = Runtime.getRuntime().exec(command);
                     p.waitFor(); //This makes each execution synchronous
                     long timeTaken = System.currentTimeMillis() - initialTime;

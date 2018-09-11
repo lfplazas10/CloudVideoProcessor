@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import instance from "../../Helpers/AjaxCrtl";
@@ -39,7 +38,7 @@ class ContestDetail extends Component {
     this.upPage = this.upPage.bind(this);
     authManager.validateUser();
   }
-
+  
   componentDidMount() {
     instance().get('contest/single/' + this.props.location.state.url)
       .then((response) => {
@@ -98,7 +97,7 @@ class ContestDetail extends Component {
     
     this.setState({sources: '{"type": "' + videoType + '", "src":"' + videoId + '"}'});
     this.setState({videoSrc: '/api/' + contestId + '/video/' + videoId, videoType: videoType});
-
+    
     
     this.togglePlayer();
   }
@@ -231,8 +230,6 @@ class ContestDetail extends Component {
     );
   }
 }
-
-
 const styles = theme => ({
   
   media: {
@@ -261,8 +258,6 @@ const styles = theme => ({
     height: 300
   }
 });
-
-
 const THEME = createMuiTheme({
   typography: {
     "fontFamily": "\"Roboto\", \"Helvetica\", \"Arial\", sans-serif",
@@ -272,10 +267,6 @@ const THEME = createMuiTheme({
     "fontWeightMedium": 500
   }
 });
-
-
 ContestDetail.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-
-export default withStyles(styles)(ContestDetail);

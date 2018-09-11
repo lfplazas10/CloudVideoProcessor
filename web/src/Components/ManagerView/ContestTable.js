@@ -37,8 +37,8 @@ class ContestTable extends React.Component {
             update: false,
             delete: false,
             pageNum: 1,
-            prevButton: true,
-            nextButton: false,
+            prevButton: false,
+            nextButton: true,
             id: 0,
             contests: [],
         };
@@ -81,11 +81,10 @@ class ContestTable extends React.Component {
 
     downPage(e) {
         e.preventDefault();
-        if (this.state.pageNum != 1) {
+        if (this.state.pageNum > 1) {
             const newPage = this.state.pageNum - 1;
             this.setState({ pageNum: newPage }, this.getAll)
         }
-        else this.setState({ prevButton: true });
     }
 
     viewUpdate(e) {
@@ -97,9 +96,11 @@ class ContestTable extends React.Component {
         if (e && e.preventDefault) e.preventDefault();
         instance().get('contest/' + this.state.pageNum)
             .then((response) => {
-                this.setState({ contests: response.data });
-                if (response.data.length >= 0)
-                    this.setState({ nextButton: true });
+                this.setState({
+                  contests: response.data,
+                  nextButton: response.data.length == 50,
+                  prevButton: this.state.pageNum > 1
+                });
             })
             .catch((error) => {
                 this.setState({errorMessage: error.response});
@@ -423,8 +424,8 @@ class ContestTable extends React.Component {
                     </Typography>
 
                     <Pager>
-                        <Pager.Item disabled={this.state.prevButton} onClick={this.downPage} previous > &larr; Previous Page </Pager.Item>
-                        <Pager.Item disabled={this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
+                        <Pager.Item disabled={!this.state.prevButton} onClick={this.downPage} previous > &larr; Previous Page </Pager.Item>
+                        <Pager.Item disabled={!this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
                     </Pager>
                     <Table className={classes.table} >
                         <TableHead>
