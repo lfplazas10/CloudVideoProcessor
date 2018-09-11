@@ -272,4 +272,4 @@ ContestDetail.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default ContestDetail;
+export default withStyles(styles)(ContestDetail);

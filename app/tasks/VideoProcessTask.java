@@ -52,14 +52,13 @@ public class VideoProcessTask {
                     Process p = Runtime.getRuntime().exec(command);
                     p.waitFor(); //This makes each execution synchronous
                     long timeTaken = System.currentTimeMillis() - initialTime;
-                    Logger.debug(v.getId() + " " + timeTaken);
+                    Logger.debug("Processed " + v.getVideoId()+" in "+timeTaken);
                 }
                 v.setState(ContestSubmission.State.Processed);
                 v.save();
                 CompletableFuture.runAsync(() -> { //TODO: Uncomment for production
                     // EmailService.sendFromGMail("Processed", // "Your video was successfully processed, you can now watch it in our website", // v.getEmail());
                 });
-                System.out.println("Processed " + v.getVideoId());
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
