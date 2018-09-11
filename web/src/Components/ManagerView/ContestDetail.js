@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {withStyles, MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
@@ -15,7 +15,7 @@ import Paper from "@material-ui/core/Paper/Paper";
 import authManager from '../../Helpers/UserManagement.js'
 import ErrorMessage from "../../Helpers/ErrorMessage";
 
-class ContestDetail extends Component {
+class ContestDetail extends React.Component {
   
   constructor(props) {
     super(props);
@@ -230,6 +230,7 @@ class ContestDetail extends Component {
     );
   }
 }
+
 const styles = theme => ({
   
   media: {
@@ -270,3 +271,5 @@ const THEME = createMuiTheme({
 ContestDetail.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
+export default ContestDetail;
