@@ -28,11 +28,16 @@ services:
     privileged: true
 
   worker:
-    image: alpine:latest
+    image: lfplazas10/video-worker:latest
     restart: always
     environment:
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_USER: ${DATABASE_USER}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_NAME: ${DATABASE_NAME}
+      NFS_IP: ${NFS_IP}
+    entrypoint: /root/./entry-point.sh
+    privileged: true
 
 # Commented as we are not using the local DB anymore
 #  postgres:

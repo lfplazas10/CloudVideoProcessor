@@ -318,7 +318,7 @@ class ContestPublic extends React.Component {
       videoId = videoId + '.mp4';
     }
     this.setState({
-      videoSrc: '/api/' + this.state.contest.id + '/video/' + videoId,
+      videoSrc: '/api/' + this.state.contest.id + '/video/' + videoId + '/converted',
       videoType: 'video/mp4'
     });
     

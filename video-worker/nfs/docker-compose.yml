@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+  server:
+    image: lfplazas10/contest-server:latest
+    restart: always
+    environment:
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_URL: ${DATABASE_URL}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+    ports:
+      - 9000:9000
+    entrypoint: /root/server/bin/./play-java-starter-example -Dplay.evolutions.db.default.autoApply=true
+
+  nfs:
+    image: itsthenetwork/nfs-server-alpine:latest
+    volumes:
+      - /home/ubuntu/nfs:/nfsshare
+    ports:
+      - 2049:2049
+    environment:
+      SHARED_DIRECTORY: /nfsshare
+    privileged: true
+
+  worker:
+    image: alpine:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${DATABASE_USER}
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${DATABASE_USER}
+    ports:
+      - 5432
+

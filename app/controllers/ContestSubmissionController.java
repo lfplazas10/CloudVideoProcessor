@@ -41,7 +41,9 @@ public class ContestSubmissionController extends BaseController {
             //TODO: When improving performance, create and attach a proper Executor to this future
             CompletableFuture.runAsync(() -> {
                 try {
-                    Path path = Paths.get("videos",
+                    Path path = Paths.get("nfs",
+                            "videos",
+                            "raw",
                             String.valueOf(cs.getContestId()),
                             videoId);
                     byte [] stream = new byte [(int) videoFile.length()];
@@ -66,9 +68,28 @@ public class ContestSubmissionController extends BaseController {
         }
     }
 
-    public Result getVideo(Long contestId, String videoId){
+    public Result getRawVideo(Long contestId, String videoId){
         try {
-            Path path = Paths.get("videos",
+            Path path = Paths.get("nfs",
+                    "videos",
+                    "raw",
+                    String.valueOf(contestId),
+                    videoId);
+            byte [] video = Files.readAllBytes(path);
+            if (video.length <= 0)
+                throw new Exception("Error reading the video");
+
+            return ok(video);
+        } catch (Exception e){
+            return error(e.getMessage());
+        }
+    }
+
+    public Result getConvertedVideo(Long contestId, String videoId){
+        try {
+            Path path = Paths.get("nfs",
+                    "videos",
+                    "converted",
                     String.valueOf(contestId),
                     videoId);
             byte [] video = Files.readAllBytes(path);
