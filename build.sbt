@@ -1,6 +1,6 @@
-name := """play-java-starter-example"""
+name := """contest-server"""
 
-version := "1.0-SNAPSHOT"
+version := "1"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 

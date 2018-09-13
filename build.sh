@@ -8,10 +8,10 @@ if [ "$1" == "true" ]; then
     mv web/build/* public/
 fi
 if [ "$2" == "true" ]; then
-    rm -r target/universal/play-java-starter-example-1.0-SNAPSHOT.zip
-    rm -r Dockerfiles/play-java*
+    rm -r target/universal/contest-server-1.zip
+    rm -r Dockerfiles/contest-server-1*
     sbt dist
-    mv target/universal/play-java-starter-example-1.0-SNAPSHOT.zip Dockerfiles/
+    mv target/universal/contest-server-1.zip Dockerfiles/
     docker build Dockerfiles/. -t lfplazas10/contest-server
 fi
 if [ "$3" == "true" ]; then

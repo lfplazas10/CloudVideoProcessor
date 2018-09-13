@@ -3,7 +3,7 @@ conf/evolutions/default/*
 .env
 target
 build
-Dockerfiles/play-java-starter-example-1.0-SNAPSHOT.zip
+Dockerfiles/contest-server-1.zip
 *.ipr
 *.iws
 videos
