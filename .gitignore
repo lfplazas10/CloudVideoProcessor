@@ -7,6 +7,7 @@ Dockerfiles/play-java-starter-example-1.0-SNAPSHOT.zip
 *.ipr
 *.iws
 videos
+video-worker/node_modules
 images
 /.idea
 /.idea_modules

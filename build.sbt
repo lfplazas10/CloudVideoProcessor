@@ -22,7 +22,7 @@ libraryDependencies += "org.apache.commons" % "commons-text" % "1.4"
 libraryDependencies += "org.assertj" % "assertj-core" % "3.6.2" % Test
 libraryDependencies += "org.awaitility" % "awaitility" % "2.0.0" % Test
 
-libraryDependencies += "org.postgresql" % "postgresql" % "42.2.2"
+libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
 libraryDependencies ++= Seq(evolutions, jdbc)
 
 // Make verbose tests
