@@ -11,9 +11,11 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       EMAIL_USER: ${EMAIL_USER}
       EMAIL_PASS: ${EMAIL_PASS}
+      NFS_IP: ${NFS_IP}
     ports:
     - 9000:9000
-    entrypoint: /root/server/bin/./play-java-starter-example -Dplay.evolutions.db.default.autoApply=true
+    privileged: true
+    entrypoint: /root/server/./entry-point.sh
 
   nfs:
     image: itsthenetwork/nfs-server-alpine:latest
@@ -31,12 +33,14 @@ services:
     environment:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_USER: ${DATABASE_USER}
-  postgres:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_USER: ${DATABASE_USER}
-    ports:
-    - 5432
+
+# Commented as we are not using the local DB anymore
+#  postgres:
+#    image: postgres
+#    restart: always
+#    environment:
+#      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+#      POSTGRES_USER: ${DATABASE_USER}
+#    ports:
+#    - 5432
 
