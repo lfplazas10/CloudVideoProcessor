@@ -1,7 +1,8 @@
-const { Client } = require('pg');
+const { Pool, Client } = require('pg')
 const execSync = require('child_process').execSync;
 let fs = require('fs');
-const client = new Client({
+
+const pool = new Pool({
   user: process.env.DATABASE_USER,
   host: process.env.DATABASE_HOST,
   database: process.env.DATABASE_NAME,
@@ -9,22 +10,26 @@ const client = new Client({
   port: 5432,
 });
 
-// let interval = setInterval(getAndProcess, 2000);
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
+
 getAndProcess();
 function getAndProcess(){
   try {
-    client.connect(() => {
-      client.query('SELECT * FROM contestsubmissions WHERE state=1', (err, res) => {
-        console.log(res)
+    pool.connect().then(client => {
+      client.query('SELECT * FROM contestsubmissions WHERE state=1 ORDER BY creation_date DESC').then(res => {
         const rows = res.rows;
-        console.log(rows.length)
+        console.log("Will process: "+rows.length);
         rows.forEach(row => {
           let initialTime = new Date().getTime();
-        
           let sourcePath = "nfs/videos/raw/" + row.contest_id + "/" + row.video_id;
           let destPath = "nfs/videos/converted/" + row.contest_id + "/" + row.video_id;
+          
           if (!fs.existsSync("nfs/videos/converted/" + row.contest_id) ){
-            fs.mkdirSync("nfs/videos/converted");
+            if (!fs.existsSync("nfs/videos/converted") )
+              fs.mkdirSync("nfs/videos/converted");
             fs.mkdirSync("nfs/videos/converted/" + row.contest_id);
           }
           
@@ -32,19 +37,23 @@ function getAndProcess(){
             "-codec:v libx264 -b:v 1000k -minrate 500k -maxrate 2000k -bufsize 2000k " +
             destPath + ".mp4 -hide_banner";
           code = execSync(command);
-        
-          let updateCommand = 'UPDATE contestsubmissions SET state=2 WHERE id =' + row.id;
-        
+          
           let timeDifference = new Date().getTime() - initialTime;
           console.log("Processed in: "+ (timeDifference/1000));
-          client.query(updateCommand);
+          setContestAsProcessed(row.id, client);
         });
-        client.end();
-      });
+        client.release();
+      }).catch(err => console.log(err));
     });
   } catch (e) {
     console.log(e);
   }
+}
+
+function setContestAsProcessed(contestSubmissionId, client){
+  let updateCommand = 'UPDATE contestsubmissions SET state=2 WHERE id=' + contestSubmissionId;
+  client.query(updateCommand).then(res => {
+  }).catch(err => console.log(err));
 }
 
 
