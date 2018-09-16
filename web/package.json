@@ -15,7 +15,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4"
   },
-  "proxy": "http://localhost:9000",
+  "proxy": "http://18.224.26.66:9000",
   "scripts": {
     "start": "PORT=8080 react-scripts start",
     "build": "react-scripts build",

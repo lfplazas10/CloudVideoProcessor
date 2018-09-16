@@ -125,6 +125,10 @@ class ContestTable extends React.Component {
         if (e && e.preventDefault) e.preventDefault();
         let sDate = new Date(this.state.startDate);
         let eDate = new Date(this.state.endDate);
+        if (sDate.getTime() > eDate.getTime()){
+          this.setState({errorMessage: 'The ending date cannot be before the start date.'});
+          return;
+        }
         sDate.setUTCHours(sDate.getUTCHours() + 24);
         eDate.setUTCHours(eDate.getUTCHours() + 24);
         let obj = {

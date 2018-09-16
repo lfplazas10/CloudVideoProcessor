@@ -11,7 +11,13 @@ class ErrorMessage extends React.Component{
   
   render(){
     const props = this.props;
-    const message = props.errorData.data.error == null ? props.errorData.statusText : props.errorData.data.error;
+    let message = '';
+    if (props.errorData.data != null && props.errorData.data.error != null)
+      message = props.errorData.data.error;
+    else if (props.errorData.data != null)
+      message = props.errorData.statusText;
+    else
+      message = props.errorData;
     return (
       <Dialog
         open={true}
