@@ -59,24 +59,28 @@ class ContestDetail extends React.Component {
     
     instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + this.state.pageNum)
       .then((response) => {
-        this.setState({submissions: response.data});
+        this.setState({
+          submissions: response.data,
+          nextButton: response.data.length == 50,
+          prevButton: this.state.pageNum > 1
+        });
       })
       .catch((error) => {
         this.setState({errorMessage: error.response});
         console.log(error.response)
       });
     
-    instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + this.state.pageNum + 1)
-      .then((response) => {
-        //SI la siguiente página tiene videos mostrar boton de next
-        if (response.data.length !== 0) {
-          this.setState({nextButton: true})
-        }
-      })
-      .catch((error) => {
-        this.setState({errorMessage: error.response});
-        console.log(error.response)
-      });
+    // instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + this.state.pageNum + 1)
+    //   .then((response) => {
+    //     //SI la siguiente página tiene videos mostrar boton de next
+    //     if (response.data.length !== 0) {
+    //       this.setState({nextButton: true})
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     this.setState({errorMessage: error.response});
+    //     console.log(error.response)
+    //   });
     
   }
   
@@ -170,11 +174,17 @@ class ContestDetail extends React.Component {
           <Typography style={{paddingTop: '2%'}} variant="display3" gutterBottom>
             Submissions
           </Typography>
-          
+  
           <Pager>
-            {this.state.prevButton && <Pager.Item onClick={this.downPage} previous> &larr; Previous Page </Pager.Item>}
-            {this.state.nextButton && <Pager.Item onClick={this.upPage} next> Next Page &rarr; </Pager.Item>}
+            <Pager.Item disabled={!this.state.prevButton} onClick={this.downPage} previous> &larr; Previous
+              Page </Pager.Item>
+            <Pager.Item disabled={!this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
           </Pager>
+          
+          {/*<Pager>*/}
+            {/*{this.state.prevButton && <Pager.Item onClick={this.downPage} previous> &larr; Previous Page </Pager.Item>}*/}
+            {/*{this.state.nextButton && <Pager.Item onClick={this.upPage} next> Next Page &rarr; </Pager.Item>}*/}
+          {/*</Pager>*/}
           
           {this.state.submissions ? (
             <div>
