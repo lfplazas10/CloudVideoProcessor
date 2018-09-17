@@ -37,6 +37,30 @@ docker-compose up -d service_name
 Where service name is either server, worker or nfs.
 For more info on open ports and general conf take a look at the docker-compose.yml file.
 
+### Docker useful commands:
+
+**Run commands:**
+
+For starting a service, run: **docker-compose up service_name**
+
+For starting a service as a daemon, run: **docker-compose up -d service_name**
+
+**Stop commands:**
+
+For stopping a service, run: **docker-compose down service_name**
+
+For stopping all running services, run: **docker-compose down**
+
+**Updating image commands**
+
+Docker images are saved on a public registry, if any changes are done to the image, you have to update (or pull) the local images, this is easily done by running: **docker-compose pull**
+
+**Miscellaneous commands:** 
+
+For viewing all the currently running containers, run: **docker container ls**
+
+For checking the container logs, run: **docker logs container_id** (you can get the id from the **docker container ls** command)
+
 ## 2. How to run locally 
 
 Follow the same steps as in the  1st step, you only need docker, docker-compose and configuring the .env file.
