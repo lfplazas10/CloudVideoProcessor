@@ -32,7 +32,7 @@ class ContestPublic extends React.Component {
       firstName: "",
       lastName: "",
       email: "",
-      desc: "",
+      description: "",
       video: null,
       create: false,
       contest: {},
@@ -73,7 +73,7 @@ class ContestPublic extends React.Component {
       this.setState({
         errorMessage: error.response,
         errorAfterFunction : () => BrowserHistory.push('/')
-      })
+      });
       console.log(error.response)
     });
   }
@@ -105,6 +105,7 @@ class ContestPublic extends React.Component {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       email: this.state.email,
+      contestUrl: this.props.match.url,
       description: this.state.description,
       contestId: this.state.contest.id
     }).then((response) => {
@@ -255,8 +256,8 @@ class ContestPublic extends React.Component {
               id="description"
               label="Video Description"
               type="text"
-              value={this.state.desc}
-              onChange={(e) => this.setState({desc: e.target.value})}
+              value={this.state.description}
+              onChange={(e) => this.setState({description: e.target.value})}
               required
               fullWidth
             />

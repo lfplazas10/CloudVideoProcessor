@@ -1,7 +1,9 @@
-const { Pool, Client } = require('pg')
+const { Pool } = require('pg');
 const execSync = require('child_process').execSync;
+AWS = require('aws-sdk');
 let fs = require('fs');
 
+AWS.config.update({region: 'us-west-2'});
 const pool = new Pool({
   user: process.env.DATABASE_USER,
   host: process.env.DATABASE_HOST,
@@ -9,6 +11,40 @@ const pool = new Pool({
   password: process.env.DATABASE_PASSWORD,
   port: 5432,
 });
+
+let params = {
+  Destination: { /* required */
+    CcAddresses: [
+      'c.hurtadoo@uniandes.edu.co',
+      /* more items */
+    ],
+    ToAddresses: [
+      'lf.plazas10@uniandes.edu.co',
+      /* more items */
+    ]
+  },
+  Message: { /* required */
+    Body: { /* required */
+      Html: {
+        Charset: "UTF-8",
+        Data: "prueba 2"
+      },
+      Text: {
+        Charset: "UTF-8",
+        Data: "prueba 22"
+      }
+    },
+    Subject: {
+      Charset: 'UTF-8',
+      Data: 'Test email'
+    }
+  },
+  Source: 'c.hurtadoo@uniandes.edu.co', /* required */
+  ReplyToAddresses: [
+    'c.hurtadoo@uniandes.edu.co',
+    /* more items */
+  ],
+};
 
 pool.on('error', (err, client) => {
   console.error('Unexpected error on idle client', err);
@@ -48,6 +84,17 @@ function getAndProcess(){
   } catch (e) {
     console.log(e);
   }
+}
+
+function sendMailToUser(userEmail, contestUrl){
+  let sendPromise = new AWS.SES({apiVersion: '2010-12-01', correctClockSkew:true}).sendEmail(params).promise();
+  sendPromise.then(
+    function(data) {
+      console.log(data.MessageId);
+    }).catch(
+    function(err) {
+      console.error(err, err.stack);
+    });
 }
 
 function setContestAsProcessed(contestSubmissionId, client){

@@ -19,13 +19,21 @@ public class ContestSubmission extends BaseModel {
         Processed
     }
 
-    private String firstName, lastName, email, description, videoId, videoType;
+    private String firstName, lastName, email, description, videoId, videoType, contestUrl;
 
     private State state;
 
     private long contestId;
 
     private Timestamp creationDate;
+
+    public String getContestUrl() {
+        return contestUrl;
+    }
+
+    public void setContestUrl(String contestUrl) {
+        this.contestUrl = contestUrl;
+    }
 
     public String getVideoType() {
         return videoType;

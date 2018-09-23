@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.320.0",
     "pg": "^7.4.3"
   }
 }
