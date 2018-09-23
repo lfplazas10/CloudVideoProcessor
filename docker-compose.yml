@@ -19,6 +19,7 @@ services:
 
   nfs:
     image: itsthenetwork/nfs-server-alpine:latest
+    restart: always
     volumes:
     - /home/ubuntu/nfs:/nfsshare
     ports:
