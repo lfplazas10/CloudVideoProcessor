@@ -3,48 +3,21 @@ const execSync = require('child_process').execSync;
 AWS = require('aws-sdk');
 let fs = require('fs');
 
-AWS.config.update({region: 'us-west-2'});
+AWS.config.update({
+  region: 'us-west-2',
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_ACCESS_SECRET,
+});
+
 const pool = new Pool({
   user: process.env.DATABASE_USER,
   host: process.env.DATABASE_HOST,
   database: process.env.DATABASE_NAME,
   password: process.env.DATABASE_PASSWORD,
   port: 5432,
+  hostVideo: process.env.HOST_VIDEO,
 });
 
-let params = {
-  Destination: { /* required */
-    CcAddresses: [
-      'c.hurtadoo@uniandes.edu.co',
-      /* more items */
-    ],
-    ToAddresses: [
-      'lf.plazas10@uniandes.edu.co',
-      /* more items */
-    ]
-  },
-  Message: { /* required */
-    Body: { /* required */
-      Html: {
-        Charset: "UTF-8",
-        Data: "prueba 2"
-      },
-      Text: {
-        Charset: "UTF-8",
-        Data: "prueba 22"
-      }
-    },
-    Subject: {
-      Charset: 'UTF-8',
-      Data: 'Test email'
-    }
-  },
-  Source: 'c.hurtadoo@uniandes.edu.co', /* required */
-  ReplyToAddresses: [
-    'c.hurtadoo@uniandes.edu.co',
-    /* more items */
-  ],
-};
 
 pool.on('error', (err, client) => {
   console.error('Unexpected error on idle client', err);
@@ -74,6 +47,11 @@ function getAndProcess(){
             destPath + ".mp4 -hide_banner";
           code = execSync(command);
           
+          let urlVideo = process.env.HOST_VIDEO + row['contest_url'];
+          
+          sendMailToUser(row['first_name'], row.email, urlVideo);
+          
+          
           let timeDifference = new Date().getTime() - initialTime;
           console.log("Processed in: "+ (timeDifference/1000));
           setContestAsProcessed(row.id, client);
@@ -86,7 +64,40 @@ function getAndProcess(){
   }
 }
 
-function sendMailToUser(userEmail, contestUrl){
+function sendMailToUser(userName, userEmail, urlVideo){
+  
+  let message = "Estimado(a) " + userName + ", <br/>"
+    + "Le informamos que su video fue procesado exitosamente, "
+    + "puede visualizarlo en el siguiente enlace: <br/>"
+    + "<a href='" + urlVideo + "'> Enlace video </a>";
+  
+  let params = {
+    Destination: { /* required */
+      CcAddresses: [
+        'c.hurtadoo@uniandes.edu.co',
+        'lf.plazas10@uniandes.edu.co',
+        /* more items */
+      ],
+      ToAddresses: [
+        userEmail,
+        /* more items */
+      ]
+    },
+    Message: { /* required */
+      Body: { /* required */
+        Html: {
+          Charset: "UTF-8",
+          Data: message
+        },
+      },
+      Subject: {
+        Charset: 'UTF-8',
+        Data: 'Notificación video concurso'
+      }
+    },
+    Source: 'c.hurtadoo@uniandes.edu.co' /* required */
+  };
+  
   let sendPromise = new AWS.SES({apiVersion: '2010-12-01', correctClockSkew:true}).sendEmail(params).promise();
   sendPromise.then(
     function(data) {

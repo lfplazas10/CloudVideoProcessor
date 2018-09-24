@@ -8,6 +8,7 @@ Dockerfiles/contest-server-1.zip
 *.iws
 videos
 video-worker/node_modules
+video-worker/credentials
 images
 /.idea
 /.idea_modules

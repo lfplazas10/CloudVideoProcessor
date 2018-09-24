@@ -11,6 +11,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       EMAIL_USER: ${EMAIL_USER}
       EMAIL_PASS: ${EMAIL_PASS}
+      CONNECT_NFS: ${CONNECT_NFS}
       NFS_IP: ${NFS_IP}
     ports:
     - 9000:9000
@@ -36,6 +37,9 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_HOST: ${DATABASE_HOST}
       DATABASE_NAME: ${DATABASE_NAME}
+      HOST_VIDEO: ${HOST_VIDEO}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_ACCESS_SECRET: ${AWS_ACCESS_SECRET}
       NFS_IP: ${NFS_IP}
     entrypoint: /root/./entry-point.sh
     privileged: true
