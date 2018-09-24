@@ -386,6 +386,9 @@ class ContestPublic extends React.Component {
                         <Typography variant='subheading' gutterBottom>
                           <strong>Date:</strong> {this.formatDate(submission.creationDate)}
                         </Typography>
+                        <Typography variant='subheading' gutterBottom>
+                          <strong>Description: </strong>{submission.description}
+                        </Typography>
                       </CardContent>
                       <CardActions>
                         <Button size="small" color="primary" disabled={submission.state == 'Waiting'}

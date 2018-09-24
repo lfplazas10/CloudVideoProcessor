@@ -206,6 +206,9 @@ class ContestDetail extends React.Component {
                         <Typography variant='subheading' gutterBottom>
                           <strong>State:</strong> {submission.state}
                         </Typography>
+                        <Typography variant='subheading' gutterBottom>
+                          <strong>Description:</strong> {submission.description}
+                        </Typography>
                       </CardContent>
                       <CardActions>
                         <Button size="small" color="primary"

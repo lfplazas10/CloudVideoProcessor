@@ -7,6 +7,9 @@ Dockerfiles/contest-server-1.zip
 *.ipr
 *.iws
 videos
+public
+public/*
+./public
 video-worker/node_modules
 video-worker/credentials
 images

@@ -28,7 +28,7 @@ getAndProcess();
 function getAndProcess(){
   try {
     pool.connect().then(client => {
-      client.query('SELECT * FROM contestsubmissions WHERE state=1 ORDER BY creation_date DESC').then(res => {
+      client.query('SELECT * FROM contestsubmissions WHERE state=1 ORDER BY creation_date ASC').then(res => {
         const rows = res.rows;
         console.log("Will process: "+rows.length);
         rows.forEach(row => {
