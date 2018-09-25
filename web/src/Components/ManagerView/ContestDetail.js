@@ -98,7 +98,7 @@ class ContestDetail extends React.Component {
         videoId = videoId + '.mp4';
       }
       videoType = 'video/mp4';
-      let videoSrc = '/api/' + contestId + '/video/' + videoId + '/converted';
+      videoSrc = '/api/' + contestId + '/video/' + videoId + '/converted';
     }
     
     this.setState({sources: '{"type": "' + videoType + '", "src":"' + videoId + '"}'});

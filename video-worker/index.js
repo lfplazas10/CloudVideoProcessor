@@ -36,7 +36,7 @@ function getAndProcess(){
         
         let rowsNotInQueue = rows.filter(row => !isContestAlreadyInQueue(row));
         contestsToProcess.push(...rowsNotInQueue);
-        
+        console.log("Amount in queue: "+contestsToProcess.length);
         while (contestsToProcess.length > 0){
           console.log("Amount in queue: "+contestsToProcess.length);
           let row = contestsToProcess.shift();
