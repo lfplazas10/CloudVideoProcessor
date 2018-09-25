@@ -63,7 +63,8 @@ public class ContestController extends BaseController {
             if (contest == null)
                 throw new Exception("That contest doesn't exist");
 
-            Path path = Paths.get("images",
+            Path path = Paths.get("nfs",
+                    "images",
                     contest.getBannerUrl());
             byte [] image = Files.readAllBytes(path);
             if (image.length <= 0)
@@ -98,7 +99,8 @@ public class ContestController extends BaseController {
             CompletableFuture.runAsync(() -> {
 
                 try {
-                    Path path = Paths.get("images",
+                    Path path = Paths.get("nfs",
+                            "images",
                             imageName);
                     byte [] stream = new byte [(int) imageFile.length()];
                     new FileInputStream(imageFile).read(stream);
