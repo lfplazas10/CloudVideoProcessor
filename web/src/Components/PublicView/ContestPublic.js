@@ -41,7 +41,7 @@ class ContestPublic extends React.Component {
       submissions: [],
       success: false,
       loading: false,
-      prevButton: true,
+      prevButton: false,
       nextButton: false,
       error: null,
       showDialogMessage : false
@@ -50,7 +50,7 @@ class ContestPublic extends React.Component {
     this.hideCreate = this.hideCreate.bind(this);
     this.viewCreate = this.viewCreate.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.getSubs = this.getSubs.bind(this);
+    this.getSubmissions = this.getSubmissions.bind(this);
     this.createSub = this.createSub.bind(this);
     this.sendVideo = this.sendVideo.bind(this);
     this.handleMessageClose = this.handleMessageClose.bind(this);
@@ -68,7 +68,7 @@ class ContestPublic extends React.Component {
     const url = this.props.match.params.contestUrl;
     instance().get('contest/single/' + url)
       .then((response) => {
-        this.setState({contest: response.data}, this.getSubs);
+        this.setState({contest: response.data}, this.getSubmissions);
       }).catch((error) => {
       this.setState({
         errorMessage: error.response,
@@ -83,14 +83,25 @@ class ContestPublic extends React.Component {
     this.setState({showDialogMessage: false});
   }
   
-  getSubs(e) {
+  getSubmissions(e) {
     if (e && e.preventDefault) e.preventDefault();
     instance().get('public/submissions/' + this.state.contest.id + '/' + this.state.pageNum)
       .then((response) => {
-        if (response.data.length > 0) this.setState({submissions: response.data});
-        else this.setState({nextButton: true});
+        console.log(response)
+        this.setState({
+          submissions: response.data,
+          prevButton: this.state.pageNum > 1,
+        });
+        instance().get('public/submissions/' + this.state.contest.id + '/' + (this.state.pageNum+1))
+          .then((response2) => {
+            this.setState({ nextButton: response2.data.length > 0 });
+          }).catch((error) => {
+          this.setState({errorMessage: error.response});
+          console.log(error.response)
+        });
       }).catch((error) => {
-      console.log(error.response)
+        this.setState({errorMessage: error.response});
+        console.log(error.response)
     });
   }
   
@@ -157,16 +168,15 @@ class ContestPublic extends React.Component {
   upPage(e) {
     e.preventDefault();
     const newPage = this.state.pageNum + 1;
-    this.setState({pageNum: newPage}, this.getSubs);
+    this.setState({pageNum: newPage}, this.getSubmissions);
   }
   
   downPage(e) {
     e.preventDefault();
-    if (this.state.pageNum !== 1) {
+    if (this.state.pageNum > 1) {
       const newPage = this.state.pageNum - 1;
-      this.setState({pageNum: newPage}, this.getSubs)
+      this.setState({pageNum: newPage}, this.getSubmissions)
     }
-    else this.setState({prevButton: true});
   }
   
   showMessage() {
@@ -366,9 +376,16 @@ class ContestPublic extends React.Component {
             Submissions
           </Typography>
           <Pager>
-            <Pager.Item disabled={this.state.prevButton} onClick={this.downPage} previous> &larr; Previous
-              Page </Pager.Item>
-            <Pager.Item disabled={this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
+            <Pager.Item disabled={!this.state.prevButton} className='pager2'
+                        onClick={(e) => {this.setState({prevButton: false}); this.downPage(e)}}
+                        previous>
+              &larr; Previous Page
+            </Pager.Item>
+            <Pager.Item disabled={!this.state.nextButton} className='pager2'
+                        onClick={(e) => {this.setState({nextButton: false}); this.upPage(e)}}
+                        next>
+              Next Page &rarr;
+            </Pager.Item>
           </Pager>
           {this.state.submissions ? (
             <div>

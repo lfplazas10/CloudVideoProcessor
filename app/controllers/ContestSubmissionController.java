@@ -126,8 +126,8 @@ public class ContestSubmissionController extends BaseController {
             return ok (ContestSubmission.find.query().where()
                     .eq("contest_id", id)
                     .orderBy("creation_date desc")
-                    .setFirstRow(50*pageNum - 50)
-                    .setMaxRows(50*pageNum)
+                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
+                    .setMaxRows(PAGINATION)
                     .findList());
         } catch (Exception e){
             e.printStackTrace();
@@ -142,8 +142,8 @@ public class ContestSubmissionController extends BaseController {
                     .and()
                     .eq("state", ContestSubmission.State.Processed)
                     .orderBy("creation_date desc")
-                    .setFirstRow(50*pageNum - 50)
-                    .setMaxRows(50*pageNum)
+                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
+                    .setMaxRows(PAGINATION)
                     .findList());
         } catch (Exception e){
             e.printStackTrace();

@@ -10,6 +10,8 @@ public class BaseController extends Controller {
 
     protected static final String CONTENT_TYPE = "application/json";
 
+    protected static final int PAGINATION = 30;
+
     protected static <T> T bodyAs(Class<T> clazz) {
         Http.RequestBody body = request().body();
         if (body == null || body.asJson() == null) {

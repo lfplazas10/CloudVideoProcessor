@@ -54,34 +54,25 @@ class ContestDetail extends React.Component {
   
   getData(e) {
     if (e && e.preventDefault) e.preventDefault();
-    
-    // console.log('location', this.props.location.state.contestName);
-    
     instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + this.state.pageNum)
       .then((response) => {
         this.setState({
           submissions: response.data,
-          nextButton: response.data.length == 50,
-          prevButton: this.state.pageNum > 1
+          prevButton: this.state.pageNum > 1,
         });
+        instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + (this.state.pageNum + 1))
+          .then((response2) => {
+            this.setState({ nextButton: response2.data.length > 0 });
+          })
+          .catch((error) => {
+            this.setState({errorMessage: error.response});
+            console.log(error.response)
+          });
       })
       .catch((error) => {
         this.setState({errorMessage: error.response});
         console.log(error.response)
       });
-    
-    // instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + this.state.pageNum + 1)
-    //   .then((response) => {
-    //     //SI la siguiente página tiene videos mostrar boton de next
-    //     if (response.data.length !== 0) {
-    //       this.setState({nextButton: true})
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     this.setState({errorMessage: error.response});
-    //     console.log(error.response)
-    //   });
-    
   }
   
   togglePlayer() {
@@ -122,18 +113,15 @@ class ContestDetail extends React.Component {
   upPage(e) {
     e.preventDefault();
     const newPage = this.state.pageNum + 1;
-    this.setState({prevButton: true});
     this.setState({pageNum: newPage}, this.getData);
   }
   
   downPage(e) {
     e.preventDefault();
-    if (this.state.pageNum !== 1) {
+    if (this.state.pageNum > 1) {
       const newPage = this.state.pageNum - 1;
       this.setState({pageNum: newPage}, this.getData)
     }
-    else if (this.state.pageNum == 2)
-      this.setState({prevButton: false});
   }
   
   render() {
@@ -176,9 +164,16 @@ class ContestDetail extends React.Component {
           </Typography>
   
           <Pager>
-            <Pager.Item disabled={!this.state.prevButton} onClick={this.downPage} previous> &larr; Previous
-              Page </Pager.Item>
-            <Pager.Item disabled={!this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
+            <Pager.Item disabled={!this.state.prevButton} className='pager2'
+                        onClick={(e) => {this.setState({prevButton: false}); this.downPage(e)}}
+                        previous>
+              &larr; Previous Page
+            </Pager.Item>
+            <Pager.Item disabled={!this.state.nextButton} className='pager2'
+                        onClick={(e) => {this.setState({nextButton: false}); this.upPage(e)}}
+                        next>
+              Next Page &rarr;
+            </Pager.Item>
           </Pager>
           
           {/*<Pager>*/}

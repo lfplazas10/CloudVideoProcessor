@@ -33,8 +33,8 @@ public class ContestController extends BaseController {
             return ok(Contest.find.query().where()
                     .eq("owner_email", user)
                     .orderBy("creation_date desc")
-                    .setFirstRow(50*pageNum - 50)
-                    .setMaxRows(50*pageNum)
+                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
+                    .setMaxRows(PAGINATION)
                     .findList());
         } catch (Exception e){
             e.printStackTrace();

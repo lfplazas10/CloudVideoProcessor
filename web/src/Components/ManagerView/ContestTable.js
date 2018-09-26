@@ -38,7 +38,7 @@ class ContestTable extends React.Component {
       delete: false,
       pageNum: 1,
       prevButton: false,
-      nextButton: true,
+      nextButton: false,
       id: 0,
       contests: [],
     };
@@ -98,9 +98,16 @@ class ContestTable extends React.Component {
       .then((response) => {
         this.setState({
           contests: response.data,
-          nextButton: response.data.length == 50,
           prevButton: this.state.pageNum > 1
         });
+        instance().get('contest/' + (this.state.pageNum+1))
+          .then((response2) => {
+            this.setState({ nextButton: response2.data.length > 0 });
+          })
+          .catch((error) => {
+            this.setState({errorMessage: error.response});
+            console.log(error.response)
+          });
       })
       .catch((error) => {
         this.setState({errorMessage: error.response});
@@ -430,11 +437,18 @@ class ContestTable extends React.Component {
               Add Contest
             </Button>
           </Typography>
-          
+  
           <Pager>
-            <Pager.Item disabled={!this.state.prevButton} onClick={this.downPage} previous> &larr; Previous
-              Page </Pager.Item>
-            <Pager.Item disabled={!this.state.nextButton} onClick={this.upPage} next> Next Page &rarr; </Pager.Item>
+            <Pager.Item disabled={!this.state.prevButton} className='pager2'
+                        onClick={(e) => {this.setState({prevButton: false}); this.downPage(e)}}
+                        previous>
+              &larr; Previous Page
+            </Pager.Item>
+            <Pager.Item disabled={!this.state.nextButton} className='pager2'
+                        onClick={(e) => {this.setState({nextButton: false}); this.upPage(e)}}
+                        next>
+              Next Page &rarr;
+            </Pager.Item>
           </Pager>
           <Table className={classes.table}>
             <TableHead>
