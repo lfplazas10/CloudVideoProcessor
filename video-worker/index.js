@@ -25,6 +25,8 @@ pool.on('error', (err, client) => {
 
 let contestsToProcess = [];
 
+const initProcessTime = new Date().getTime();
+
 setInterval(getAndProcess, 10*60*1000);
 
 getAndProcess();
@@ -63,12 +65,11 @@ function getAndProcess(){
   
           let timeDifference = new Date().getTime() - initialTime;
           console.log("Processed in: "+ (timeDifference/1000));
+          let timeDifference2 = new Date().getTime() - initProcessTime;
+          console.log("TIME:"+ (timeDifference2/1000));
           setContestAsProcessed(row.id, client);
         }
         
-        // rows.forEach(row => {
-        //
-        // });
         client.release();
       }).catch(err => console.log(err));
     }).catch(err => console.log(err));

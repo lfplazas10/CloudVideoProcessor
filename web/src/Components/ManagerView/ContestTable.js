@@ -309,7 +309,14 @@ class ContestTable extends React.Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => this.setState({create: false})} color="primary">
+            <Button onClick={() => this.setState({
+              create: false,
+              name   : '',
+              banner : '',
+              url : '',
+              startDate : "2018-08-28",
+              endDate : "2018-08-28",
+              winnerPrize : '',})} color="primary">
               Cancel
             </Button>
             <Button color="primary" type="submit">
@@ -433,7 +440,14 @@ class ContestTable extends React.Component {
           <Typography variant="display3" gutterBottom>
             Contest List
             <Button variant="contained" color="primary" className='pull-right'
-                    onClick={() => this.setState({create: true})}>
+                    onClick={() => this.setState({
+                      create: true,
+                      name   : '',
+                      banner : '',
+                      url : '',
+                      startDate : "2018-08-28",
+                      endDate : "2018-08-28",
+                      winnerPrize : '',})}>
               Add Contest
             </Button>
           </Typography>

@@ -160,7 +160,7 @@ public class ContestController extends BaseController {
                 && !contest.getUrl().equals( oldContest.getUrl() ))
                 throw new Exception("There is already a contest with that URL, please try a different one");
 
-
+            contest.setCreationDate(oldContest.getCreationDate());
             contest.update();
             return ok(contest);
         } catch (Exception e){
