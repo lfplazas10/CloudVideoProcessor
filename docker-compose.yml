@@ -40,6 +40,7 @@ services:
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
       AWS_ACCESS_SECRET: ${AWS_ACCESS_SECRET}
       NFS_IP: ${NFS_IP}
+      LOOP_TIME: ${LOOP_TIME}
     entrypoint: /root/./entry-point.sh
     privileged: true
 

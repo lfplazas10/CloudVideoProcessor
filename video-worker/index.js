@@ -27,7 +27,7 @@ let contestsToProcess = [];
 
 const initProcessTime = new Date().getTime();
 
-setInterval(getAndProcess, 10*60*1000);
+setInterval(getAndProcess, parseInt(process.env.LOOP_TIME)*60*1000);
 
 getAndProcess();
 function getAndProcess(){
