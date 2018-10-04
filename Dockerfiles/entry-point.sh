@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+find . -type f -name RUNNING_PID -exec rm -f {} \;
 mount -t nfs4 -o proto=tcp,port=2049 ${NFS_IP}:/ /root/server/nfs/
 
 if [ "$?" != 0 ]; then
