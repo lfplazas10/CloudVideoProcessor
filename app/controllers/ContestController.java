@@ -141,6 +141,7 @@ public class ContestController extends BaseController {
 
             contest.setCreationDate(Timestamp.from(Instant.now()));
             contest.save();
+//            contest.save();
             return ok(contest);
         } catch (Exception e){
             return error(e.getMessage());
