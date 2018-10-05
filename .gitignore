@@ -9,6 +9,7 @@ Dockerfiles/contest-server-1.zip
 videos
 public
 public/*
+aws-scripts/node_modules
 ./public
 video-worker/node_modules
 video-worker/credentials
