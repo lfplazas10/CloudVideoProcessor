@@ -3,46 +3,36 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.base.BaseController;
 import models.Manager;
-import models.base.User;
 import play.Logger;
 import play.filters.csrf.AddCSRFToken;
-import play.filters.csrf.CSRF;
 import play.mvc.Result;
 
 public class AuthController extends BaseController {
 
-    @AddCSRFToken
-    public Result getToken() {
-        return ok(CSRF.getToken(request()).map(CSRF.Token::value).orElse("no token"));
-    }
 
     public Result getManager(){
         try{
-            return ok( Manager.find.byId( session("connected") ) );
+            return ok( find(session("connected"), Manager.class) );
         } catch (Exception e){
             return error(e.getMessage());
         }
     }
-
     public Result createManager() {
         try {
             long inTime = System.currentTimeMillis();
             Manager user = bodyAs(Manager.class);
-            boolean exists = Manager.find.query().where()
-                    .eq("email", user.getEmail()).findOne() != null;
-
+            boolean exists = find(user.getEmail(), Manager.class) != null;
             if (exists)
                 throw new Exception("There is already an user with that email");
 
             user.hashAndSavePassword();
-            user.save();
+            save(user);
             Logger.debug("Created manager " +((System.currentTimeMillis()-inTime)/1000)+"s");
             return ok(user);
         } catch (Exception e){
             return error(e.getMessage());
         }
     }
-
     public Result isActiveUser() {
         try {
             return ok(session("connected") != null);
@@ -58,7 +48,7 @@ public class AuthController extends BaseController {
             JsonNode request = request().body().asJson();
             String email = request.get("email").asText();
             String password = request.get("password").asText();
-            User user = Manager.find.query().where().eq("email", email).findOne();
+            Manager user = find(email, Manager.class);
 
             if (user == null)
                 throw new Exception("The user does not exist");

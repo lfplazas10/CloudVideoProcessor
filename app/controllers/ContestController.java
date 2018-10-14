@@ -1,26 +1,18 @@
 package controllers;
 
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import controllers.base.BaseController;
 import models.Contest;
-import models.ContestSubmission;
+//import models.ContestSubmission;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.text.StringEscapeUtils;
-import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.nio.file.*;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -30,12 +22,14 @@ public class ContestController extends BaseController {
     public Result getAll(Integer pageNum) {
         try {
             String user = session("connected");
-            return ok(Contest.find.query().where()
-                    .eq("owner_email", user)
-                    .orderBy("creation_date desc")
-                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
-                    .setMaxRows(PAGINATION)
-                    .findList());
+            QueryResultPage<Contest> qrp = findList("ownerEmail", user, Contest.class);
+            return ok(qrp);
+//            return ok(Contest.find.query().where()
+//                    .eq("owner_email", user)
+//                    .orderBy("creation_date desc")
+//                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
+//                    .setMaxRows(PAGINATION)
+//                    .findList());
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());
@@ -44,9 +38,7 @@ public class ContestController extends BaseController {
 
     public Result getSingleContest(String url) {
         try {
-            Contest contest = Contest.find.query().where()
-                    .eq("url", url)
-                    .findOne();
+            Contest contest = findOne("url", url, Contest.class);
             if (contest == null)
                 throw new Exception("There is no contest with url "+url);
 
@@ -59,7 +51,7 @@ public class ContestController extends BaseController {
 
     public Result getImage(Long id){
         try {
-            Contest contest = Contest.find.byId(id);
+            Contest contest = find(id, Contest.class);
             if (contest == null)
                 throw new Exception("That contest doesn't exist");
 
@@ -78,7 +70,7 @@ public class ContestController extends BaseController {
 
     public Result receiveImage(long contestId){
         try {
-            Contest contest = Contest.find.byId(contestId);
+            Contest contest = find(contestId, Contest.class);
 
             if (contest == null)
                 throw new Exception("The contest doesn't exist");
@@ -120,7 +112,7 @@ public class ContestController extends BaseController {
                 }
             });
             contest.setBannerUrl(imageName);
-            contest.save();
+            save(contest);
             return ok(contest);
 
         } catch (Exception e){
@@ -136,14 +128,16 @@ public class ContestController extends BaseController {
 
             if(! session("connected").equals(contest.getOwnerEmail() ) )
                 throw new Exception("This shouldn't happen");
-            if (Contest.find.query().where().eq("url", contest.getUrl()).findOne() != null)
+
+            if (findOne("url", contest.getUrl(), Contest.class) != null)
                 throw new Exception("There is already a contest with that URL, please try a different one");
 
             contest.setCreationDate(Timestamp.from(Instant.now()));
-            contest.save();
-//            contest.save();
+            contest.setId( Math.abs(UUID.randomUUID().getMostSignificantBits() ) );
+            save(contest);
             return ok(contest);
         } catch (Exception e){
+            e.printStackTrace();
             return error(e.getMessage());
         }
     }
@@ -153,16 +147,18 @@ public class ContestController extends BaseController {
         try {
             String user = session("connected");
             Contest contest = bodyAs(Contest.class);
-            Contest oldContest = Contest.find.byId(contest.getId());
+            Contest oldContest = find(contest.getId(), Contest.class);
             if (! oldContest.getOwnerEmail().equals(user))
                 throw new Exception("The user does not own the contest");
-            System.out.println("old "+oldContest.getUrl()+" new "+contest.getUrl());
-            if (Contest.find.query().where().eq("url", contest.getUrl()).findOne() != null
+
+
+            if (findOne("url", contest.getUrl(), Contest.class) != null
                 && !contest.getUrl().equals( oldContest.getUrl() ))
                 throw new Exception("There is already a contest with that URL, please try a different one");
 
             contest.setCreationDate(oldContest.getCreationDate());
-            contest.update();
+            save(contest);
+//            contest.update();
             return ok(contest);
         } catch (Exception e){
             return error(e.getMessage());
@@ -173,14 +169,15 @@ public class ContestController extends BaseController {
     public Result delete(Long contestId) {
         try {
             String user = session("connected");
-            if (!Contest.find.byId(contestId).getOwnerEmail().equals(user))
+            Contest contest = find(contestId, Contest.class);
+            if (! contest.getOwnerEmail().equals(user))
                 throw new Exception("The user does not own the contest");
 
-            Contest.find.deleteById(contestId);
+            delete(contest);
 
             //Delete all contest submissions
-            ContestSubmission.find.query()
-                    .where().eq("contest_id", contestId).delete();
+//            ContestSubmission.find.query()
+//                    .where().eq("contest_id", contestId).delete();
 
             //Delete all videos
             Path path = Paths.get("videos", String.valueOf(contestId));

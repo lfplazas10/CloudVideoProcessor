@@ -45,8 +45,7 @@ function initializeNFS(){
     ],
   };
   
-  EC2.runInstances(instanceParams).promise().then((data) => {
-      console.log(data)
+  EC2.runInstances(instanceParams).promise().then(data => {
       let instanceId = data.Instances[0].InstanceId;
       console.log('Started Instance: '+instanceId);
     }).catch(
@@ -82,9 +81,7 @@ function initializeServer(){
     ],
   };
   
-  EC2.runInstances(instanceParams).promise().then(
-    (data) => {
-      console.log(data)
+  EC2.runInstances(instanceParams).promise().then( data => {
       let instanceId = data.Instances[0].InstanceId;
       console.log('Started Instance: '+instanceId);
     }).catch(

@@ -1,30 +1,67 @@
 package models;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.ebean.Finder;
-import models.base.BaseModel;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.sql.Timestamp;
-import java.time.OffsetDateTime;
 
-@Entity
-@Table(name = "CONTESTS")
-public class Contest extends BaseModel {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@DynamoDBTable(tableName="Contests")
+public class Contest {
 
-    public static final Finder<Long, Contest> find = new Finder<>(Contest.class);
-    private String url, description, ownerEmail, bannerUrl;
+    @DynamoDBHashKey(attributeName="id")
+    private Long id;
+
+    @DynamoDBAttribute(attributeName = "urlText")
+    private String url;
+
+    private String description, ownerEmail, bannerUrl, name;
 
     @JsonFormat(shape=JsonFormat.Shape.NUMBER, pattern="s")
     private Timestamp startDate, endDate, creationDate;
 
-    public Contest(String url, String description, String ownerEmail, String bannerUrl, Timestamp startDate, Timestamp endDate) {
-        this.url = url;
-        this.description = description;
-        this.ownerEmail = ownerEmail;
-        this.bannerUrl = bannerUrl;
-        this.startDate = startDate;
-        this.endDate = endDate;
+    public Contest(){
+
+    }
+
+//    public Contest(String url, String description, String ownerEmail, String bannerUrl, Timestamp startDate, Timestamp endDate) {
+//        this.url = url;
+//        this.description = description;
+//        this.ownerEmail = ownerEmail;
+//        this.bannerUrl = bannerUrl;
+//        this.startDate = startDate;
+//        this.endDate = endDate;
+//    }
+//
+//    public Contest(String url, String description, String ownerEmail, String bannerUrl, String name, Timestamp startDate, Timestamp endDate, Timestamp creationDate) {
+//        this.url = url;
+//        this.description = description;
+//        this.ownerEmail = ownerEmail;
+//        this.bannerUrl = bannerUrl;
+//        this.name = name;
+//        this.startDate = startDate;
+//        this.endDate = endDate;
+//        this.creationDate = creationDate;
+//    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getBannerUrl() {
