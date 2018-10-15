@@ -3,10 +3,8 @@ package models;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.sql.Timestamp;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,32 +19,11 @@ public class Contest {
 
     private String description, ownerEmail, bannerUrl, name;
 
-//    @JsonFormat(shape=JsonFormat.Shape.NUMBER, pattern="s")
     private Long startDate, endDate, creationDate;
 
     public Contest(){
 
     }
-
-//    public Contest(String url, String description, String ownerEmail, String bannerUrl, Timestamp startDate, Timestamp endDate) {
-//        this.url = url;
-//        this.description = description;
-//        this.ownerEmail = ownerEmail;
-//        this.bannerUrl = bannerUrl;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//    }
-//
-//    public Contest(String url, String description, String ownerEmail, String bannerUrl, String name, Timestamp startDate, Timestamp endDate, Timestamp creationDate) {
-//        this.url = url;
-//        this.description = description;
-//        this.ownerEmail = ownerEmail;
-//        this.bannerUrl = bannerUrl;
-//        this.name = name;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.creationDate = creationDate;
-//    }
 
     public String getId() {
         return id;

@@ -98,7 +98,6 @@ class ContestTable extends React.Component {
     if (e && e.preventDefault) e.preventDefault();
     instance().post('contest/paginated', this.state.paginationKeys[pageNum])
       .then((response) => {
-        // console.log(response.data)
         let paginationKey = { lastEvaluatedPage : {
           "id": {
             "S": response.data.results[response.data.results.length-1].id+''

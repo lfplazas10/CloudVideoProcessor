@@ -29,7 +29,8 @@ class ContestDetail extends React.Component {
       prevButton: false,
       nextButton: false,
       pageNum: 1,
-      contest: {}
+      contest: {},
+      paginationKeys: {0: {}}
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.togglePlayer = this.togglePlayer.bind(this);
@@ -43,33 +44,55 @@ class ContestDetail extends React.Component {
     instance().get('contest/single/' + this.props.location.state.url)
       .then((response) => {
         console.log(response.data);
-        this.setState({contest: response.data});
+        this.setState({contest: response.data}, this.getData);
       })
       .catch((error) => {
         this.setState({errorMessage: error.response});
         console.log(error.response)
       });
-    this.getData();
   }
   
-  getData(e) {
+  upPage(e) {
+    e.preventDefault();
+    const newPage = this.state.pageNum + 1;
+    this.setState({pageNum: newPage},  () => this.getData(null, newPage-1));
+  }
+  
+  downPage(e) {
+    e.preventDefault();
+    if (this.state.pageNum > 1) {
+      const newPage = this.state.pageNum - 1;
+      this.setState({pageNum: newPage},  () => this.getData(null, newPage-1))
+    }
+  }
+  
+  getData(e, pageNum) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + this.state.pageNum)
+    if (pageNum == undefined) pageNum = 0;
+    instance().post('submissions/' + this.props.match.params.contestId + '/paginated',
+      this.state.paginationKeys[pageNum])
       .then((response) => {
+        let paginationKey = { lastEvaluatedPage : {
+            "id": {
+              "S": response.data.results[response.data.results.length-1].id+''
+            },
+            "creationDate": {
+              "N": response.data.results[response.data.results.length-1].creationDate+''
+            },
+            "contestId": {
+              "S": response.data.results[response.data.results.length-1].contestId
+            }
+          }};
         this.setState({
-          submissions: response.data,
+          submissions: response.data.results,
+          nextButton: response.data.lastEvaluatedKey != null,
           prevButton: this.state.pageNum > 1,
+          paginationKeys: {
+            ...this.state.paginationKeys,
+            [this.state.pageNum]: response.data.lastEvaluatedKey != null ? paginationKey: {}
+          }
         });
-        instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + (this.state.pageNum + 1))
-          .then((response2) => {
-            this.setState({ nextButton: response2.data.length > 0 });
-          })
-          .catch((error) => {
-            this.setState({errorMessage: error.response});
-            console.log(error.response)
-          });
-      })
-      .catch((error) => {
+      }).catch((error) => {
         this.setState({errorMessage: error.response});
         console.log(error.response)
       });
@@ -108,20 +131,6 @@ class ContestDetail extends React.Component {
     let year = d.getFullYear();
     
     return year + "-" + month + "-" + day;
-  }
-  
-  upPage(e) {
-    e.preventDefault();
-    const newPage = this.state.pageNum + 1;
-    this.setState({pageNum: newPage}, this.getData);
-  }
-  
-  downPage(e) {
-    e.preventDefault();
-    if (this.state.pageNum > 1) {
-      const newPage = this.state.pageNum - 1;
-      this.setState({pageNum: newPage}, this.getData)
-    }
   }
   
   render() {

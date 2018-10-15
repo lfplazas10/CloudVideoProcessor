@@ -7,8 +7,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.*;
 import play.libs.Json;
 import play.mvc.*;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +17,7 @@ public class BaseController extends Controller {
 
     protected static final String CONTENT_TYPE = "application/json";
 
-    protected static final int PAGINATION = 2;
+    protected static final int PAGINATION = 3;
 
     protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
             .withRegion(Regions.US_EAST_2)
@@ -109,34 +107,42 @@ public class BaseController extends Controller {
     private <T> void createQueryExpression(DynamoDBQueryExpression<T> queryExpression, String attribute){
         boolean globalIndex = false;
         if (attribute.equalsIgnoreCase("url")){
+            queryExpression.withKeyConditionExpression("urlText = :val");
+            globalIndex = true;
+        } else if (attribute.equalsIgnoreCase("ownerEmail")){
             queryExpression.withKeyConditionExpression("ownerEmail = :val");
             globalIndex = true;
-        }
-        else if (attribute.equalsIgnoreCase("ownerEmail")){
-            queryExpression.withKeyConditionExpression("ownerEmail = :val");
+        } else if (attribute.equalsIgnoreCase("contestId")){
+            queryExpression.withKeyConditionExpression("contestId = :val");
             globalIndex = true;
         }
         if (globalIndex){
-            queryExpression.withConsistentRead(false)
+            queryExpression
                     .withConsistentRead(false)
                     .withIndexName(attribute+"-index");
         }
     }
 
-    protected <T> ScanResultPage<T> scanList(String attribute, String value, Class<T> clazz){
+    protected <T> ScanResultPage<T> scanList(Class<T> clazz, String... keyValuePairs){
         try {
-
             DynamoDBMapper mapper = new DynamoDBMapper(client);
             Map<String, AttributeValue> eav = new HashMap<>();
-            eav.put(":val", new AttributeValue().withS(value));
+            for (int i = 1; i < keyValuePairs.length; i+=2) {
+                eav.put(":val"+(i-1), new AttributeValue().withS(keyValuePairs[i]));
+            }
 
             DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-                    .withFilterExpression(attribute +"= :val")
                     .withExpressionAttributeValues(eav);
 
+            String expression = "";
+            for (int i = 0; i < keyValuePairs.length; i+=2) {
+                expression += keyValuePairs[i] + " = :val" + i ;
+                if (i+2 < keyValuePairs.length)
+                    expression += " and ";
+            }
+            scanExpression.withFilterExpression(expression);
+
             return mapper.scanPage(clazz, scanExpression);
-//            QueryResultPage<T> qrp = mapper.queryPage(clazz, queryExpression);
-//            return qrp;
         } catch (Exception e){
             e.printStackTrace();
             throw e;
@@ -145,9 +151,9 @@ public class BaseController extends Controller {
 
     protected static <T> T bodyAs(Class<T> clazz) {
         Http.RequestBody body = request().body();
-//        if (body == null || body.asJson() == null) {
-//            System.out.println("ERROR, this should never happen");
-//        }
+        if (body == null || body.asJson() == null) {
+            System.out.println("ERROR, this should never happen");
+        }
         return Json.fromJson(body.asJson(), clazz);
     }
 

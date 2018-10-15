@@ -1,10 +1,9 @@
 package controllers;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import controllers.base.BaseController;
 import models.Contest;
-//import models.ContestSubmission;
+import models.ContestSubmission;
 import org.apache.commons.io.FilenameUtils;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -12,8 +11,6 @@ import play.mvc.With;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.*;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -26,7 +23,6 @@ public class ContestController extends BaseController {
             String user = session("connected");
             Map lep = (Map)bodyAs(Map.class).get("lastEvaluatedPage");
             QueryResultPage<Contest> qrp = queryList("ownerEmail", user, Contest.class, lep);
-            System.out.println(qrp.getResults());
             return ok(qrp);
         } catch (Exception e){
             e.printStackTrace();
@@ -156,7 +152,6 @@ public class ContestController extends BaseController {
 
             contest.setCreationDate(oldContest.getCreationDate());
             save(contest);
-//            contest.update();
             return ok(contest);
         } catch (Exception e){
             return error(e.getMessage());
@@ -173,6 +168,7 @@ public class ContestController extends BaseController {
 
             delete(contest);
 
+            //TODO: Update this once it is available
             //Delete all contest submissions
 //            ContestSubmission.find.query()
 //                    .where().eq("contest_id", contestId).delete();

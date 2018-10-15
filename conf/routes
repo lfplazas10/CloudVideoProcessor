@@ -12,8 +12,8 @@ POST        /api/signup                        controllers.AuthController.create
 POST        /api/login                         controllers.AuthController.login()
 POST        /api/logout                        controllers.AuthController.logout()
 GET         /api/active                        controllers.AuthController.isActiveUser()
-#
-## Contest endpoints
+
+# Contest endpoints
 GET         /api/contest/single/:url             controllers.ContestController.getSingleContest(url:String)
 POST        /api/contest/paginated               controllers.ContestController.getAll()
 POST        /api/contest                         controllers.ContestController.create()
@@ -21,16 +21,16 @@ POST        /api/contest/:id/img                 controllers.ContestController.r
 GET         /api/contest/:id/img                 controllers.ContestController.getImage(id:String)
 PUT         /api/contest                         controllers.ContestController.update()
 DELETE      /api/contest/:id                     controllers.ContestController.delete(id:String)
-#GET         /api/public/submissions/:id/:page    controllers.ContestSubmissionController.getProcessedVideos(id:Long, page:Integer)
-#
-## ContestSubmission endpoints
-#GET         /api/contest/:id/submissions/:page   controllers.ContestSubmissionController.get(id:Long, page:Integer)
-#POST        /api/contestSubmission               controllers.ContestSubmissionController.create()
-#POST        /api/contestSubmission/video/:id     controllers.ContestSubmissionController.receiveVideo(id:Long)
-#
+POST        /api/public/submissions/:contestId/paginated   controllers.ContestSubmissionController.getProcessedVideos(contestId:String)
+
+# ContestSubmission endpoints
+POST        /api/submissions/:contestId/paginated     controllers.ContestSubmissionController.getContestSubmissions(contestId:String)
+POST        /api/contestSubmission                    controllers.ContestSubmissionController.create()
+POST        /api/contestSubmission/video/:id          controllers.ContestSubmissionController.receiveVideo(id:String)
+
 ## Video endpoints
-#GET         /api/:contestId/video/:videoId             controllers.ContestSubmissionController.getRawVideo(contestId:Long, videoId:String)
-#GET         /api/:contestId/video/:videoId/converted   controllers.ContestSubmissionController.getConvertedVideo(contestId:Long, videoId:String)
+GET         /api/:contestId/video/:videoId            controllers.ContestSubmissionController.getRawVideo(contestId:String, videoId:String)
+GET         /api/:contestId/video/:videoId/converted  controllers.ContestSubmissionController.getConvertedVideo(contestId:String, videoId:String)
 
 # An example controller showing how to write asynchronous code
 #GET     /message                    controllers.AsyncController.message
