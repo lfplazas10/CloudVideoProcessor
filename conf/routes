@@ -15,7 +15,7 @@ GET         /api/active                        controllers.AuthController.isActi
 #
 ## Contest endpoints
 GET         /api/contest/single/:url             controllers.ContestController.getSingleContest(url:String)
-GET         /api/contest/:page                   controllers.ContestController.getAll(page:Integer)
+POST        /api/contest/paginated               controllers.ContestController.getAll()
 POST        /api/contest                         controllers.ContestController.create()
 POST        /api/contest/:id/img                 controllers.ContestController.receiveImage(id:Long)
 GET         /api/contest/:id/img                 controllers.ContestController.getImage(id:Long)

@@ -1,6 +1,7 @@
 package controllers;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import controllers.base.BaseController;
 import models.Contest;
 //import models.ContestSubmission;
@@ -13,23 +14,18 @@ import java.io.FileInputStream;
 import java.nio.file.*;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class ContestController extends BaseController {
 
     @With(Session.class)
-    public Result getAll(Integer pageNum) {
+    public Result getAll() {
         try {
             String user = session("connected");
-            QueryResultPage<Contest> qrp = findList("ownerEmail", user, Contest.class);
+            QueryResultPage<Contest> qrp = queryList("ownerEmail", user, Contest.class, bodyAs(Map.class));
             return ok(qrp);
-//            return ok(Contest.find.query().where()
-//                    .eq("owner_email", user)
-//                    .orderBy("creation_date desc")
-//                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
-//                    .setMaxRows(PAGINATION)
-//                    .findList());
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());
@@ -132,7 +128,7 @@ public class ContestController extends BaseController {
             if (findOne("url", contest.getUrl(), Contest.class) != null)
                 throw new Exception("There is already a contest with that URL, please try a different one");
 
-            contest.setCreationDate(Timestamp.from(Instant.now()));
+            contest.setCreationDate(System.currentTimeMillis());
             contest.setId( Math.abs(UUID.randomUUID().getMostSignificantBits() ) );
             save(contest);
             return ok(contest);

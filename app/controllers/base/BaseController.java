@@ -4,12 +4,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
 import play.libs.Json;
 import play.mvc.*;
-//import com.
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +19,7 @@ public class BaseController extends Controller {
 
     protected static final String CONTENT_TYPE = "application/json";
 
-    protected static final int PAGINATION = 30;
+    protected static final int PAGINATION = 2;
 
     protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
             .withRegion(Regions.US_EAST_2)
@@ -64,17 +62,15 @@ public class BaseController extends Controller {
             eav.put(":val", new AttributeValue().withS(value));
 
             DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
+                    .withKeyConditionExpression(attribute+" = :val")
                     .withExpressionAttributeValues(eav);
 
+
             if (attribute.equalsIgnoreCase("url")){
-                System.out.println("jejeje");
                 queryExpression
                         .withKeyConditionExpression("urlText = :val")
                         .withConsistentRead(false)
-                        .withIndexName("urlText-index");
-            }
-            else{
-                queryExpression.withKeyConditionExpression(attribute+" = :val");
+                        .withIndexName("url-index");
             }
 
             List<T> answer = mapper.query(clazz, queryExpression);
@@ -86,7 +82,8 @@ public class BaseController extends Controller {
         }
     }
 
-    protected <T> QueryResultPage<T> findList(String attribute, String value, Class<T> clazz){
+    protected <T> QueryResultPage<T> queryList(String attribute, String value,
+                                               Class<T> clazz, Map<String,AttributeValue> lastEvaluatedPage){
         try {
             DynamoDBMapper mapper = new DynamoDBMapper(client);
             Map<String, AttributeValue> eav = new HashMap<>();
@@ -95,10 +92,51 @@ public class BaseController extends Controller {
             DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
                     .withKeyConditionExpression(attribute+" = :val")
                     .withExpressionAttributeValues(eav)
+                    .withScanIndexForward(false)
+                    .withExclusiveStartKey(lastEvaluatedPage)
                     .withLimit(PAGINATION);
+
+            createQueryExpression(queryExpression, attribute);
 
             QueryResultPage<T> qrp = mapper.queryPage(clazz, queryExpression);
             return qrp;
+        } catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    private <T> void createQueryExpression(DynamoDBQueryExpression<T> queryExpression, String attribute){
+        boolean globalIndex = false;
+        if (attribute.equalsIgnoreCase("url")){
+            queryExpression.withKeyConditionExpression("ownerEmail = :val");
+            globalIndex = true;
+        }
+        else if (attribute.equalsIgnoreCase("ownerEmail")){
+            queryExpression.withKeyConditionExpression("ownerEmail = :val");
+            globalIndex = true;
+        }
+        if (globalIndex){
+            queryExpression.withConsistentRead(false)
+                    .withConsistentRead(false)
+                    .withIndexName(attribute+"-index");
+        }
+    }
+
+    protected <T> ScanResultPage<T> scanList(String attribute, String value, Class<T> clazz){
+        try {
+
+            DynamoDBMapper mapper = new DynamoDBMapper(client);
+            Map<String, AttributeValue> eav = new HashMap<>();
+            eav.put(":val", new AttributeValue().withS(value));
+
+            DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                    .withFilterExpression(attribute +"= :val")
+                    .withExpressionAttributeValues(eav);
+
+            return mapper.scanPage(clazz, scanExpression);
+//            QueryResultPage<T> qrp = mapper.queryPage(clazz, queryExpression);
+//            return qrp;
         } catch (Exception e){
             e.printStackTrace();
             throw e;

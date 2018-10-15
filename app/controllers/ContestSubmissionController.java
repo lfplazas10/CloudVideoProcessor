@@ -128,7 +128,7 @@
 //                    .orderBy("creation_date desc")
 //                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
 //                    .setMaxRows(PAGINATION)
-//                    .findList());
+//                    .queryList());
 //        } catch (Exception e){
 //            e.printStackTrace();
 //            return error(e.getMessage());
@@ -144,7 +144,7 @@
 //                    .orderBy("creation_date desc")
 //                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
 //                    .setMaxRows(PAGINATION)
-//                    .findList());
+//                    .queryList());
 //        } catch (Exception e){
 //            e.printStackTrace();
 //            return error(e.getMessage());
