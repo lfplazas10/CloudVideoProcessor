@@ -145,9 +145,9 @@ public class BaseController extends Controller {
 
     protected static <T> T bodyAs(Class<T> clazz) {
         Http.RequestBody body = request().body();
-        if (body == null || body.asJson() == null) {
-            System.out.println("ERROR, this should never happen");
-        }
+//        if (body == null || body.asJson() == null) {
+//            System.out.println("ERROR, this should never happen");
+//        }
         return Json.fromJson(body.asJson(), clazz);
     }
 

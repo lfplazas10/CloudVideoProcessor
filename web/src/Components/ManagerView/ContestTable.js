@@ -25,7 +25,6 @@ import Typography from "@material-ui/core/Typography/Typography";
 class ContestTable extends React.Component {
   constructor(props) {
     super(props);
-    
     this.state = {
       name: "",
       url: null,
@@ -41,6 +40,7 @@ class ContestTable extends React.Component {
       nextButton: false,
       id: 0,
       contests: [],
+      paginationKeys: {0: {}}
     };
     
     this.getAll = this.getAll.bind(this);
@@ -76,14 +76,14 @@ class ContestTable extends React.Component {
   upPage(e) {
     e.preventDefault();
     const newPage = this.state.pageNum + 1;
-    this.setState({pageNum: newPage}, this.getAll);
+    this.setState({pageNum: newPage}, () => this.getAll(null, newPage-1));
   }
   
   downPage(e) {
     e.preventDefault();
     if (this.state.pageNum > 1) {
       const newPage = this.state.pageNum - 1;
-      this.setState({pageNum: newPage}, this.getAll)
+      this.setState({pageNum: newPage}, () => this.getAll(null, newPage-1));
     }
   }
   
@@ -92,22 +92,33 @@ class ContestTable extends React.Component {
     this.setState({update: true});
   }
   
-  getAll(e) {
+  getAll(e, pageNum) {
+    // console.log(this.state.paginationKeys)
+    if (pageNum == undefined) pageNum = 0;
     if (e && e.preventDefault) e.preventDefault();
-    instance().get('contest/' + this.state.pageNum)
+    instance().post('contest/paginated', this.state.paginationKeys[pageNum])
       .then((response) => {
+        // console.log(response.data)
+        let paginationKey = { lastEvaluatedPage : {
+          "id": {
+            "S": response.data.results[response.data.results.length-1].id+''
+          },
+          "creationDate": {
+            "N": response.data.results[response.data.results.length-1].creationDate+''
+          },
+          "ownerEmail": {
+            "S": response.data.results[response.data.results.length-1].ownerEmail
+          }
+        }};
         this.setState({
-          contests: response.data,
-          prevButton: this.state.pageNum > 1
+          contests: response.data.results,
+          nextButton: response.data.lastEvaluatedKey != null,
+          prevButton: this.state.pageNum > 1,
+          paginationKeys: {
+            ...this.state.paginationKeys,
+            [this.state.pageNum]: response.data.lastEvaluatedKey != null ? paginationKey: {}
+          }
         });
-        instance().get('contest/' + (this.state.pageNum+1))
-          .then((response2) => {
-            this.setState({ nextButton: response2.data.length > 0 });
-          })
-          .catch((error) => {
-            this.setState({errorMessage: error.response});
-            console.log(error.response)
-          });
       })
       .catch((error) => {
         this.setState({errorMessage: error.response});
@@ -143,10 +154,11 @@ class ContestTable extends React.Component {
       url: this.state.url,
       description: this.state.winnerPrize,
       ownerEmail: this.state.user.email,
-      creationDate: new Date(),
+      creationDate: new Date().getTime(),
       startDate: sDate.getTime(),
       endDate: eDate.getTime()
     };
+    console.log(obj)
     instance().post('contest', obj)
       .then((response) => {
         this.setState({
@@ -186,14 +198,8 @@ class ContestTable extends React.Component {
     let monthIndex = d.getMonth();
     let month = monthIndex < 8 ? "0" + (monthIndex + 1) : monthIndex + 1;
     let year = d.getFullYear();
-    
     return year + "-" + month + "-" + fDay;
-  }
-  
-  formatDateISO(date) {
-    var curr = new Date(date);
-    curr.setDate(curr.getDate() + 3);
-    var date = curr.toISOString().substr(0, 10);
+    // return date;
   }
   
   updateContest(e) {
@@ -212,7 +218,6 @@ class ContestTable extends React.Component {
       url: this.state.url,
       description: this.state.winnerPrize,
       ownerEmail: this.state.user.email,
-      creationDate: new Date(),
       startDate: sDate.getTime(),
       endDate: eDate.getTime()
     })

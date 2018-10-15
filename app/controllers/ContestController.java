@@ -24,7 +24,9 @@ public class ContestController extends BaseController {
     public Result getAll() {
         try {
             String user = session("connected");
-            QueryResultPage<Contest> qrp = queryList("ownerEmail", user, Contest.class, bodyAs(Map.class));
+            Map lep = (Map)bodyAs(Map.class).get("lastEvaluatedPage");
+            QueryResultPage<Contest> qrp = queryList("ownerEmail", user, Contest.class, lep);
+            System.out.println(qrp.getResults());
             return ok(qrp);
         } catch (Exception e){
             e.printStackTrace();
@@ -45,7 +47,7 @@ public class ContestController extends BaseController {
         }
     }
 
-    public Result getImage(Long id){
+    public Result getImage(String id){
         try {
             Contest contest = find(id, Contest.class);
             if (contest == null)
@@ -64,7 +66,7 @@ public class ContestController extends BaseController {
         }
     }
 
-    public Result receiveImage(long contestId){
+    public Result receiveImage(String contestId){
         try {
             Contest contest = find(contestId, Contest.class);
 
@@ -129,7 +131,7 @@ public class ContestController extends BaseController {
                 throw new Exception("There is already a contest with that URL, please try a different one");
 
             contest.setCreationDate(System.currentTimeMillis());
-            contest.setId( Math.abs(UUID.randomUUID().getMostSignificantBits() ) );
+            contest.setId( UUID.randomUUID().toString());
             save(contest);
             return ok(contest);
         } catch (Exception e){
@@ -162,7 +164,7 @@ public class ContestController extends BaseController {
     }
 
     @With(Session.class)
-    public Result delete(Long contestId) {
+    public Result delete(String contestId) {
         try {
             String user = session("connected");
             Contest contest = find(contestId, Contest.class);
