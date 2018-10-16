@@ -1,5 +1,9 @@
 package controllers.base;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -38,12 +42,12 @@ public class BaseController extends Controller {
         }
     }
 
-    // 2. Create Redisson instance
 
-
+    static AWSCredentials awsCreds = new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY"), System.getenv("AWS_ACCESS_SECRET"));
 
     protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
             .withRegion(Regions.US_EAST_2)
+            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
             .build();
 
     protected void save(Object object) throws Exception{
