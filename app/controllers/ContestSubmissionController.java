@@ -1,7 +1,6 @@
 package controllers;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
-import com.amazonaws.services.dynamodbv2.datamodeling.ScanResultPage;
 import controllers.base.BaseController;
 import models.Contest;
 import models.ContestSubmission;
@@ -9,16 +8,11 @@ import org.apache.commons.io.FilenameUtils;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
-import services.EmailService;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -144,9 +138,9 @@ public class ContestSubmissionController extends BaseController {
                 throw new Exception("The contest doesn't exist");
 
             Map lep = (Map)bodyAs(Map.class).get("lastEvaluatedPage");
-            QueryResultPage<ContestSubmission> qrp = queryList("contestId", contestId, ContestSubmission.class, lep);
+//            QueryResultPage<ContestSubmission> qrp = queryList("contestId", contestId, ContestSubmission.class, lep);
 
-            ScanResultPage<ContestSubmission> srp = scanList(ContestSubmission.class,
+            QueryResultPage<ContestSubmission> srp = scanList2(ContestSubmission.class, lep,
                     "contestId", contestId, "stateText", "Processed");
 //            qrp.getResults().stream().filter(result -> result.getState().equals(ContestSubmission.State.Processed));
             return ok (srp);

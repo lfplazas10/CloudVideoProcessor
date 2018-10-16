@@ -5,6 +5,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.*;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import play.libs.Json;
 import play.mvc.*;
 import java.util.HashMap;
@@ -17,7 +20,27 @@ public class BaseController extends Controller {
 
     protected static final String CONTENT_TYPE = "application/json";
 
-    protected static final int PAGINATION = 3;
+    protected static final int PAGINATION = 30;
+
+
+    static{
+        try {
+            Config config = new Config();
+            config.useReplicatedServers()
+                    .setScanInterval(2000) // master node change scan interval
+                    // use "rediss://" for SSL connection
+                    .addNodeAddress("redis://cache-001.qbtphv.0001.use2.cache.amazonaws.com:6379");
+//                    .addNodeAddress("cache-003.qbtphv.0001.use2.cache.amazonaws.com");
+
+            RedissonClient redisson = Redisson.create(config);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    // 2. Create Redisson instance
+
+
 
     protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
             .withRegion(Regions.US_EAST_2)
@@ -123,7 +146,36 @@ public class BaseController extends Controller {
         }
     }
 
-    protected <T> ScanResultPage<T> scanList(Class<T> clazz, String... keyValuePairs){
+    protected <T> QueryResultPage<T> scanList2(Class<T> clazz, Map<String,AttributeValue> lastEvaluatedPage,
+                                               String... keyValuePairs){
+        try {
+            DynamoDBMapper mapper = new DynamoDBMapper(client);
+            Map<String, AttributeValue> eav = new HashMap<>();
+
+
+            eav.put(":val0", new AttributeValue().withS(keyValuePairs[1]));
+            eav.put(":val2", new AttributeValue().withS(keyValuePairs[3]));
+
+            DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
+                    .withKeyConditionExpression("contestId"+" = :val0")
+                    .withFilterExpression("stateText"+" = :val2")
+                    .withExpressionAttributeValues(eav)
+                    .withIndexName("contestId"+"-index")
+                    .withScanIndexForward(false)
+                    .withConsistentRead(false)
+                    .withExclusiveStartKey(lastEvaluatedPage)
+                    .withLimit(PAGINATION);
+
+            QueryResultPage<T> qrp = mapper.queryPage(clazz, queryExpression);
+            return qrp;
+        } catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    protected <T> ScanResultPage<T> scanList(Class<T> clazz, Map<String,AttributeValue> lastEvaluatedPage,
+                                             String... keyValuePairs){
         try {
             DynamoDBMapper mapper = new DynamoDBMapper(client);
             Map<String, AttributeValue> eav = new HashMap<>();
@@ -132,6 +184,7 @@ public class BaseController extends Controller {
             }
 
             DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                    .withLimit(PAGINATION)
                     .withExpressionAttributeValues(eav);
 
             String expression = "";

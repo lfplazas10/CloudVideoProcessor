@@ -44,7 +44,8 @@ class ContestPublic extends React.Component {
       prevButton: false,
       nextButton: false,
       error: null,
-      showDialogMessage : false
+      showDialogMessage : false,
+      paginationKeys: {0: {}}
     };
     
     this.hideCreate = this.hideCreate.bind(this);
@@ -83,25 +84,49 @@ class ContestPublic extends React.Component {
     this.setState({showDialogMessage: false});
   }
   
-  getSubmissions(e) {
+  upPage(e) {
+    e.preventDefault();
+    const newPage = this.state.pageNum + 1;
+    this.setState({pageNum: newPage}, () => this.getSubmissions(null, newPage-1));
+  }
+  
+  downPage(e) {
+    e.preventDefault();
+    if (this.state.pageNum > 1) {
+      const newPage = this.state.pageNum - 1;
+      this.setState({pageNum: newPage}, () => this.getSubmissions(null, newPage-1))
+    }
+  }
+  
+  getSubmissions(e, pageNum) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().get('public/submissions/' + this.state.contest.id + '/' + this.state.pageNum)
+    if (pageNum == undefined) pageNum = 0;
+    instance().post('public/submissions/' + this.state.contest.id + '/paginated', this.state.paginationKeys[pageNum])
       .then((response) => {
-        console.log(response)
+        console.log(response.data);
+        let paginationKey = { lastEvaluatedPage : {
+            "id": {
+              "S": response.data.results[response.data.results.length-1].id+''
+            },
+            "creationDate": {
+              "N": response.data.results[response.data.results.length-1].creationDate+''
+            },
+            "contestId": {
+              "S": response.data.results[response.data.results.length-1].contestId
+            }
+          }};
         this.setState({
-          submissions: response.data,
+          submissions: response.data.results,
+          nextButton: response.data.lastEvaluatedKey != null,
           prevButton: this.state.pageNum > 1,
-        });
-        instance().get('public/submissions/' + this.state.contest.id + '/' + (this.state.pageNum+1))
-          .then((response2) => {
-            this.setState({ nextButton: response2.data.length > 0 });
-          }).catch((error) => {
-          this.setState({errorMessage: error.response});
-          console.log(error.response)
-        });
+          paginationKeys: {
+            ...this.state.paginationKeys,
+            [this.state.pageNum]: response.data.lastEvaluatedKey != null ? paginationKey: {}
+          }
+        }, () => console.log(JSON.stringify(this.state.paginationKeys)));
       }).catch((error) => {
         this.setState({errorMessage: error.response});
-        console.log(error.response)
+        console.log(error)
     });
   }
   
@@ -163,20 +188,6 @@ class ContestPublic extends React.Component {
   viewCreate(e) {
     e.preventDefault();
     this.setState({create: true});
-  }
-  
-  upPage(e) {
-    e.preventDefault();
-    const newPage = this.state.pageNum + 1;
-    this.setState({pageNum: newPage}, this.getSubmissions);
-  }
-  
-  downPage(e) {
-    e.preventDefault();
-    if (this.state.pageNum > 1) {
-      const newPage = this.state.pageNum - 1;
-      this.setState({pageNum: newPage}, this.getSubmissions)
-    }
   }
   
   showMessage() {
