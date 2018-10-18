@@ -4,6 +4,7 @@ conf/evolutions/default/*
 target
 build
 Dockerfiles/contest-server-1.zip
+Dockerfiles/server
 *.ipr
 *.iws
 videos

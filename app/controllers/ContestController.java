@@ -139,7 +139,7 @@ public class ContestController extends BaseController {
 
             delete(contest);
 
-            //TODO: Update this once it is available
+            //TODO: Update this
             //Delete all contest submissions
 //            ContestSubmission.find.query()
 //                    .where().eq("contest_id", contestId).delete();

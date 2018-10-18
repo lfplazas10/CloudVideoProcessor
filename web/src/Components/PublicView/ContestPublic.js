@@ -376,7 +376,7 @@ class ContestPublic extends React.Component {
               </Paper>
             </Grid>
             <Grid item xs={4}>
-              <img className={classes.img} src={"/api/contest/" + this.state.contest.id + "/img"}/>
+              <img className={classes.img} src={'https://s3.us-east-2.amazonaws.com/modeld-images/'+this.state.contest.bannerUrl}/>
             </Grid>
           </Grid>
           <div style={{padding: 24, textAlign: 'center'}}>

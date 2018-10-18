@@ -49,7 +49,6 @@ public class ContestSubmissionController extends BaseController {
                     request.setMetadata(metadata);
                     s3Client.putObject(request);
                 } catch (Exception e){
-                    //TODO: Notify client about error
                     e.printStackTrace();
                 }
             });
