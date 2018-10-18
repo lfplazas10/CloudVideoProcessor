@@ -1,6 +1,9 @@
 package controllers;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import controllers.base.BaseController;
 import models.Contest;
 import models.ContestSubmission;
@@ -21,7 +24,6 @@ public class ContestSubmissionController extends BaseController {
 
     public Result receiveVideo(String contestSubmissionId){
         try {
-
             ContestSubmission cs = find(contestSubmissionId, ContestSubmission.class);
             if (cs == null)
                 throw new Exception("The submission doesn't exist");
@@ -39,18 +41,16 @@ public class ContestSubmissionController extends BaseController {
             //TODO: When improving performance, create and attach a proper Executor to this future
             CompletableFuture.runAsync(() -> {
                 try {
-                    Path path = Paths.get("nfs",
-                            "videos",
-                            "raw",
-                            String.valueOf(cs.getContestId()),
-                            videoId);
-                    byte [] stream = new byte [(int) videoFile.length()];
-                    new FileInputStream(videoFile).read(stream);
-                    Files.createDirectories( path.getParent() );
-                    Files.createFile(path);
-                    Files.write(path, stream);
+                    PutObjectRequest request = new PutObjectRequest("modeld-videos/raw", videoId, videoFile)
+                            .withCannedAcl(CannedAccessControlList.PublicRead);
+
+                    ObjectMetadata metadata = new ObjectMetadata();
+                    metadata.setContentType(contentType);
+//                    metadata.addUserMetadata("x-amz-meta-title", "someTitle");
+                    request.setMetadata(metadata);
+                    s3Client.putObject(request);
                 } catch (Exception e){
-                    //Notify client about error
+                    //TODO: Notify client about error
                     e.printStackTrace();
                 }
             });
@@ -59,7 +59,6 @@ public class ContestSubmissionController extends BaseController {
             cs.setState(ContestSubmission.State.Processing);
             save(cs);
             return ok(cs);
-
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());

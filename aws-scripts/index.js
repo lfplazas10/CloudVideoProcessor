@@ -21,6 +21,7 @@ else {
 function initializeNFS(){
   let instanceParams = {
     ImageId: 'ami-0070ef629180c29d2',
+    KeyName: "nfs-instance",
     InstanceType: 't2.micro',
     KeyName: 'thirdSubmission',
     MinCount: 1,

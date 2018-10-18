@@ -9,6 +9,8 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -27,20 +29,20 @@ public class BaseController extends Controller {
     protected static final int PAGINATION = 30;
 
 
-    static{
-        try {
-            Config config = new Config();
-            config.useReplicatedServers()
-                    .setScanInterval(2000) // master node change scan interval
-                    // use "rediss://" for SSL connection
-                    .addNodeAddress("redis://cache-001.qbtphv.0001.use2.cache.amazonaws.com:6379");
-//                    .addNodeAddress("cache-003.qbtphv.0001.use2.cache.amazonaws.com");
-
-            RedissonClient redisson = Redisson.create(config);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+//    static{
+//        try {
+//            Config config = new Config();
+//            config.useReplicatedServers()
+//                    .setScanInterval(2000) // master node change scan interval
+//                    // use "rediss://" for SSL connection
+//                    .addNodeAddress("redis://cache-001.qbtphv.0001.use2.cache.amazonaws.com:6379");
+////                    .addNodeAddress("cache-003.qbtphv.0001.use2.cache.amazonaws.com");
+//
+//            RedissonClient redisson = Redisson.create(config);
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
 
     static AWSCredentials awsCreds = new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY"), System.getenv("AWS_ACCESS_SECRET"));
@@ -48,6 +50,11 @@ public class BaseController extends Controller {
     protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
             .withRegion(Regions.US_EAST_2)
             .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+            .build();
+
+    protected static AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+            .withRegion(Regions.US_EAST_2)
             .build();
 
     protected void save(Object object) throws Exception{
