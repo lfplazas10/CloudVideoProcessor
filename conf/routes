@@ -18,7 +18,6 @@ GET         /api/contest/single/:url             controllers.ContestController.g
 POST        /api/contest/paginated               controllers.ContestController.getAll()
 POST        /api/contest                         controllers.ContestController.create()
 POST        /api/contest/:id/img                 controllers.ContestController.receiveImage(id:String)
-GET         /api/contest/:id/img                 controllers.ContestController.getImage(id:String)
 PUT         /api/contest                         controllers.ContestController.update()
 DELETE      /api/contest/:id                     controllers.ContestController.delete(id:String)
 POST        /api/public/submissions/:contestId/paginated   controllers.ContestSubmissionController.getProcessedVideos(contestId:String)

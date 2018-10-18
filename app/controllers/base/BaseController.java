@@ -1,6 +1,7 @@
 package controllers.base;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -44,17 +45,17 @@ public class BaseController extends Controller {
 //        }
 //    }
 
-
-    static AWSCredentials awsCreds = new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY"), System.getenv("AWS_ACCESS_SECRET"));
+    private static AWSCredentialsProvider awsCreds = new AWSStaticCredentialsProvider( new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY"), System.getenv("AWS_ACCESS_SECRET")) );
+    private static Regions awsRegion = Regions.US_EAST_2;
 
     protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-            .withRegion(Regions.US_EAST_2)
-            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+            .withRegion(awsRegion)
+            .withCredentials(awsCreds)
             .build();
 
     protected static AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-            .withRegion(Regions.US_EAST_2)
+            .withRegion(awsRegion)
+            .withCredentials(awsCreds)
             .build();
 
     protected void save(Object object) throws Exception{

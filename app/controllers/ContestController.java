@@ -1,6 +1,9 @@
 package controllers;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import controllers.base.BaseController;
 import models.Contest;
 import models.ContestSubmission;
@@ -43,35 +46,12 @@ public class ContestController extends BaseController {
         }
     }
 
-    public Result getImage(String id){
-        try {
-            Contest contest = find(id, Contest.class);
-            if (contest == null)
-                throw new Exception("That contest doesn't exist");
-
-            Path path = Paths.get("nfs",
-                    "images",
-                    contest.getBannerUrl());
-            byte [] image = Files.readAllBytes(path);
-            if (image.length <= 0)
-                throw new Exception("Error reading the image");
-
-            return ok(image);
-        } catch (Exception e){
-            return error(e.getMessage());
-        }
-    }
-
     public Result receiveImage(String contestId){
         try {
             Contest contest = find(contestId, Contest.class);
 
             if (contest == null)
                 throw new Exception("The contest doesn't exist");
-
-/*          Commented out this to be able to update a contest banner image
-            if (contest.getBannerUrl() != null)
-                throw new Exception("This contest already has an image");*/
 
             Http.MultipartFormData<File> body = request().body().asMultipartFormData();
             Http.MultipartFormData.FilePart<File> image = body.getFile("image");
@@ -80,35 +60,26 @@ public class ContestController extends BaseController {
                 throw new Exception("The image was not received");
 
             File imageFile = image.getFile();
+            String contentType = image.getContentType();
             String imageName = contest.getUrl() + "." + FilenameUtils.getExtension( image.getFilename() ) ;
             //TODO: When improving performance, create and attach a proper Executor to this future
             CompletableFuture.runAsync(() -> {
-
                 try {
-                    Path path = Paths.get("nfs",
-                            "images",
-                            imageName);
-                    byte [] stream = new byte [(int) imageFile.length()];
-                    new FileInputStream(imageFile).read(stream);
-                    Files.createDirectories( path.getParent() );
-                    try {
-                        Files.createFile(path);
-                    } catch (FileAlreadyExistsException fae){
-                        //This is perfectly normal, might happen if
-                        //1. The user is updating the contest image
-                        //2. The user has the same image for 2 different contests.
-                    }
-                    Files.write(path, stream, StandardOpenOption.TRUNCATE_EXISTING);
+                    PutObjectRequest request = new PutObjectRequest("modeld-images", imageName, imageFile)
+                            .withCannedAcl(CannedAccessControlList.PublicRead);
+
+                    ObjectMetadata metadata = new ObjectMetadata();
+                    metadata.setContentType(contentType);
+                    request.setMetadata(metadata);
+                    s3Client.putObject(request);
                 }
                 catch (Exception e){
-                    //Notify client about error
                     e.printStackTrace();
                 }
             });
             contest.setBannerUrl(imageName);
             save(contest);
             return ok(contest);
-
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());
