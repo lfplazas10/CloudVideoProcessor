@@ -28,7 +28,6 @@ POST        /api/contestSubmission                    controllers.ContestSubmiss
 POST        /api/contestSubmission/video/:id          controllers.ContestSubmissionController.receiveVideo(id:String)
 
 ## Video endpoints
-GET         /api/:contestId/video/:videoId            controllers.ContestSubmissionController.getRawVideo(contestId:String, videoId:String)
 GET         /api/:contestId/video/:videoId/converted  controllers.ContestSubmissionController.getConvertedVideo(contestId:String, videoId:String)
 
 # An example controller showing how to write asynchronous code

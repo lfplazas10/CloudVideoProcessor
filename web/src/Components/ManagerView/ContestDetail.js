@@ -99,6 +99,7 @@ class ContestDetail extends React.Component {
   }
   
   togglePlayer() {
+    console.log(this.state.playVideo)
     this.setState({playVideo: !this.state.playVideo})
   }
   
@@ -106,20 +107,17 @@ class ContestDetail extends React.Component {
     const contestId = this.props.match.params.contestId;
     
     //Add extension and file type for processed video
-    let videoSrc = '/api/' + contestId + '/video/' + videoId;
+    let videoSrc = 'https://s3.us-east-2.amazonaws.com/modeld-videos/raw/'+videoId;
     if (converted) {
       if (videoType != 'video/mp4'){
         videoId = videoId + '.mp4';
       }
       videoType = 'video/mp4';
-      videoSrc = '/api/' + contestId + '/video/' + videoId + '/converted';
+      //TODO: Here goes the cloudfront url
+      // videoSrc = '/api/' + contestId + '/video/' + videoId + '/converted';
     }
     
-    this.setState({sources: '{"type": "' + videoType + '", "src":"' + videoId + '"}'});
-    this.setState({videoSrc: videoSrc, videoType: videoType});
-    
-    
-    this.togglePlayer();
+    this.setState({videoSrc: videoSrc, videoType: videoType}, () => this.togglePlayer());
   }
   
   formatDate(date) {
@@ -232,7 +230,7 @@ class ContestDetail extends React.Component {
             </div>
           ) : "No courses found"}
           
-          {(this.state.playVideo && this.state.sources !== '') &&
+          {(this.state.playVideo) &&
           <Player
             videoType={this.state.videoType}
             videoSrc={this.state.videoSrc}

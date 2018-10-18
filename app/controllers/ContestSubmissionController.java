@@ -63,23 +63,6 @@ public class ContestSubmissionController extends BaseController {
         }
     }
 
-    public Result getRawVideo(String contestId, String videoId){
-        try {
-            Path path = Paths.get("nfs",
-                    "videos",
-                    "raw",
-                    String.valueOf(contestId),
-                    videoId);
-            byte [] video = Files.readAllBytes(path);
-            if (video.length <= 0)
-                throw new Exception("Error reading the video");
-
-            return ok(video);
-        } catch (Exception e){
-            return error(e.getMessage());
-        }
-    }
-
     public Result getConvertedVideo(String contestId, String videoId){
         try {
             Path path = Paths.get("nfs",
