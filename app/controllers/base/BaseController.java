@@ -1,10 +1,8 @@
 package controllers.base;
 
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -22,15 +20,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 
 public class BaseController extends Controller {
 
     protected static final String CONTENT_TYPE = "application/json";
-
     protected static final int PAGINATION = 30;
+    protected static final String QUEUE_URL = "https://sqs.us-east-2.amazonaws.com/306743161273/videos.fifo";
+    private static AWSCredentialsProvider awsCreds = new AWSStaticCredentialsProvider( new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY"), System.getenv("AWS_ACCESS_SECRET")) );
+    private static Regions awsRegion = Regions.US_EAST_2;
 
 
-//    static{
+    protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+            .withRegion(awsRegion)
+            .withCredentials(awsCreds)
+            .build();
+
+    protected static AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+            .withRegion(awsRegion)
+            .withCredentials(awsCreds)
+            .build();
+
+    protected static AmazonSQS sqs = AmazonSQSClientBuilder.standard()
+            .withRegion(awsRegion)
+            .withCredentials(awsCreds)
+            .build();
+
+//        static{
 //        try {
 //            Config config = new Config();
 //            config.useReplicatedServers()
@@ -44,19 +62,6 @@ public class BaseController extends Controller {
 //            e.printStackTrace();
 //        }
 //    }
-
-    private static AWSCredentialsProvider awsCreds = new AWSStaticCredentialsProvider( new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY"), System.getenv("AWS_ACCESS_SECRET")) );
-    private static Regions awsRegion = Regions.US_EAST_2;
-
-    protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-            .withRegion(awsRegion)
-            .withCredentials(awsCreds)
-            .build();
-
-    protected static AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-            .withRegion(awsRegion)
-            .withCredentials(awsCreds)
-            .build();
 
     protected void save(Object object) throws Exception{
         try {

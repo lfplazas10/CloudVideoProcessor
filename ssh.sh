@@ -9,7 +9,7 @@ elif [ "$1" == "nfs" ]; then
     ssh -i /Users/felipeplazas/Downloads/keys.pem ubuntu@18.223.240.69
 else
     echo "ssh -i /Users/felipeplazas/Downloads/Cloud/thirdSubmission.pem ubuntu@$1"
-    ssh -i /Users/felipeplazas/Downloads/Cloud/thirdSubmission.pem "ubuntu@$1"
+    ssh -oStrictHostKeyChecking=no -i /Users/felipeplazas/Downloads/Cloud/thirdSubmission.pem "ubuntu@$1"
     if [ "$?" != 0 ]; then
         echo "You must select one from [m1, server, worker, nfs], For example:"
         echo "./ssh.sh server"

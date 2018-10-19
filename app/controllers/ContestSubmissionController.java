@@ -4,6 +4,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 import controllers.base.BaseController;
 import models.Contest;
 import models.ContestSubmission;
@@ -47,7 +49,13 @@ public class ContestSubmissionController extends BaseController {
                     metadata.setContentType(contentType);
 //                    metadata.addUserMetadata("x-amz-meta-title", "someTitle");
                     request.setMetadata(metadata);
-                    s3Client.putObject(request);
+                    PutObjectResult result =  s3Client.putObject(request);
+                    SendMessageRequest send_msg_request = new SendMessageRequest()
+                            .withQueueUrl(QUEUE_URL)
+                            .withMessageBody(videoId)
+                            .withMessageGroupId("videos");
+//                            .withDelaySeconds(5);
+                    sqs.sendMessage(send_msg_request);
                 } catch (Exception e){
                     e.printStackTrace();
                 }
