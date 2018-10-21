@@ -1,30 +1,42 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.ebean.Finder;
-import models.base.BaseModel;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.sql.Timestamp;
-import java.time.OffsetDateTime;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-@Entity
-@Table(name = "CONTESTS")
-public class Contest extends BaseModel {
+@DynamoDBTable(tableName="Contests")
+public class Contest {
 
-    public static final Finder<Long, Contest> find = new Finder<>(Contest.class);
-    private String url, description, ownerEmail, bannerUrl;
+    @DynamoDBHashKey(attributeName="id")
+    private String id;
 
-    @JsonFormat(shape=JsonFormat.Shape.NUMBER, pattern="s")
-    private Timestamp startDate, endDate, creationDate;
+    @DynamoDBAttribute(attributeName = "urlText")
+    private String url;
 
-    public Contest(String url, String description, String ownerEmail, String bannerUrl, Timestamp startDate, Timestamp endDate) {
-        this.url = url;
-        this.description = description;
-        this.ownerEmail = ownerEmail;
-        this.bannerUrl = bannerUrl;
-        this.startDate = startDate;
-        this.endDate = endDate;
+    private String description, ownerEmail, bannerUrl, name;
+
+    private Long startDate, endDate, creationDate;
+
+    public Contest(){
+
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getBannerUrl() {
@@ -59,27 +71,27 @@ public class Contest extends BaseModel {
         this.ownerEmail = ownerEmail;
     }
 
-    public Timestamp getStartDate() {
+    public Long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(Long startDate) {
         this.startDate = startDate;
     }
 
-    public Timestamp getEndDate() {
+    public Long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(Long endDate) {
         this.endDate = endDate;
     }
 
-    public Timestamp getCreationDate() {
+    public Long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Timestamp creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
 }

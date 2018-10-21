@@ -10,10 +10,13 @@ fi
 if [ "$2" == "true" ]; then
     rm -r target/universal/contest-server-1.zip
     rm -r Dockerfiles/contest-server-1*
+    rm -r Dockerfiles/server
     sbt dist
     mv target/universal/contest-server-1.zip Dockerfiles/
-    docker build Dockerfiles/. -t development2018/contest-server
+    unzip Dockerfiles/contest-server-1.zip -d Dockerfiles/ && mv Dockerfiles/contest-server-1 Dockerfiles/server
+    rm -r Dockerfiles/contest-server-1.zip
+    docker build Dockerfiles/. -t development2018/contest-server-d
 fi
 if [ "$3" == "true" ]; then
-    docker push development2018/contest-server
+    docker push development2018/contest-server-d
 fi

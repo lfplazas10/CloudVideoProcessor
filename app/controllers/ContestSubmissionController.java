@@ -1,5 +1,12 @@
 package controllers;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.google.common.collect.ImmutableMap;
 import controllers.base.BaseController;
 import models.Contest;
 import models.ContestSubmission;
@@ -7,24 +14,22 @@ import org.apache.commons.io.FilenameUtils;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
-import services.EmailService;
+import services.PaginationService;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.OffsetDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class ContestSubmissionController extends BaseController {
 
-    public Result receiveVideo(long contestSubmissionId){
+    public Result receiveVideo(String contestSubmissionId){
         try {
-            ContestSubmission cs = ContestSubmission.find.byId(contestSubmissionId);
+            ContestSubmission cs = find(contestSubmissionId, ContestSubmission.class);
             if (cs == null)
                 throw new Exception("The submission doesn't exist");
             if (cs.getState() != ContestSubmission.State.Waiting)
@@ -41,51 +46,40 @@ public class ContestSubmissionController extends BaseController {
             //TODO: When improving performance, create and attach a proper Executor to this future
             CompletableFuture.runAsync(() -> {
                 try {
-                    Path path = Paths.get("nfs",
-                            "videos",
-                            "raw",
-                            String.valueOf(cs.getContestId()),
-                            videoId);
-                    byte [] stream = new byte [(int) videoFile.length()];
-                    new FileInputStream(videoFile).read(stream);
-                    Files.createDirectories( path.getParent() );
-                    Files.createFile(path);
-                    Files.write(path, stream);
+                    PutObjectRequest request = new PutObjectRequest("smarttools-videos/raw", videoId, videoFile)
+                            .withCannedAcl(CannedAccessControlList.PublicRead);
+
+                    ObjectMetadata metadata = new ObjectMetadata();
+                    metadata.setContentType(contentType);
+                    request.setMetadata(metadata);
+                    s3Client.putObject(request);
+                    Map<String, MessageAttributeValue> map = new HashMap<>();
+                    map.put("id", new MessageAttributeValue().withDataType("String").withStringValue(cs.getId()) );
+                    map.put("email", new MessageAttributeValue().withDataType("String").withStringValue(cs.getEmail()) );
+                    map.put("contestUrl", new MessageAttributeValue().withDataType("String").withStringValue(cs.getContestUrl()) );
+                    SendMessageRequest send_msg_request = new SendMessageRequest()
+                            .withQueueUrl(QUEUE_URL)
+                            .withMessageAttributes(map)
+                            .withMessageBody(videoId)
+                            .withMessageGroupId("videos");
+
+                    sqs.sendMessage(send_msg_request);
                 } catch (Exception e){
-                    //Notify client about error
                     e.printStackTrace();
                 }
             });
             cs.setVideoId(videoId);
             cs.setVideoType(contentType);
             cs.setState(ContestSubmission.State.Processing);
-            cs.update();
+            save(cs);
             return ok(cs);
-
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());
         }
     }
 
-    public Result getRawVideo(Long contestId, String videoId){
-        try {
-            Path path = Paths.get("nfs",
-                    "videos",
-                    "raw",
-                    String.valueOf(contestId),
-                    videoId);
-            byte [] video = Files.readAllBytes(path);
-            if (video.length <= 0)
-                throw new Exception("Error reading the video");
-
-            return ok(video);
-        } catch (Exception e){
-            return error(e.getMessage());
-        }
-    }
-
-    public Result getConvertedVideo(Long contestId, String videoId){
+    public Result getConvertedVideo(String contestId, String videoId){
         try {
             Path path = Paths.get("nfs",
                     "videos",
@@ -105,12 +99,14 @@ public class ContestSubmissionController extends BaseController {
     public Result create() {
         try {
             ContestSubmission cs = bodyAs(ContestSubmission.class);
-            if (Contest.find.byId(cs.getContestId()) == null)
+
+            if (find(cs.getContestId(), Contest.class) == null)
                 throw new Exception("The contest doesn't exist, it's kinda hard to create a submission for a non existing contest");
 
-            cs.setCreationDate(Timestamp.from(Instant.now()));
+            cs.setCreationDate( System.currentTimeMillis() );
             cs.setState(ContestSubmission.State.Waiting);
-            cs.save();
+            cs.setId( UUID.randomUUID().toString());
+            save(cs);
             return ok(cs);
         } catch (Exception e){
             return error(e.getMessage());
@@ -118,33 +114,33 @@ public class ContestSubmissionController extends BaseController {
     }
 
     @With(Session.class)
-    public Result get(Long id, Integer pageNum) {
+    public Result getContestSubmissions(String contestId) {
         try {
-            if (Contest.find.byId(id) == null)
+            if (find(contestId, Contest.class) == null)
                 throw new Exception("The contest doesn't exist");
 
-            return ok (ContestSubmission.find.query().where()
-                    .eq("contest_id", id)
-                    .orderBy("creation_date desc")
-                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
-                    .setMaxRows(PAGINATION)
-                    .findList());
+            Map lep = (Map)bodyAs(Map.class).get("lastEvaluatedPage");
+            QueryResultPage<ContestSubmission> qrp = queryList("contestId", contestId, ContestSubmission.class, lep);
+            return ok (qrp);
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());
         }
     }
 
-    public Result getProcessedVideos(Long id, Integer pageNum) {
+    public Result getProcessedVideos(String contestId) {
         try {
-            return ok (ContestSubmission.find.query().where()
-                    .eq("contest_id", id)
-                    .and()
-                    .eq("state", ContestSubmission.State.Processed)
-                    .orderBy("creation_date desc")
-                    .setFirstRow(PAGINATION*pageNum - PAGINATION)
-                    .setMaxRows(PAGINATION)
-                    .findList());
+            if (find(contestId, Contest.class) == null)
+                throw new Exception("The contest doesn't exist");
+            PaginationService.getPage("s",1);
+
+            Map lep = (Map)bodyAs(Map.class).get("lastEvaluatedPage");
+//            QueryResultPage<ContestSubmission> qrp = queryList("contestId", contestId, ContestSubmission.class, lep);
+
+            QueryResultPage<ContestSubmission> srp = scanList2(ContestSubmission.class, lep,
+                    "contestId", contestId, "stateText", "Processed");
+//            qrp.getResults().stream().filter(result -> result.getState().equals(ContestSubmission.State.Processed));
+            return ok (srp);
         } catch (Exception e){
             e.printStackTrace();
             return error(e.getMessage());
@@ -156,7 +152,7 @@ public class ContestSubmissionController extends BaseController {
         try {
             String user = session("connected");
             ContestSubmission cs = bodyAs(ContestSubmission.class);
-            cs.update();
+            save(cs);
             return ok(cs);
         } catch (Exception e){
             return error(e.getMessage());

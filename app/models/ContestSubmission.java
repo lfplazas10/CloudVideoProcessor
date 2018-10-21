@@ -1,17 +1,16 @@
 package models;
 
-import io.ebean.Finder;
-import models.base.BaseModel;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.sql.Timestamp;
-import java.time.OffsetDateTime;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-@Entity
-@Table(name = "ContestSubmissions")
-public class ContestSubmission extends BaseModel {
-
-    public static final Finder<Long, ContestSubmission> find = new Finder<>(ContestSubmission.class);
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@DynamoDBTable(tableName="ContestSubmissions")
+public class ContestSubmission {
 
     public enum State {
         Waiting,
@@ -19,16 +18,29 @@ public class ContestSubmission extends BaseModel {
         Processed
     }
 
+    @DynamoDBHashKey(attributeName="id")
+    private String id;
+
     private String firstName, lastName, email, description, videoId, videoType, contestUrl;
 
+    @DynamoDBTypeConvertedEnum
+    @DynamoDBAttribute(attributeName = "stateText")
     private State state;
 
-    private long contestId;
+    private String contestId;
 
-    private Timestamp creationDate;
+    private Long creationDate;
 
     public String getContestUrl() {
         return contestUrl;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setContestUrl(String contestUrl) {
@@ -51,19 +63,19 @@ public class ContestSubmission extends BaseModel {
         this.videoId = videoId;
     }
 
-    public long getContestId() {
+    public String getContestId() {
         return contestId;
     }
 
-    public void setContestId(long contestId) {
+    public void setContestId(String contestId) {
         this.contestId = contestId;
     }
 
-    public Timestamp getCreationDate() {
+    public Long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Timestamp creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
 

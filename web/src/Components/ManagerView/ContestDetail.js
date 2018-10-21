@@ -29,7 +29,8 @@ class ContestDetail extends React.Component {
       prevButton: false,
       nextButton: false,
       pageNum: 1,
-      contest: {}
+      contest: {},
+      paginationKeys: {0: {}}
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.togglePlayer = this.togglePlayer.bind(this);
@@ -43,39 +44,62 @@ class ContestDetail extends React.Component {
     instance().get('contest/single/' + this.props.location.state.url)
       .then((response) => {
         console.log(response.data);
-        this.setState({contest: response.data});
+        this.setState({contest: response.data}, this.getData);
       })
       .catch((error) => {
         this.setState({errorMessage: error.response});
         console.log(error.response)
       });
-    this.getData();
   }
   
-  getData(e) {
+  upPage(e) {
+    e.preventDefault();
+    const newPage = this.state.pageNum + 1;
+    this.setState({pageNum: newPage},  () => this.getData(null, newPage-1));
+  }
+  
+  downPage(e) {
+    e.preventDefault();
+    if (this.state.pageNum > 1) {
+      const newPage = this.state.pageNum - 1;
+      this.setState({pageNum: newPage},  () => this.getData(null, newPage-1))
+    }
+  }
+  
+  getData(e, pageNum) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + this.state.pageNum)
+    if (pageNum == undefined) pageNum = 0;
+    instance().post('submissions/' + this.props.match.params.contestId + '/paginated',
+      this.state.paginationKeys[pageNum])
       .then((response) => {
+        let paginationKey = { lastEvaluatedPage : {
+            "id": {
+              "S": response.data.results[response.data.results.length-1].id+''
+            },
+            "creationDate": {
+              "N": response.data.results[response.data.results.length-1].creationDate+''
+            },
+            "contestId": {
+              "S": response.data.results[response.data.results.length-1].contestId
+            }
+          }};
         this.setState({
-          submissions: response.data,
+          submissions: response.data.results,
+          nextButton: response.data.lastEvaluatedKey != null,
           prevButton: this.state.pageNum > 1,
+          paginationKeys: {
+            ...this.state.paginationKeys,
+            [this.state.pageNum]: response.data.lastEvaluatedKey != null ? paginationKey: {}
+          }
         });
-        instance().get('contest/' + this.props.match.params.contestId + '/submissions/' + (this.state.pageNum + 1))
-          .then((response2) => {
-            this.setState({ nextButton: response2.data.length > 0 });
-          })
-          .catch((error) => {
-            this.setState({errorMessage: error.response});
-            console.log(error.response)
-          });
-      })
-      .catch((error) => {
+      }).catch((error) => {
         this.setState({errorMessage: error.response});
         console.log(error.response)
       });
   }
   
   togglePlayer() {
+    console.log(this.state.playVideo)
     this.setState({playVideo: !this.state.playVideo})
   }
   
@@ -83,24 +107,17 @@ class ContestDetail extends React.Component {
     const contestId = this.props.match.params.contestId;
     
     //Add extension and file type for processed video
-    let videoSrc = '/api/' + contestId + '/video/' + videoId;
+    let videoSrc = 'https://s3.amazonaws.com/smarttools-videos/raw/'+videoId;
     if (converted) {
-      if (videoType != 'video/mp4'){
-        videoId = videoId + '.mp4';
-      }
+      videoId += '.mp4';
       videoType = 'video/mp4';
-      videoSrc = '/api/' + contestId + '/video/' + videoId + '/converted';
+      videoSrc = 'https://s3.amazonaws.com/smarttools-videos/converted/'+videoId;
     }
     
-    this.setState({sources: '{"type": "' + videoType + '", "src":"' + videoId + '"}'});
-    this.setState({videoSrc: videoSrc, videoType: videoType});
-    
-    
-    this.togglePlayer();
+    this.setState({videoSrc: videoSrc, videoType: videoType}, () => this.togglePlayer());
   }
   
   formatDate(date) {
-    
     let d = new Date(date);
     let day = d.getDate();
     let monthIndex = d.getMonth();
@@ -108,20 +125,6 @@ class ContestDetail extends React.Component {
     let year = d.getFullYear();
     
     return year + "-" + month + "-" + day;
-  }
-  
-  upPage(e) {
-    e.preventDefault();
-    const newPage = this.state.pageNum + 1;
-    this.setState({pageNum: newPage}, this.getData);
-  }
-  
-  downPage(e) {
-    e.preventDefault();
-    if (this.state.pageNum > 1) {
-      const newPage = this.state.pageNum - 1;
-      this.setState({pageNum: newPage}, this.getData)
-    }
   }
   
   render() {
@@ -155,7 +158,7 @@ class ContestDetail extends React.Component {
               </Paper>
             </Grid>
             <Grid item xs={4}>
-              <img className={classes.img} src={"/api/contest/" + this.state.contest.id + "/img"}/>
+              <img className={classes.img} src={'https://s3.amazonaws.com/smarttools-images/'+this.state.contest.bannerUrl}/>
             </Grid>
           </Grid>
           
@@ -223,7 +226,7 @@ class ContestDetail extends React.Component {
             </div>
           ) : "No courses found"}
           
-          {(this.state.playVideo && this.state.sources !== '') &&
+          {(this.state.playVideo) &&
           <Player
             videoType={this.state.videoType}
             videoSrc={this.state.videoSrc}

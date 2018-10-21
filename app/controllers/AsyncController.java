@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContextExecutor;
 
 /**
  * This controller contains an action that demonstrates how to write
- * simple asynchronous code in a controller. It uses a timer to
+ * simple asynchronous code in a controller. It uses a  timer to
  * asynchronously delay sending a response for 1 second.
  */
 @Singleton

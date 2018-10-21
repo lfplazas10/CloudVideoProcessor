@@ -44,11 +44,11 @@ class ContestPublic extends React.Component {
       prevButton: false,
       nextButton: false,
       error: null,
-      showDialogMessage : false
+      showDialogMessage : false,
+      paginationKeys: {0: {}}
     };
     
     this.hideCreate = this.hideCreate.bind(this);
-    this.viewCreate = this.viewCreate.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.getSubmissions = this.getSubmissions.bind(this);
     this.createSub = this.createSub.bind(this);
@@ -83,25 +83,49 @@ class ContestPublic extends React.Component {
     this.setState({showDialogMessage: false});
   }
   
-  getSubmissions(e) {
+  upPage(e) {
+    e.preventDefault();
+    const newPage = this.state.pageNum + 1;
+    this.setState({pageNum: newPage}, () => this.getSubmissions(null, newPage-1));
+  }
+  
+  downPage(e) {
+    e.preventDefault();
+    if (this.state.pageNum > 1) {
+      const newPage = this.state.pageNum - 1;
+      this.setState({pageNum: newPage}, () => this.getSubmissions(null, newPage-1))
+    }
+  }
+  
+  getSubmissions(e, pageNum) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().get('public/submissions/' + this.state.contest.id + '/' + this.state.pageNum)
+    if (pageNum == undefined) pageNum = 0;
+    instance().post('public/submissions/' + this.state.contest.id + '/paginated', this.state.paginationKeys[pageNum])
       .then((response) => {
-        console.log(response)
+        console.log(response.data);
+        let paginationKey = { lastEvaluatedPage : {
+            "id": {
+              "S": response.data.results[response.data.results.length-1].id+''
+            },
+            "creationDate": {
+              "N": response.data.results[response.data.results.length-1].creationDate+''
+            },
+            "contestId": {
+              "S": response.data.results[response.data.results.length-1].contestId
+            }
+          }};
         this.setState({
-          submissions: response.data,
+          submissions: response.data.results,
+          nextButton: response.data.lastEvaluatedKey != null,
           prevButton: this.state.pageNum > 1,
-        });
-        instance().get('public/submissions/' + this.state.contest.id + '/' + (this.state.pageNum+1))
-          .then((response2) => {
-            this.setState({ nextButton: response2.data.length > 0 });
-          }).catch((error) => {
-          this.setState({errorMessage: error.response});
-          console.log(error.response)
-        });
+          paginationKeys: {
+            ...this.state.paginationKeys,
+            [this.state.pageNum]: response.data.lastEvaluatedKey != null ? paginationKey: {}
+          }
+        }, () => console.log(JSON.stringify(this.state.paginationKeys)));
       }).catch((error) => {
         this.setState({errorMessage: error.response});
-        console.log(error.response)
+        console.log(error)
     });
   }
   
@@ -112,71 +136,54 @@ class ContestPublic extends React.Component {
   
   createSub(e) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().post('contestSubmission', {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      email: this.state.email,
-      contestUrl: this.props.match.url,
-      description: this.state.description,
-      contestId: this.state.contest.id
-    }).then((response) => {
-      this.setState({videoId: response.data.id}, this.sendVideo);
-    }).catch((error) => {
-      this.setState({errorMessage: error.response});
-      console.log(error.response)
-    });
-  }
-  
-  sendVideo(e) {
-    if (e && e.preventDefault) e.preventDefault();
-  
-    if (!this.state.loading) {
-      this.setState({
+    this.setState({
         success: false,
         loading: true,
       }, () => {
-        let formData = new FormData();
-        formData.append('video', this.state.video);
-        const config = {
-          headers: {
-            'content-type': 'multipart/form-data'
-          }
-        };
-        instance().post('contestSubmission/video/' + this.state.videoId, formData, config)
-          .then((response) => {
-            this.setState({create: false,
-              success: true,
-              showDialogMessage : true,
-              loading: false});
-          }).catch((error) => {
-          this.setState({
-            create: false,
-            success: false,
-            loading: false,
-            showDialogMessage: true,
-            error: error.response});
-        });
+      instance().post('contestSubmission', {
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        email: this.state.email,
+        contestUrl: this.props.match.url,
+        description: this.state.description,
+        contestId: this.state.contest.id
+      }).then((response) => {
+        this.setState({videoId: response.data.id}, this.sendVideo);
+      }).catch((error) => {
+        this.setState({errorMessage: error.response});
+        console.log(error.response)
       });
-    }
+    });
+
   }
   
-  viewCreate(e) {
-    e.preventDefault();
-    this.setState({create: true});
-  }
-  
-  upPage(e) {
-    e.preventDefault();
-    const newPage = this.state.pageNum + 1;
-    this.setState({pageNum: newPage}, this.getSubmissions);
-  }
-  
-  downPage(e) {
-    e.preventDefault();
-    if (this.state.pageNum > 1) {
-      const newPage = this.state.pageNum - 1;
-      this.setState({pageNum: newPage}, this.getSubmissions)
-    }
+  sendVideo() {
+    let formData = new FormData();
+    formData.append('video', this.state.video);
+    const config = { headers: { 'content-type': 'multipart/form-data' } };
+    instance().post('contestSubmission/video/' + this.state.videoId, formData, config).then((response) => {
+      this.setState({
+        create: false,
+        success: true,
+        showDialogMessage : true,
+        loading: false
+      });
+    }).catch((error) => {
+      this.setState({
+        create: false,
+        success: false,
+        loading: false,
+        showDialogMessage: true,
+        error: error.response});
+    });
+    // if (!this.state.loading) {
+    //   this.setState({
+    //     success: false,
+    //     loading: true,
+    //   }, () => {
+    //     l
+    //   });
+    // }
   }
   
   showMessage() {
@@ -323,16 +330,11 @@ class ContestPublic extends React.Component {
   }
   
   playVideo(videoType, videoId) {
-    this.setState({sources: '{"type": "' + videoType + '", "src":"' + videoId + '"}'});
-    if (videoType != 'video/mp4'){
-      videoId = videoId + '.mp4';
-    }
-    
+    videoId += '.mp4';
     this.setState({
-      videoSrc: ('/api/' + this.state.contest.id + '/video/' + videoId + '/converted'),
+      videoSrc: ('https://d2wjn220snb47x.cloudfront.net/' + videoId),
       videoType: 'video/mp4'
     });
-    
     this.togglePlayer();
   }
   
@@ -365,12 +367,12 @@ class ContestPublic extends React.Component {
               </Paper>
             </Grid>
             <Grid item xs={4}>
-              <img className={classes.img} src={"/api/contest/" + this.state.contest.id + "/img"}/>
+              <img className={classes.img} src={'https://s3.amazonaws.com/smarttools-images/'+this.state.contest.bannerUrl}/>
             </Grid>
           </Grid>
           <div style={{padding: 24, textAlign: 'center'}}>
             <Button size="large" style={{textAlign: 'center'}} variant="contained" color="primary"
-                    onClick={this.viewCreate}>Add Video</Button>
+                    onClick={() => this.setState({create: true})}>Add Video</Button>
           </div>
           <Typography style={{paddingTop: '2%'}} variant="display3" gutterBottom>
             Submissions
@@ -421,10 +423,9 @@ class ContestPublic extends React.Component {
           ) : "No courses found"}
           {this.showCreate()}
           {this.showMessage()}
-          {(this.state.playVideo && this.state.sources !== '') &&
+          {(this.state.playVideo) &&
           <Player videoType={this.state.videoType}
                   videoSrc={this.state.videoSrc}
-                  sources={this.state.sources}
                   togglePlayer={this.togglePlayer}/>
           }
         </MuiThemeProvider>
