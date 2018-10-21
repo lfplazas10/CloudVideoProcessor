@@ -8,6 +8,7 @@ import controllers.base.BaseController;
 import models.Contest;
 import models.ContestSubmission;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
@@ -65,7 +66,7 @@ public class ContestController extends BaseController {
             //TODO: When improving performance, create and attach a proper Executor to this future
             CompletableFuture.runAsync(() -> {
                 try {
-                    PutObjectRequest request = new PutObjectRequest("modeld-images", imageName, imageFile)
+                    PutObjectRequest request = new PutObjectRequest("smarttools-images", imageName, imageFile)
                             .withCannedAcl(CannedAccessControlList.PublicRead);
 
                     ObjectMetadata metadata = new ObjectMetadata();

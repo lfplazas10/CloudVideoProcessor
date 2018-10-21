@@ -49,7 +49,6 @@ class ContestPublic extends React.Component {
     };
     
     this.hideCreate = this.hideCreate.bind(this);
-    this.viewCreate = this.viewCreate.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.getSubmissions = this.getSubmissions.bind(this);
     this.createSub = this.createSub.bind(this);
@@ -137,57 +136,54 @@ class ContestPublic extends React.Component {
   
   createSub(e) {
     if (e && e.preventDefault) e.preventDefault();
-    instance().post('contestSubmission', {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      email: this.state.email,
-      contestUrl: this.props.match.url,
-      description: this.state.description,
-      contestId: this.state.contest.id
-    }).then((response) => {
-      this.setState({videoId: response.data.id}, this.sendVideo);
-    }).catch((error) => {
-      this.setState({errorMessage: error.response});
-      console.log(error.response)
-    });
-  }
-  
-  sendVideo(e) {
-    if (e && e.preventDefault) e.preventDefault();
-  
-    if (!this.state.loading) {
-      this.setState({
+    this.setState({
         success: false,
         loading: true,
       }, () => {
-        let formData = new FormData();
-        formData.append('video', this.state.video);
-        const config = {
-          headers: {
-            'content-type': 'multipart/form-data'
-          }
-        };
-        instance().post('contestSubmission/video/' + this.state.videoId, formData, config)
-          .then((response) => {
-            this.setState({create: false,
-              success: true,
-              showDialogMessage : true,
-              loading: false});
-          }).catch((error) => {
-          this.setState({
-            create: false,
-            success: false,
-            loading: false,
-            showDialogMessage: true,
-            error: error.response});
-        });
+      instance().post('contestSubmission', {
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        email: this.state.email,
+        contestUrl: this.props.match.url,
+        description: this.state.description,
+        contestId: this.state.contest.id
+      }).then((response) => {
+        this.setState({videoId: response.data.id}, this.sendVideo);
+      }).catch((error) => {
+        this.setState({errorMessage: error.response});
+        console.log(error.response)
       });
-    }
+    });
+
   }
   
-  viewCreate(e) {
-    e.preventDefault();
-    this.setState({create: true});
+  sendVideo() {
+    let formData = new FormData();
+    formData.append('video', this.state.video);
+    const config = { headers: { 'content-type': 'multipart/form-data' } };
+    instance().post('contestSubmission/video/' + this.state.videoId, formData, config).then((response) => {
+      this.setState({
+        create: false,
+        success: true,
+        showDialogMessage : true,
+        loading: false
+      });
+    }).catch((error) => {
+      this.setState({
+        create: false,
+        success: false,
+        loading: false,
+        showDialogMessage: true,
+        error: error.response});
+    });
+    // if (!this.state.loading) {
+    //   this.setState({
+    //     success: false,
+    //     loading: true,
+    //   }, () => {
+    //     l
+    //   });
+    // }
   }
   
   showMessage() {
@@ -334,16 +330,11 @@ class ContestPublic extends React.Component {
   }
   
   playVideo(videoType, videoId) {
-    this.setState({sources: '{"type": "' + videoType + '", "src":"' + videoId + '"}'});
-    if (videoType != 'video/mp4'){
-      videoId = videoId + '.mp4';
-    }
-    
+    videoId += '.mp4';
     this.setState({
-      videoSrc: ('/api/' + this.state.contest.id + '/video/' + videoId + '/converted'),
+      videoSrc: ('https://d2wjn220snb47x.cloudfront.net/' + videoId),
       videoType: 'video/mp4'
     });
-    
     this.togglePlayer();
   }
   
@@ -376,12 +367,12 @@ class ContestPublic extends React.Component {
               </Paper>
             </Grid>
             <Grid item xs={4}>
-              <img className={classes.img} src={'https://s3.us-east-2.amazonaws.com/modeld-images/'+this.state.contest.bannerUrl}/>
+              <img className={classes.img} src={'https://s3.amazonaws.com/smarttools-images/'+this.state.contest.bannerUrl}/>
             </Grid>
           </Grid>
           <div style={{padding: 24, textAlign: 'center'}}>
             <Button size="large" style={{textAlign: 'center'}} variant="contained" color="primary"
-                    onClick={this.viewCreate}>Add Video</Button>
+                    onClick={() => this.setState({create: true})}>Add Video</Button>
           </div>
           <Typography style={{paddingTop: '2%'}} variant="display3" gutterBottom>
             Submissions
@@ -432,10 +423,9 @@ class ContestPublic extends React.Component {
           ) : "No courses found"}
           {this.showCreate()}
           {this.showMessage()}
-          {(this.state.playVideo && this.state.sources !== '') &&
+          {(this.state.playVideo) &&
           <Player videoType={this.state.videoType}
                   videoSrc={this.state.videoSrc}
-                  sources={this.state.sources}
                   togglePlayer={this.togglePlayer}/>
           }
         </MuiThemeProvider>

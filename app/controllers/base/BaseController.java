@@ -10,9 +10,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
 import play.libs.Json;
 import play.mvc.*;
 import java.util.HashMap;
@@ -22,15 +19,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import com.amazonaws.services.sqs.model.SendMessageRequest;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import services.PaginationService;
 
 public class BaseController extends Controller {
 
     protected static final String CONTENT_TYPE = "application/json";
     protected static final int PAGINATION = 30;
-    protected static final String QUEUE_URL = "https://sqs.us-east-2.amazonaws.com/306743161273/videos.fifo";
+    protected static final String QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/306743161273/videos.fifo";
     private static AWSCredentialsProvider awsCreds = new AWSStaticCredentialsProvider( new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY"), System.getenv("AWS_ACCESS_SECRET")) );
-    private static Regions awsRegion = Regions.US_EAST_2;
+    private static Regions awsRegion = Regions.US_EAST_1;
 
 
     protected static AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
@@ -47,21 +46,6 @@ public class BaseController extends Controller {
             .withRegion(awsRegion)
             .withCredentials(awsCreds)
             .build();
-
-//        static{
-//        try {
-//            Config config = new Config();
-//            config.useReplicatedServers()
-//                    .setScanInterval(2000) // master node change scan interval
-//                    // use "rediss://" for SSL connection
-//                    .addNodeAddress("redis://cache-001.qbtphv.0001.use2.cache.amazonaws.com:6379");
-////                    .addNodeAddress("cache-003.qbtphv.0001.use2.cache.amazonaws.com");
-//
-//            RedissonClient redisson = Redisson.create(config);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
 
     protected void save(Object object) throws Exception{
         try {

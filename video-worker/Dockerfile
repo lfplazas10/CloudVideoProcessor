@@ -5,4 +5,5 @@ COPY package.json /root
 COPY entry-point.sh /root
 RUN npm install -y && chmod +x entry-point.sh
 COPY index.js /root
+COPY queue.js /root
 RUN chmod 755 index.js entry-point.sh

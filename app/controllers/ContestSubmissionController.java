@@ -4,8 +4,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.google.common.collect.ImmutableMap;
 import controllers.base.BaseController;
 import models.Contest;
 import models.ContestSubmission;
@@ -13,10 +14,13 @@ import org.apache.commons.io.FilenameUtils;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.With;
+import services.PaginationService;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -42,19 +46,23 @@ public class ContestSubmissionController extends BaseController {
             //TODO: When improving performance, create and attach a proper Executor to this future
             CompletableFuture.runAsync(() -> {
                 try {
-                    PutObjectRequest request = new PutObjectRequest("modeld-videos/raw", videoId, videoFile)
+                    PutObjectRequest request = new PutObjectRequest("smarttools-videos/raw", videoId, videoFile)
                             .withCannedAcl(CannedAccessControlList.PublicRead);
 
                     ObjectMetadata metadata = new ObjectMetadata();
                     metadata.setContentType(contentType);
-//                    metadata.addUserMetadata("x-amz-meta-title", "someTitle");
                     request.setMetadata(metadata);
-                    PutObjectResult result =  s3Client.putObject(request);
+                    s3Client.putObject(request);
+                    Map<String, MessageAttributeValue> map = new HashMap<>();
+                    map.put("id", new MessageAttributeValue().withDataType("String").withStringValue(cs.getId()) );
+                    map.put("email", new MessageAttributeValue().withDataType("String").withStringValue(cs.getEmail()) );
+                    map.put("contestUrl", new MessageAttributeValue().withDataType("String").withStringValue(cs.getContestUrl()) );
                     SendMessageRequest send_msg_request = new SendMessageRequest()
                             .withQueueUrl(QUEUE_URL)
+                            .withMessageAttributes(map)
                             .withMessageBody(videoId)
                             .withMessageGroupId("videos");
-//                            .withDelaySeconds(5);
+
                     sqs.sendMessage(send_msg_request);
                 } catch (Exception e){
                     e.printStackTrace();
@@ -124,6 +132,7 @@ public class ContestSubmissionController extends BaseController {
         try {
             if (find(contestId, Contest.class) == null)
                 throw new Exception("The contest doesn't exist");
+            PaginationService.getPage("s",1);
 
             Map lep = (Map)bodyAs(Map.class).get("lastEvaluatedPage");
 //            QueryResultPage<ContestSubmission> qrp = queryList("contestId", contestId, ContestSubmission.class, lep);

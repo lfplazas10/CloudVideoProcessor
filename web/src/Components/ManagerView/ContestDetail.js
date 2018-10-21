@@ -107,21 +107,17 @@ class ContestDetail extends React.Component {
     const contestId = this.props.match.params.contestId;
     
     //Add extension and file type for processed video
-    let videoSrc = 'https://s3.us-east-2.amazonaws.com/modeld-videos/raw/'+videoId;
+    let videoSrc = 'https://s3.amazonaws.com/smarttools-videos/raw/'+videoId;
     if (converted) {
-      if (videoType != 'video/mp4'){
-        videoId = videoId + '.mp4';
-      }
+      videoId += '.mp4';
       videoType = 'video/mp4';
-      //TODO: Here goes the cloudfront url
-      // videoSrc = '/api/' + contestId + '/video/' + videoId + '/converted';
+      videoSrc = 'https://s3.amazonaws.com/smarttools-videos/converted/'+videoId;
     }
     
     this.setState({videoSrc: videoSrc, videoType: videoType}, () => this.togglePlayer());
   }
   
   formatDate(date) {
-    
     let d = new Date(date);
     let day = d.getDate();
     let monthIndex = d.getMonth();
@@ -162,7 +158,7 @@ class ContestDetail extends React.Component {
               </Paper>
             </Grid>
             <Grid item xs={4}>
-              <img className={classes.img} src={'https://s3.us-east-2.amazonaws.com/modeld-images/'+this.state.contest.bannerUrl}/>
+              <img className={classes.img} src={'https://s3.amazonaws.com/smarttools-images/'+this.state.contest.bannerUrl}/>
             </Grid>
           </Grid>
           

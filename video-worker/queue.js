@@ -1,4 +1,4 @@
-const QUEUE_URL = "https://sqs.us-east-2.amazonaws.com/306743161273/videos.fifo";
+const QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/306743161273/videos.fifo";
 AWS = require('aws-sdk');
 
 AWS.config.update({
