@@ -24,7 +24,7 @@ else {
   
 function initializeNFS(){
   let instanceParams = {
-    ImageId: 'ami-04d4a2c8edd1179c5',
+    ImageId: 'ami-0011fdb09b5226987',
     KeyName: "nfs-instance",
     InstanceType: 't2.micro',
     KeyName: '3s',
@@ -55,7 +55,7 @@ function initializeNFS(){
 
 function initializeServerC(){
   let instanceParams = {
-    ImageId: 'ami-0067f918c65147f2a',
+    ImageId: 'ami-014d508c45a715c2f',
     InstanceType: 't2.micro',
     KeyName: '3s',
     MinCount: 1,
@@ -105,18 +105,18 @@ function initializeServerD(){
   let instanceParams = {
     ImageId: 'ami-018086fef8ae9a512',
     InstanceType: 't2.micro',
-    KeyName: 'thirdSubmission',
+    KeyName: '3s',
     MinCount: 1,
     MaxCount: 1,
     NetworkInterfaces: [
       {
-        SubnetId: 'subnet-4fb09427',
+        SubnetId: 'subnet-b94bcade',
         AssociatePublicIpAddress: true,
         DeleteOnTermination: true ,
-        Description: 'Server D interface',
+        Description: 'Server D server',
         DeviceIndex: 0,
         Groups: [
-          'sg-086801fdb53330b93',
+          'sg-07233ff5b6ad214da',
         ]
       },
     ],
