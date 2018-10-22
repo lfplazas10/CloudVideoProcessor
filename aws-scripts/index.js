@@ -13,6 +13,8 @@ if (action == 'nfs')
   initializeNFS()
 else if (action == 'serverc')
   initializeServerC()
+else if (action == 'workerc')
+  initializeWorkerC()
 else if (action == 'serverd')
   initializeServerD()
 else {
@@ -22,7 +24,7 @@ else {
   
 function initializeNFS(){
   let instanceParams = {
-    ImageId: 'ami-068bccc5ef35ac9d4',
+    ImageId: 'ami-04d4a2c8edd1179c5',
     KeyName: "nfs-instance",
     InstanceType: 't2.micro',
     KeyName: '3s',
@@ -53,7 +55,31 @@ function initializeNFS(){
 
 function initializeServerC(){
   let instanceParams = {
-    ImageId: 'ami-02d635a0b51c52626',
+    ImageId: 'ami-0067f918c65147f2a',
+    InstanceType: 't2.micro',
+    KeyName: '3s',
+    MinCount: 1,
+    MaxCount: 1,
+    NetworkInterfaces: [
+      {
+        SubnetId: 'subnet-b94bcade',
+        AssociatePublicIpAddress: true,
+        DeleteOnTermination: true ,
+        Description: 'Server C interface',
+        DeviceIndex: 0,
+        Groups: [
+          'sg-07233ff5b6ad214da',
+        ]
+      },
+    ],
+  };
+  
+  runInstance(instanceParams);
+}
+
+function initializeWorkerC(){
+  let instanceParams = {
+    ImageId: 'ami-0a222bfe38fd413d5',
     InstanceType: 't2.micro',
     KeyName: '3s',
     MinCount: 1,
