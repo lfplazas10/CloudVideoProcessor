@@ -13,7 +13,6 @@ libraryDependencies += guice
 
 libraryDependencies += "org.apache.commons" % "commons-text" % "1.4"
 libraryDependencies += "com.amazonaws" % "aws-java-sdk" % "1.11.327"
-libraryDependencies += "org.redisson" % "redisson" % "3.8.2"
 libraryDependencies += "redis.clients" % "jedis" % "2.9.0"
 
 // Test Database

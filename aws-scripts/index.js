@@ -67,13 +67,7 @@ function initializeServerC(){
         DeviceIndex: 0,
         Groups: [
           'sg-07233ff5b6ad214da',
-        ],
-        PrivateIpAddresses: [
-          {
-            Primary: true ,
-            PrivateIpAddress: '172.31.0.15'
-          },
-        ],
+        ]
       },
     ],
   };
